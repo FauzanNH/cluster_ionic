@@ -1,0 +1,64 @@
+<div class="preview-container">
+  <div class="preview-header">
+    <ion-buttons>
+      <ion-button (click)="cancel()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <div class="preview-title">Preview Dokumen</div>
+    <div class="spacer"></div>
+  </div>
+
+  <div class="preview-content">
+    <!-- Loading indicator -->
+    <div class="loading-container" *ngIf="isLoading">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Memuat dokumen...</p>
+    </div>
+    
+    <!-- Empty state -->
+    <div class="empty-document" *ngIf="!isLoading && !previewDocument">
+      <div class="empty-document-icon">
+        <ion-icon name="document-outline"></ion-icon>
+      </div>
+      <p>Tidak ada dokumen yang dipilih</p>
+      <ion-button (click)="openFilePicker()">Pilih Dokumen</ion-button>
+    </div>
+    
+    <!-- Document preview -->
+    <div class="document-preview" *ngIf="!isLoading && previewDocument">
+      <div class="document-preview-icon">
+        <ion-icon [name]="getDocumentIcon(previewDocument.type)"></ion-icon>
+      </div>
+      <div class="document-preview-info">
+        <div class="document-preview-name">{{ previewDocument.name }}</div>
+        <div class="document-preview-size">{{ previewDocument.size }}</div>
+        <div class="document-preview-type">{{ previewDocument.type | uppercase }}</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Action buttons -->
+  <div class="document-actions" *ngIf="previewDocument">
+    <ion-button fill="clear" (click)="chooseAnotherDocument()">
+      <ion-icon slot="start" name="folder-open"></ion-icon>
+      Pilih Dokumen Lain
+    </ion-button>
+  </div>
+  
+  <!-- Caption input with send button -->
+  <div class="caption-container" *ngIf="previewDocument">
+    <div class="caption-input-wrapper">
+      <ion-textarea
+        placeholder="Tambahkan keterangan (opsional)"
+        [(ngModel)]="documentCaption"
+        autoGrow="true"
+        rows="1"
+        maxlength="500"
+      ></ion-textarea>
+      <ion-button class="send-button" (click)="send()" [disabled]="!previewDocument">
+        <ion-icon name="paper-plane"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</div> 

@@ -1,0 +1,179 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/satpam/beranda" text="" icon="arrow-back-outline"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Jadwal Kerja</ion-title>
+  </ion-toolbar>
+  
+  <ion-toolbar class="search-toolbar">
+    <div class="month-selector">
+      <ion-button fill="clear" (click)="previousMonth()">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </ion-button>
+      <h3>{{ currentMonthYear }}</h3>
+      <ion-button fill="clear" (click)="nextMonth()">
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Add pull to refresh -->
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-down-outline"
+      pullingText="Tarik untuk memperbarui"
+      refreshingSpinner="circles"
+      refreshingText="Memperbarui jadwal...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Custom loading animation for schedule -->
+  <div class="custom-loading" *ngIf="isLoading">
+    <div class="loading-container">
+      <div class="loading-calendar">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <div class="loading-spinner">
+          <div class="spinner"></div>
+        </div>
+      </div>
+      <h4>Memuat Jadwal Kerja</h4>
+      <p>Mohon tunggu sebentar...</p>
+    </div>
+  </div>
+
+  <!-- Main content (hidden when loading) -->
+  <div class="main-content" [class.hidden]="isLoading">
+    <!-- Calendar view -->
+    <div class="calendar-container">
+      <div class="weekday-header">
+        <div class="weekday" *ngFor="let day of weekdays">{{ day }}</div>
+      </div>
+      <div class="calendar-grid">
+        <div 
+          *ngFor="let day of calendarDays" 
+          class="calendar-day" 
+          [ngClass]="{
+            'other-month': !day.isCurrentMonth,
+            'today': day.isToday,
+            'shift-pagi': day.shift === 'pagi',
+            'shift-siang': day.shift === 'siang',
+            'shift-malam': day.shift === 'malam',
+            'libur': day.shift === 'libur',
+            'selected': day.selected,
+            'hidden': day.hidden
+          }"
+          (click)="selectDate(day)">
+          <span class="day-number">{{ day.day }}</span>
+          <div *ngIf="day.shift" class="shift-indicator">
+            {{ day.shift.charAt(0).toUpperCase() + day.shift.slice(1) }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom loading animation for day details -->
+    <div class="custom-loading day-loading" *ngIf="isLoadingDetail">
+      <div class="loading-container">
+        <div class="loading-detail">
+          <ion-icon name="time-outline"></ion-icon>
+          <div class="loading-spinner">
+            <div class="spinner"></div>
+          </div>
+        </div>
+        <h4>Memuat Detail Jadwal</h4>
+        <p>Mengambil informasi shift...</p>
+      </div>
+    </div>
+
+    <!-- Current shift info -->
+    <div class="current-shift-container" *ngIf="selectedDate && !isLoadingDetail">
+      <div class="date-header">
+        <h4>{{ selectedDateFormatted }}</h4>
+      </div>
+
+      <div class="shift-card" [ngClass]="{'active-shift': selectedDate.jadwal?.is_active}">
+        <div class="shift-icon" [ngClass]="selectedDate.shift">
+          <ion-icon *ngIf="selectedDate.shift === 'pagi'" name="sunny-outline"></ion-icon>
+          <ion-icon *ngIf="selectedDate.shift === 'siang'" name="partly-sunny-outline"></ion-icon>
+          <ion-icon *ngIf="selectedDate.shift === 'malam'" name="moon-outline"></ion-icon>
+          <ion-icon *ngIf="selectedDate.shift === 'libur'" name="calendar-outline"></ion-icon>
+        </div>
+        <div class="shift-details">
+          <h3>{{ getShiftLabel(selectedDate.shift || '') }}</h3>
+          <p *ngIf="selectedDate.shift !== 'libur'">{{ getShiftTime(selectedDate.shift || '') }}</p>
+          <p *ngIf="selectedDate.shift === 'libur'" class="libur-message">Tidak ada jadwal kerja</p>
+        </div>
+        <div class="shift-status" *ngIf="selectedDate.shift !== 'libur'">
+          <ion-badge [color]="selectedDate.jadwal?.is_active ? 'success' : 'medium'">
+            {{ selectedDate.jadwal?.is_active ? 'Aktif' : 'Tidak Aktif' }}
+          </ion-badge>
+        </div>
+        <div class="shift-status" *ngIf="selectedDate.shift === 'libur'">
+          <ion-badge color="medium">Tidak Ada Jadwal</ion-badge>
+        </div>
+      </div>
+
+      <!-- Location and teammates -->
+      <div class="location-card" *ngIf="selectedDate.shift !== 'libur' && selectedDate.jadwal && selectedDate.jadwal.lokasi">
+        <div class="card-header">
+          <ion-icon name="location-outline"></ion-icon>
+          <h4>Lokasi Tugas</h4>
+        </div>
+        <div class="location-details">
+          <h5>{{ selectedDate.jadwal.lokasi }}</h5>
+          <p>{{ selectedDate.jadwal.lokasi_detail }}</p>
+        </div>
+      </div>
+
+      <div class="teammates-card" *ngIf="selectedDate.shift !== 'libur' && selectedDate.jadwal && selectedDate.jadwal.teammates && selectedDate.jadwal.teammates.length > 0">
+        <div class="card-header">
+          <ion-icon name="people-outline"></ion-icon>
+          <h4>Rekan Tugas</h4>
+        </div>
+        <div class="teammates-list">
+          <div class="teammate" *ngFor="let teammate of selectedDate.jadwal.teammates">
+            <div class="teammate-avatar">
+              <ion-icon name="person-circle-outline"></ion-icon>
+            </div>
+            <div class="teammate-info">
+              <h5>{{ teammate.nama || teammate.name }}</h5>
+              <p>{{ teammate.posisi || teammate.position }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="notes-card" *ngIf="selectedDate.jadwal && selectedDate.jadwal.catatan">
+        <div class="card-header">
+          <ion-icon name="document-text-outline"></ion-icon>
+          <h4>Catatan</h4>
+        </div>
+        <div class="notes-content">
+          <p>{{ selectedDate.jadwal.catatan }}</p>
+        </div>
+      </div>
+      
+      <!-- No Schedule Message -->
+      <div class="no-schedule-card" *ngIf="selectedDate.shift === 'libur' && (!selectedDate.jadwal || !selectedDate.jadwal.catatan)">
+        <div class="card-header">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          <h4>Informasi</h4>
+        </div>
+        <div class="no-schedule-content">
+          <p>Anda tidak memiliki jadwal kerja untuk hari ini.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state when no date is selected -->
+    <div class="empty-state" *ngIf="!selectedDate && !isLoading">
+      <ion-icon name="calendar-outline"></ion-icon>
+      <h4>Pilih tanggal untuk melihat jadwal</h4>
+      <p>Silakan pilih tanggal pada kalender di atas</p>
+    </div>
+  </div>
+</ion-content>

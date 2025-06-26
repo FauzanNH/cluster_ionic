@@ -1,0 +1,110 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/satpam/lainnya/keamanan" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <div class="toolbar-title">PIN</div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <div *ngIf="isCheckingPin" class="pin-loading-overlay">
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <div class="loading-text">Memeriksa PIN</div>
+    </div>
+  </div>
+
+  <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-down-outline"
+      refreshingSpinner="crescent"
+      pullingText="Tarik untuk refresh"
+      refreshingText="Merefresh...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div class="status-bar-spacer"></div>
+  
+  <div class="content-wrapper">
+    <!-- Header with page title -->
+    <div class="app-header">
+      <p class="page-subtitle">Bukit Asri Cluster · Pengaturan PIN</p>
+    </div>
+    
+    <!-- PIN Settings List -->
+    <div class="pin-card">
+      <ion-item *ngIf="pinActive" lines="none" detail class="pin-item" [routerLink]="['/satpam/lainnya/keamanan/pin/ubah-pin']">
+        <div class="pin-icon blue-bg">
+          <ion-icon name="key-outline"></ion-icon>
+        </div>
+        <ion-label>
+          <h3>Ubah PIN</h3>
+          <p>Ubah PIN keamanan Anda</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="pinActive" lines="none" detail class="pin-item" [routerLink]="['/satpam/lainnya/keamanan/pin/sethint']">
+        <div class="pin-icon yellow-bg">
+          <ion-icon name="help-circle-outline"></ion-icon>
+        </div>
+        <ion-label>
+          <h3>Hint PIN</h3>
+          <p>Atur petunjuk pengingat PIN</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="pinActive" lines="none" detail class="pin-item danger-item" (click)="confirmDeletePin()">
+        <div class="pin-icon red-bg">
+          <ion-icon name="trash-outline"></ion-icon>
+        </div>
+        <ion-label>
+          <h3>Hapus PIN</h3>
+          <p>Nonaktifkan keamanan PIN</p>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="!pinActive" lines="none" detail class="pin-item" [routerLink]="['/satpam/lainnya/keamanan/pin/setpin']">
+        <div class="pin-icon blue-bg">
+          <ion-icon name="add-circle-outline"></ion-icon>
+        </div>
+        <ion-label>
+          <h3>Atur PIN</h3>
+          <p>Aktifkan keamanan PIN Anda</p>
+        </ion-label>
+      </ion-item>
+    </div>
+    
+    <!-- PIN Info Card -->
+    <div class="status-card">
+      <div class="status-icon">
+        <ion-icon name="information-circle-outline"></ion-icon>
+      </div>
+      <div class="status-info">
+        <p class="status-label">Status PIN</p>
+        <div class="status-value" [ngClass]="{'active': pinActive, 'inactive': !pinActive}">
+          {{ pinStatus }}
+        </div>
+      </div>
+    </div>
+    
+    <!-- PIN Security Toggle Card -->
+    <div class="toggle-card" *ngIf="pinActive">
+      <div class="new-badge">Baru</div>
+      <div class="toggle-content">
+        <div class="toggle-icon">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+        </div>
+        <div class="toggle-info">
+          <h3>Gunakan PIN Untuk Login</h3>
+          <p>Aktifkan untuk meminta PIN setiap kali membuka aplikasi</p>
+        </div>
+        <div class="toggle-switch-container">
+          <ion-toggle [(ngModel)]="pinSecurityEnabled" (ionChange)="togglePinSecurity($event)" [disabled]="isTogglingPinSecurity"></ion-toggle>
+          <div class="toggle-status" *ngIf="isTogglingPinSecurity">
+            <ion-spinner name="dots" class="toggle-spinner"></ion-spinner>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

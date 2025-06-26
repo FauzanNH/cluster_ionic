@@ -1,0 +1,182 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <!-- Fixed Top Section -->
+  <div class="fixed-top-section">
+    <!-- Combined Toolbar & Title Card -->
+    <div class="combined-card">
+      <div class="toolbar-section">
+        <div class="toolbar-left">
+          <div class="back-button" [routerLink]="['/warga/beranda/pengaduan']">
+            <ion-icon name="arrow-back-outline"></ion-icon>
+          </div>
+        </div>
+        <div class="toolbar-title">
+          <h2>Tambah Pengaduan</h2>
+        </div>
+        <div class="toolbar-right">
+          <div class="placeholder"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Container -->
+  <div class="form-container">
+    <form [formGroup]="pengaduanForm" (ngSubmit)="submitForm()">
+      <!-- Jenis Pengaduan -->
+      <div class="form-group">
+        <h3 class="form-section-title">Jenis Pengaduan</h3>
+        <p class="form-section-subtitle">Pilih jenis pengaduan yang ingin disampaikan</p>
+        
+        <div class="custom-select-wrapper">
+          <div class="select-container" (click)="toggleDropdown()">
+            <div class="selected-option">
+              <div *ngIf="!pengaduanForm.get('jenis')?.value" class="placeholder-text">
+                <span>Pilih jenis pengaduan</span>
+              </div>
+              
+              <div *ngIf="pengaduanForm.get('jenis')?.value === 'Keluhan'" class="selected-item keluhan-item">
+                <span>Keluhan</span>
+              </div>
+              
+              <div *ngIf="pengaduanForm.get('jenis')?.value === 'Gangguan'" class="selected-item gangguan-item">
+                <span>Gangguan</span>
+              </div>
+              
+              <div *ngIf="pengaduanForm.get('jenis')?.value === 'Aspirasi'" class="selected-item aspirasi-item">
+                <span>Aspirasi</span>
+              </div>
+              
+              <ion-icon name="chevron-down-outline" class="dropdown-icon" [ngClass]="{'open': isDropdownOpen}"></ion-icon>
+            </div>
+          </div>
+          
+          <div class="dropdown-options" *ngIf="isDropdownOpen">
+            <div class="option-item keluhan-item" (click)="selectOption('Keluhan')">
+              <span>Keluhan</span>
+            </div>
+            <div class="option-item gangguan-item" (click)="selectOption('Gangguan')">
+              <span>Gangguan</span>
+            </div>
+            <div class="option-item aspirasi-item" (click)="selectOption('Aspirasi')">
+              <span>Aspirasi</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="error-message" *ngIf="isSubmitted && pengaduanForm.get('jenis')?.errors">
+          Silakan pilih jenis pengaduan
+        </div>
+      </div>
+      
+      <!-- Detail Pengaduan -->
+      <div class="form-group">
+        <h3 class="form-section-title">Detail Pengaduan</h3>
+        <p class="form-section-subtitle">Jelaskan secara detail pengaduan Anda</p>
+        
+        <div class="input-container">
+          <ion-textarea 
+            formControlName="detail"
+            placeholder="Tuliskan detail pengaduan Anda di sini..."
+            rows="6"
+            class="custom-textarea">
+          </ion-textarea>
+        </div>
+        
+        <div class="error-message" *ngIf="isSubmitted && pengaduanForm.get('detail')?.errors">
+          Detail pengaduan wajib diisi
+        </div>
+      </div>
+      
+      <!-- Dokumen Pendukung -->
+      <div class="form-group">
+        <h3 class="form-section-title">Dokumen Pendukung (Opsional)</h3>
+        <p class="form-section-subtitle">Anda dapat menambahkan foto atau dokumen pendukung jika diperlukan</p>
+        
+        <div class="document-upload-container">
+          <!-- Dokumen 1 -->
+          <div class="document-upload-box" (click)="triggerFileInput(1)" [class.has-file]="dokumen1Preview">
+            <input 
+              type="file" 
+              #fileInput1 
+              (change)="onFileSelected($event, 1)" 
+              accept=".png,.jpg,.jpeg,.pdf" 
+              style="display: none;" 
+              formControlName="dokumen1"
+            >
+            <div class="upload-content" *ngIf="!dokumen1Preview">
+              <ion-icon name="cloud-upload-outline" class="upload-icon"></ion-icon>
+              <div class="upload-text">
+                <span class="upload-title">Dokumen 1</span>
+                <span class="upload-subtitle">Klik untuk unggah (PNG, JPG, PDF)</span>
+              </div>
+            </div>
+            <div class="file-preview" *ngIf="dokumen1Preview">
+              <div class="file-info">
+                <ion-icon [name]="getFileIcon(dokumen1Type)" class="file-icon"></ion-icon>
+                <span class="file-name">{{ dokumen1Name }}</span>
+              </div>
+              <ion-icon name="close-circle" class="remove-file" (click)="removeFile(1, $event)"></ion-icon>
+            </div>
+          </div>
+        </div>
+        
+        <div class="document-upload-container">
+          <!-- Dokumen 2 -->
+          <div class="document-upload-box" (click)="triggerFileInput(2)" [class.has-file]="dokumen2Preview">
+            <input 
+              type="file" 
+              #fileInput2 
+              (change)="onFileSelected($event, 2)" 
+              accept=".png,.jpg,.jpeg,.pdf" 
+              style="display: none;" 
+              formControlName="dokumen2"
+            >
+            <div class="upload-content" *ngIf="!dokumen2Preview">
+              <ion-icon name="cloud-upload-outline" class="upload-icon"></ion-icon>
+              <div class="upload-text">
+                <span class="upload-title">Dokumen 2</span>
+                <span class="upload-subtitle">Klik untuk unggah (PNG, JPG, PDF)</span>
+              </div>
+            </div>
+            <div class="file-preview" *ngIf="dokumen2Preview">
+              <div class="file-info">
+                <ion-icon [name]="getFileIcon(dokumen2Type)" class="file-icon"></ion-icon>
+                <span class="file-name">{{ dokumen2Name }}</span>
+              </div>
+              <ion-icon name="close-circle" class="remove-file" (click)="removeFile(2, $event)"></ion-icon>
+            </div>
+          </div>
+        </div>
+        
+        <p class="optional-note">*Ukuran maksimal file 5MB</p>
+      </div>
+      
+      <!-- Lokasi (Opsional) -->
+      <div class="form-group">
+        <h3 class="form-section-title">Lokasi (Opsional)</h3>
+        <p class="form-section-subtitle">Tentukan lokasi terkait pengaduan</p>
+        
+        <div class="input-container">
+          <ion-input 
+            formControlName="lokasi"
+            placeholder="Contoh: Lapangan Voli RT 5"
+            class="custom-input">
+          </ion-input>
+        </div>
+      </div>
+      
+      <!-- Submit Button -->
+      <div class="button-container">
+        <ion-button expand="block" type="submit" class="submit-button">
+          <ion-icon name="paper-plane-outline" slot="start"></ion-icon>
+          Kirim Pengaduan
+        </ion-button>
+      </div>
+    </form>
+  </div>
+</ion-content>

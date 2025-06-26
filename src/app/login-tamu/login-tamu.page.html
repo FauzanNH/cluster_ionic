@@ -1,0 +1,49 @@
+<ion-header [translucent]="true">
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="login-container">
+    <div class="login-back-button">
+      <ion-button fill="clear" routerLink="/login" class="back-btn">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </div>
+    
+    <div class="login-header">
+      <img src="assets/images/rumah.png" alt="Bukit Asri Cluster" class="login-logo">
+      <h1>Login Tamu</h1>
+      <p>Silakan masukkan ID Tamu untuk mengakses layanan Bukit Asri Cluster</p>
+    </div>
+    
+    <div class="login-form">
+      <div class="input-group">
+        <label class="input-label">ID Tamu</label>
+        <div class="input-container">
+          <ion-icon name="person-outline"></ion-icon>
+          <input type="text" [(ngModel)]="idTamu" placeholder="Masukkan ID Tamu Anda">
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <ion-button expand="block" (click)="loginTamu()" class="login-button" [disabled]="!idTamu || isLoading">
+          <span *ngIf="!isLoading">
+            Masuk
+            <ion-icon slot="end" name="log-in-outline"></ion-icon>
+          </span>
+          <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
+        </ion-button>
+        
+        <div class="alternative-options">
+          <a routerLink="/login" class="guest-link">
+            <ion-icon name="home-outline"></ion-icon>
+            Kembali ke Login Warga
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="login-footer">
+      <p>V1.0.0 (beta) Bukit Asri Cluster Apps</p>
+    </div>
+  </div>
+</ion-content>

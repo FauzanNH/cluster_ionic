@@ -1,0 +1,84 @@
+<ion-header>
+  <ion-toolbar class="custom-toolbar">
+    <div class="title-container">
+      <ion-title>Chat</ion-title>
+    </div>
+  </ion-toolbar>
+  
+  <!-- Search bar -->
+  <ion-toolbar class="search-toolbar">
+    <ion-searchbar 
+      placeholder="Cari chat..." 
+      [(ngModel)]="searchQuery" 
+      (ionInput)="searchChats()"
+      [disabled]="isSelectionMode">
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="chat-list-content">
+  <!-- Pull to refresh -->
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Loading spinner -->
+  <div class="loading-container" *ngIf="isLoading">
+    <ion-spinner name="circular"></ion-spinner>
+    <p>Memuat pesan...</p>
+  </div>
+
+  <!-- No chats message -->
+  <div class="empty-state" *ngIf="!isLoading && noChats">
+    <img src="assets/images/empty-chat.svg" alt="No chats" class="empty-icon" />
+    <h3>Belum ada pesan</h3>
+    <p>Mulai percakapan baru dengan mengetuk tombol chat.</p>
+    <ion-button expand="block" (click)="startNewChat()">
+      <ion-icon name="chatbubble-ellipses"></ion-icon>
+      Mulai Chat Baru
+    </ion-button>
+  </div>
+
+  <!-- Chat list -->
+  <ion-list class="chat-list" *ngIf="!isLoading && !noChats">
+    <ion-item
+      *ngFor="let chat of filteredChats"
+      button
+      [detail]="false"
+      class="chat-item"
+      [class.selected]="chat.selected"
+      [class.muted]="chat.muted"
+      [class.unread]="chat.unread > 0"
+      (click)="openChat(chat)"
+    >
+      <!-- Avatar -->
+      <ion-avatar slot="start">
+        <img [src]="chat.avatar" alt="{{ chat.name }}" />
+      </ion-avatar>
+      
+      <!-- Chat info -->
+      <ion-label>
+        <div class="chat-header">
+          <h2>{{ chat.name }}</h2>
+          <span class="chat-time">{{ chat.time }}</span>
+        </div>
+        <p class="last-message" [class.unread-text]="chat.unread > 0">
+          {{ chat.lastMessage || "Belum ada pesan" }}
+          <ion-badge *ngIf="chat.unread > 0" color="primary" class="unread-badge">
+            {{ chat.unread }}
+          </ion-badge>
+        </p>
+      </ion-label>
+      
+      <!-- Selection checkbox -->
+      <ion-checkbox slot="end" [(ngModel)]="chat.selected" (click)="$event.stopPropagation()" *ngIf="isSelectionMode"></ion-checkbox>
+    </ion-item>
+  </ion-list>
+  
+  <!-- Floating button for new chat -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="!isSelectionMode">
+    <ion-fab-button (click)="startNewChat()">
+      <ion-icon name="chatbubble-ellipses"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

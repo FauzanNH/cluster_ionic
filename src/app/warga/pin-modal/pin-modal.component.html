@@ -1,0 +1,184 @@
+<div class="pin-modal-container">
+  <ng-container *ngIf="!isForgotPinMode; else forgotPinBlock">
+    <!-- Mode sidik jari saja jika PIN dinonaktifkan -->
+    <div class="pin-modal-content" *ngIf="isFingerprintOnlyMode; else normalPinModal">
+      <div class="modal-header">
+        <div class="header-icon fingerprint-icon">
+          <ion-icon name="finger-print"></ion-icon>
+        </div>
+        <h2>Autentikasi Sidik Jari</h2>
+        <p>Pindai sidik jari Anda untuk melanjutkan</p>
+      </div>
+      
+      <div class="fingerprint-animation" [class.scanning]="isVerifyingFingerprint">
+        <div class="scan-icon">
+          <ion-icon name="finger-print-outline"></ion-icon>
+        </div>
+      </div>
+      
+      <div class="error-message" *ngIf="showError">
+        <ion-icon name="alert-circle"></ion-icon>
+        <span>{{ errorMessage }}</span>
+      </div>
+      
+      <div class="action-buttons">
+        <button class="btn-cancel" (click)="cancel()">Batal</button>
+        <button class="btn-verify" [disabled]="isVerifyingFingerprint" (click)="useFingerprintAuth()">
+          <span *ngIf="!isVerifyingFingerprint">Verifikasi Sidik Jari</span>
+          <ion-spinner *ngIf="isVerifyingFingerprint" name="dots"></ion-spinner>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Mode PIN normal -->
+    <ng-template #normalPinModal>
+      <div class="pin-modal-content">
+        <div class="modal-header">
+          <div class="header-icon">
+            <ion-icon name="lock-closed"></ion-icon>
+          </div>
+          <h2>Verifikasi PIN</h2>
+          <p>Masukkan PIN 4 digit untuk melanjutkan</p>
+        </div>
+        
+        <!-- Tombol sidik jari jika perangkat mendukung dan fitur diaktifkan -->
+        <div *ngIf="isFingerprintSupported" class="fingerprint-option">
+          <button class="fingerprint-button" [class.enabled]="isFingerprintEnabled" [disabled]="isVerifyingFingerprint || !isFingerprintEnabled" (click)="useFingerprintAuth()">
+            <ion-icon name="finger-print-outline"></ion-icon>
+            <span>{{ isFingerprintEnabled ? 'Gunakan Sidik Jari' : 'Sidik Jari Tidak Aktif' }}</span>
+            <ion-spinner *ngIf="isVerifyingFingerprint" name="dots" class="fingerprint-spinner"></ion-spinner>
+          </button>
+        </div>
+        
+        <div class="pin-input-container">
+          <div class="pin-inputs">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="pin0" 
+                   [(ngModel)]="pinValues[0]" (input)="onPinInput($event, 0)" (keyup)="onPinKeyup($event, 0)">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="pin1" 
+                   [(ngModel)]="pinValues[1]" (input)="onPinInput($event, 1)" (keyup)="onPinKeyup($event, 1)">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="pin2" 
+                   [(ngModel)]="pinValues[2]" (input)="onPinInput($event, 2)" (keyup)="onPinKeyup($event, 2)">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="pin3" 
+                   [(ngModel)]="pinValues[3]" (input)="onPinInput($event, 3)" (keyup)="onPinKeyup($event, 3)">
+          </div>
+          
+          <div class="error-message" *ngIf="showError">
+            <ion-icon name="alert-circle"></ion-icon>
+            <span>{{ errorMessage }}</span>
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <button class="btn-cancel" (click)="cancel()">Batal</button>
+          <button class="btn-verify" [disabled]="pinValues.includes('') || isVerifying" (click)="verifyPin()">
+            <span *ngIf="!isVerifying">Verifikasi</span>
+            <ion-spinner *ngIf="isVerifying" name="dots"></ion-spinner>
+          </button>
+        </div>
+        
+        <div class="forgot-pin">
+          <a (click)="showForgotPinForm()">Lupa PIN?</a>
+        </div>
+      </div>
+    </ng-template>
+  </ng-container>
+  <ng-template #forgotPinBlock>
+    <div class="pin-modal-content forgot-pin-container">
+      <!-- Step 1: Input Hint -->
+      <div *ngIf="currentForgotStep === 1" class="forgot-step">
+        <div class="modal-header">
+          <div class="header-icon">
+            <ion-icon name="help-circle"></ion-icon>
+          </div>
+          <h2>Lupa PIN</h2>
+          <p>Masukkan hint PIN Anda untuk mereset PIN</p>
+        </div>
+        
+        <div class="form-group">
+          <label for="hint">Hint PIN</label>
+          <input type="text" id="hint" class="hint-input" [(ngModel)]="hintInput" placeholder="Masukkan hint PIN Anda">
+          
+          <div class="error-message" *ngIf="showError">
+            <ion-icon name="alert-circle"></ion-icon>
+            <span>{{ errorMessage }}</span>
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <button class="btn-cancel" (click)="closeForgotPin()">Batal</button>
+          <button class="btn-verify" [disabled]="!hintInput || isCheckingHint" (click)="verifyHint()">
+            <span *ngIf="!isCheckingHint">Verifikasi Hint</span>
+            <ion-spinner *ngIf="isCheckingHint" name="dots"></ion-spinner>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Step 2: Input PIN Baru -->
+      <div *ngIf="currentForgotStep === 2" class="forgot-step">
+        <div class="modal-header">
+          <div class="header-icon">
+            <ion-icon name="lock-open"></ion-icon>
+          </div>
+          <h2>Buat PIN Baru</h2>
+          <p>Masukkan PIN 4 digit baru</p>
+        </div>
+        
+        <div class="pin-input-container">
+          <div class="pin-inputs">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="newPin0" 
+                   [(ngModel)]="newPinValues[0]" (input)="onForgotPinInput($event, 0, 'new')" (keyup)="onForgotPinKeyup($event, 0, 'new')">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="newPin1" 
+                   [(ngModel)]="newPinValues[1]" (input)="onForgotPinInput($event, 1, 'new')" (keyup)="onForgotPinKeyup($event, 1, 'new')">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="newPin2" 
+                   [(ngModel)]="newPinValues[2]" (input)="onForgotPinInput($event, 2, 'new')" (keyup)="onForgotPinKeyup($event, 2, 'new')">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="newPin3" 
+                   [(ngModel)]="newPinValues[3]" (input)="onForgotPinInput($event, 3, 'new')" (keyup)="onForgotPinKeyup($event, 3, 'new')">
+          </div>
+        </div>
+        
+        <div class="error-message" *ngIf="showError">
+          <ion-icon name="alert-circle"></ion-icon>
+          <span>{{ errorMessage }}</span>
+        </div>
+        <div class="action-buttons">
+          <button class="btn-cancel" (click)="currentForgotStep = 1">Kembali</button>
+          <button class="btn-verify" [disabled]="newPinValues.includes('')" (click)="goToConfirmPin()">Lanjut</button>
+        </div>
+      </div>
+      
+      <!-- Step 3: Konfirmasi PIN Baru -->
+      <div *ngIf="currentForgotStep === 3" class="forgot-step">
+        <div class="modal-header">
+          <div class="header-icon">
+            <ion-icon name="lock-open"></ion-icon>
+          </div>
+          <h2>Konfirmasi PIN Baru</h2>
+          <p>Masukkan kembali PIN 4 digit baru</p>
+        </div>
+        <div class="pin-input-container">
+          <div class="pin-inputs">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="confirmPin0" 
+                   [(ngModel)]="confirmPinValues[0]" (input)="onForgotPinInput($event, 0, 'confirm')" (keyup)="onForgotPinKeyup($event, 0, 'confirm')">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="confirmPin1" 
+                   [(ngModel)]="confirmPinValues[1]" (input)="onForgotPinInput($event, 1, 'confirm')" (keyup)="onForgotPinKeyup($event, 1, 'confirm')">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="confirmPin2" 
+                   [(ngModel)]="confirmPinValues[2]" (input)="onForgotPinInput($event, 2, 'confirm')" (keyup)="onForgotPinKeyup($event, 2, 'confirm')">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="confirmPin3" 
+                   [(ngModel)]="confirmPinValues[3]" (input)="onForgotPinInput($event, 3, 'confirm')" (keyup)="onForgotPinKeyup($event, 3, 'confirm')">
+          </div>
+          <div class="error-message" *ngIf="showError">
+            <ion-icon name="alert-circle"></ion-icon>
+            <span>{{ errorMessage }}</span>
+          </div>
+        </div>
+        <div class="action-buttons">
+          <button class="btn-cancel" (click)="currentForgotStep = 2">Kembali</button>
+          <button class="btn-verify" [disabled]="confirmPinValues.includes('') || isVerifying" (click)="resetPin()">
+            <span *ngIf="!isVerifying">Reset PIN</span>
+            <ion-spinner *ngIf="isVerifying" name="dots"></ion-spinner>
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div> 

@@ -1,0 +1,172 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/satpam/beranda/kunjungantamu" text="" icon="arrow-back-outline"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detail Kunjungan</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-down-outline"
+      refreshingSpinner="crescent"
+      pullingText="Tarik untuk refresh"
+      refreshingText="Merefresh...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Loading Skeleton -->
+  <div class="loading-container" *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Memuat detail kunjungan...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="!isLoading && !kunjungan">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+    <h3>Data tidak ditemukan</h3>
+    <p>Detail kunjungan tidak tersedia atau telah dihapus</p>
+    <ion-button expand="block" fill="clear" routerLink="/satpam/beranda/kunjungantamu">
+      Kembali ke Daftar Kunjungan
+    </ion-button>
+  </div>
+
+  <!-- Content -->
+  <div class="content-container" *ngIf="!isLoading && kunjungan">
+    <!-- Status Badge -->
+    <div class="status-badge-container">
+      <div class="status-badge" [ngClass]="getStatusClass(kunjungan.status_kunjungan)">
+        {{ kunjungan.status_kunjungan }}
+      </div>
+    </div>
+
+    <!-- Kunjungan ID -->
+    <div class="id-container">
+      <div class="id-label">ID Kunjungan</div>
+      <div class="id-value">{{ kunjungan.kunjungan_id }}</div>
+    </div>
+
+    <!-- Card Informasi Tamu -->
+    <ion-card class="info-card">
+      <ion-card-header>
+        <div class="section-title">
+          <ion-icon name="person-outline"></ion-icon>
+          <h2>Informasi Tamu</h2>
+        </div>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="info-list">
+          <div class="info-item">
+            <div class="info-label">ID Tamu</div>
+            <div class="info-value">{{ kunjungan.tamu?.id || kunjungan.tamu?.tamu_id || '-' }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Nama</div>
+            <div class="info-value">{{ kunjungan.tamu?.detail_tamu?.nama || '-' }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">NIK</div>
+            <div class="info-value">{{ kunjungan.tamu?.detail_tamu?.nik || '-' }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Email</div>
+            <div class="info-value">{{ kunjungan.tamu?.email || '-' }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">No. HP</div>
+            <div class="info-value">{{ kunjungan.tamu?.no_hp || '-' }}</div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Card Informasi Rumah & Tujuan -->
+    <ion-card class="info-card">
+      <ion-card-header>
+        <div class="section-title">
+          <ion-icon name="home-outline"></ion-icon>
+          <h2>Informasi Rumah & Tujuan</h2>
+        </div>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="info-list">
+          <div class="info-item">
+            <div class="info-label">Blok/RT</div>
+            <div class="info-value">{{ kunjungan.rumah?.blok_rt || kunjungan.rumah_id }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Nama Pemilik Rumah</div>
+            <div class="info-value">{{ kunjungan.rumah?.nama_pemilik || kunjungan.rumah?.kepala_keluarga?.nama || '-' }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Alamat</div>
+            <div class="info-value">{{ kunjungan.rumah?.alamat_cluster || '-' }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Tujuan Kunjungan</div>
+            <div class="info-value">{{ kunjungan.tujuan_kunjungan }}</div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Card Waktu Kunjungan -->
+    <ion-card class="info-card">
+      <ion-card-header>
+        <div class="section-title">
+          <ion-icon name="time-outline"></ion-icon>
+          <h2>Waktu Kunjungan</h2>
+        </div>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="info-list">
+          <div class="info-item">
+            <div class="info-label">Dibuat pada</div>
+            <div class="info-value">{{ formatDateTime(kunjungan.created_at) }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Waktu Masuk</div>
+            <div class="info-value">{{ formatDateTime(kunjungan.waktu_masuk) }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Waktu Keluar</div>
+            <div class="info-value">{{ formatDateTime(kunjungan.waktu_keluar) }}</div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+    
+    <!-- Action Buttons -->
+    <div class="action-buttons" *ngIf="kunjungan.status_kunjungan !== 'Meninggalkan Cluster'">
+      <!-- Tamu Masuk Button -->
+      <ion-button 
+        expand="block" 
+        color="primary" 
+        class="action-button"
+        *ngIf="kunjungan.status_kunjungan === 'Menunggu Menuju Cluster'"
+        (click)="processTamuMasuk(kunjungan.kunjungan_id)">
+        <ion-icon name="log-in-outline" slot="start"></ion-icon>
+        Proses Tamu Masuk
+      </ion-button>
+      
+      <!-- Tamu Keluar Button -->
+      <ion-button 
+        expand="block" 
+        color="secondary" 
+        class="action-button"
+        *ngIf="kunjungan.status_kunjungan === 'Sedang Berlangsung'"
+        (click)="processTamuKeluar(kunjungan.kunjungan_id)">
+        <ion-icon name="log-out-outline" slot="start"></ion-icon>
+        Proses Tamu Keluar
+      </ion-button>
+    </div>
+    
+    <!-- Status Completed Message -->
+    <div class="completed-message" *ngIf="kunjungan.status_kunjungan === 'Meninggalkan Cluster'">
+      <ion-icon name="checkmark-circle-outline"></ion-icon>
+      <p>Kunjungan telah selesai</p>
+    </div>
+  </div>
+</ion-content>

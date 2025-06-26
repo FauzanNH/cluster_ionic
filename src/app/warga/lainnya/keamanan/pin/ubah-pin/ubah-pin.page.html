@@ -1,0 +1,134 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="onBack()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      <div class="toolbar-title">Keamanan</div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <div class="status-bar-spacer"></div>
+  
+  <div class="content-wrapper">
+    <!-- Page Header -->
+    <div class="app-header">
+      <h1 class="page-title">Ubah PIN</h1>
+    </div>
+
+    <!-- Steps Indicator -->
+    <div class="steps-indicator">
+      <div class="step" [ngClass]="{'active': currentStep === 1}">
+        <div class="step-number">1</div>
+        <p class="step-label">PIN Lama</p>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" [ngClass]="{'active': currentStep === 2}">
+        <div class="step-number">2</div>
+        <p class="step-label">PIN Baru</p>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" [ngClass]="{'active': currentStep === 3}">
+        <div class="step-number">3</div>
+        <p class="step-label">Konfirmasi PIN</p>
+      </div>
+    </div>
+
+    <!-- PIN Lama Input Step -->
+    <div class="step-content" *ngIf="currentStep === 1">
+      <div class="form-card">
+        <div class="form-header">
+          <div class="form-icon">
+            <img src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/svgs/solid/lock.svg" alt="PIN">
+          </div>
+          <h2>Masukkan PIN Lama</h2>
+        </div>
+        
+        <p class="form-description">
+          Masukkan PIN 4 digit yang saat ini Anda gunakan.
+        </p>
+        
+        <div class="pin-container">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="oldPin0" [(ngModel)]="oldPinValues[0]" (input)="onPinInput($event, 0, 'old')" (keyup)="onPinKeyup($event, 0, 'old')">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="oldPin1" [(ngModel)]="oldPinValues[1]" (input)="onPinInput($event, 1, 'old')" (keyup)="onPinKeyup($event, 1, 'old')">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="oldPin2" [(ngModel)]="oldPinValues[2]" (input)="onPinInput($event, 2, 'old')" (keyup)="onPinKeyup($event, 2, 'old')">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="oldPin3" [(ngModel)]="oldPinValues[3]" (input)="onPinInput($event, 3, 'old')" (keyup)="onPinKeyup($event, 3, 'old')">
+        </div>
+        
+        <div class="form-actions">
+          <button class="btn-primary" (click)="verifyOldPin()" [disabled]="oldPinValues.includes('')">
+            Lanjutkan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PIN Baru Input Step -->
+    <div class="step-content" *ngIf="currentStep === 2">
+      <div class="form-card">
+        <div class="form-header">
+          <div class="form-icon">
+            <img src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/svgs/solid/lock.svg" alt="PIN">
+          </div>
+          <h2>Buat PIN Baru</h2>
+        </div>
+        
+        <p class="form-description">
+          Buat PIN 4 digit baru untuk keamanan akun Anda.
+        </p>
+        
+        <div class="pin-container">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="newPin0" [(ngModel)]="newPinValues[0]" (input)="onPinInput($event, 0, 'new')" (keyup)="onPinKeyup($event, 0, 'new')">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="newPin1" [(ngModel)]="newPinValues[1]" (input)="onPinInput($event, 1, 'new')" (keyup)="onPinKeyup($event, 1, 'new')">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="newPin2" [(ngModel)]="newPinValues[2]" (input)="onPinInput($event, 2, 'new')" (keyup)="onPinKeyup($event, 2, 'new')">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="newPin3" [(ngModel)]="newPinValues[3]" (input)="onPinInput($event, 3, 'new')" (keyup)="onPinKeyup($event, 3, 'new')">
+        </div>
+        
+        <div class="form-actions">
+          <button class="btn-secondary" (click)="currentStep = 1">
+            Kembali
+          </button>
+          <button class="btn-primary" (click)="currentStep = 3" [disabled]="newPinValues.includes('')">
+            Lanjutkan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirm PIN Step -->
+    <div class="step-content" *ngIf="currentStep === 3">
+      <div class="form-card">
+        <div class="form-header">
+          <div class="form-icon">
+            <img src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/svgs/solid/check-double.svg" alt="Confirm PIN">
+          </div>
+          <h2>Konfirmasi PIN Baru</h2>
+        </div>
+        
+        <div class="form-description">
+          Masukkan kembali PIN 4 digit baru untuk konfirmasi.
+        </div>
+        
+        <div class="pin-container">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="confirmPin0" [(ngModel)]="confirmPinValues[0]" (input)="onPinInput($event, 0, 'confirm')" (keyup)="onPinKeyup($event, 0, 'confirm')">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="confirmPin1" [(ngModel)]="confirmPinValues[1]" (input)="onPinInput($event, 1, 'confirm')" (keyup)="onPinKeyup($event, 1, 'confirm')">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="confirmPin2" [(ngModel)]="confirmPinValues[2]" (input)="onPinInput($event, 2, 'confirm')" (keyup)="onPinKeyup($event, 2, 'confirm')">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" name="confirmPin3" [(ngModel)]="confirmPinValues[3]" (input)="onPinInput($event, 3, 'confirm')" (keyup)="onPinKeyup($event, 3, 'confirm')">
+        </div>
+        <div class="form-actions">
+          <button class="btn-secondary" (click)="currentStep = 2">
+            Kembali
+          </button>
+          <button class="btn-primary" (click)="updatePin()" [disabled]="isUpdatingPin || confirmPinValues.includes('')">
+            <ng-container *ngIf="!isUpdatingPin">Perbarui PIN</ng-container>
+            <ng-container *ngIf="isUpdatingPin"><ion-spinner name="dots"></ion-spinner></ng-container>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

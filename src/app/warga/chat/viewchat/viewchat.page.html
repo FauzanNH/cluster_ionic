@@ -1,0 +1,317 @@
+<ion-header class="ion-no-border">
+  <!-- Toolbar standar (tidak dalam mode seleksi) -->
+  <ion-toolbar *ngIf="!isSelectionMode">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/warga/chat" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <div class="chat-profile">
+        <ion-avatar>
+          <img [src]="otherUser?.avatar || 'https://ionicframework.com/docs/img/demos/avatar.svg'" alt="Avatar">
+        </ion-avatar>
+        <div class="chat-info">
+          <h2>{{ otherUser?.name || 'Loading...' }}</h2>
+          <p *ngIf="!isBlocked">{{ otherUser?.status || 'Online' }}</p>
+          <p *ngIf="isBlocked" class="blocked-status">Diblokir</p>
+        </div>
+      </div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="call-outline"></ion-icon>
+      </ion-button>
+      <ion-button id="chat-options-button">
+        <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+      </ion-button>
+      <ion-popover trigger="chat-options-button" [dismissOnSelect]="true">
+        <ng-template>
+          <ion-list lines="none">
+            <ion-item button (click)="blockContact()">
+              <ion-icon [name]="isBlocked ? 'checkmark-circle-outline' : 'ban-outline'" slot="start" [color]="isBlocked ? 'success' : 'danger'"></ion-icon>
+              <ion-label>{{ isBlocked ? 'Buka Blokir Kontak' : 'Blokir Kontak' }}</ion-label>
+            </ion-item>
+            <ion-item button (click)="clearChat()">
+              <ion-icon name="trash-outline" slot="start" color="medium"></ion-icon>
+              <ion-label>Bersihkan Chat</ion-label>
+            </ion-item>
+            <ion-item button (click)="reportContact()">
+              <ion-icon name="flag-outline" slot="start" color="warning"></ion-icon>
+              <ion-label>Laporkan</ion-label>
+            </ion-item>
+          </ion-list>
+        </ng-template>
+      </ion-popover>
+    </ion-buttons>
+  </ion-toolbar>
+  
+  <!-- Toolbar untuk mode seleksi -->
+  <ion-toolbar *ngIf="isSelectionMode" color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="cancelSelection()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ selectedMessages.length }} dipilih</ion-title>
+    <ion-buttons slot="end">
+      <ion-button *ngIf="selectedMessages.length === 1" (click)="replyToSelectedMessage()">
+        <ion-icon slot="icon-only" name="arrow-undo-outline"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="selectedMessages.length > 0" (click)="deleteSelectedMessages()">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="selectedMessages.length === 1" id="more-options-button">
+        <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+      </ion-button>
+      <ion-popover trigger="more-options-button" [dismissOnSelect]="true">
+        <ng-template>
+          <ion-list lines="none">
+            <ion-item button (click)="copySelectedMessage()">
+              <ion-icon name="copy-outline" slot="start" color="medium"></ion-icon>
+              <ion-label>Salin</ion-label>
+            </ion-item>
+            <ion-item button *ngIf="selectedMessages.length === 1 && selectedMessages[0].sender === 'me'" (click)="editSelectedMessage()">
+              <ion-icon name="create-outline" slot="start" color="primary"></ion-icon>
+              <ion-label>Edit</ion-label>
+            </ion-item>
+            <ion-item button *ngIf="selectedMessages.length === 1 && selectedMessages[0].sender !== 'me'" (click)="reportSelectedMessage()">
+              <ion-icon name="flag-outline" slot="start" color="warning"></ion-icon>
+              <ion-label>Laporkan</ion-label>
+            </ion-item>
+            <ion-item button (click)="selectAllMessages()" *ngIf="!allMessagesSelected()">
+              <ion-icon name="checkmark-done-outline" slot="start" color="primary"></ion-icon>
+              <ion-label>Pilih Semua</ion-label>
+            </ion-item>
+          </ion-list>
+        </ng-template>
+      </ion-popover>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="chat-content" [style.padding-bottom]="keyboardVisible ? (keyboardHeight + 16) + 'px' : '0'">
+  <!-- Loading indicator -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="circular"></ion-spinner>
+    <p>Memuat percakapan...</p>
+  </div>
+  
+  <!-- Error message -->
+  <div *ngIf="!isLoading && loadingError" class="error-container">
+    <ion-icon name="alert-circle-outline" class="error-icon"></ion-icon>
+    <p>{{ loadingError }}</p>
+    <ion-button size="small" (click)="loadChatData()">Coba Lagi</ion-button>
+  </div>
+  
+  <div class="chat-background" *ngIf="!isLoading && !loadingError">
+    <!-- Label enkripsi -->
+    <div class="encryption-banner">
+      <ion-icon name="lock-closed"></ion-icon>
+      <span>Pesan ini dienkripsi demi keamanan privasi anda. tidak ada satu pun di luar chat ini, Hanya anda yang dapat mengakses pesan ini.</span>
+    </div>
+    
+    <div class="message-container">
+      <!-- Tanggal -->
+      <div class="date-divider">
+        <span>{{ currentDate | date:'EEEE, d MMMM yyyy' }}</span>
+      </div>
+      
+      <!-- Pesan dinamis dari array messages -->
+      <div class="message-wrapper" *ngFor="let message of messages" [ngClass]="getMessageClass(message)">
+        <div class="message-bubble" 
+             #messageBubble
+             [ngClass]="{
+               'selected': message.selected,
+               'sending': message.sending,
+               'send-failed': message.sendFailed
+             }"
+             (click)="toggleMessageSelection(message)"
+             [attr.data-message-id]="message.id">
+          
+          <!-- Pesan yang dibalas (Reply) -->
+          <div class="reply-container" *ngIf="message.replyTo" (click)="scrollToMessage(message.replyTo.id); $event.stopPropagation()">
+            <div class="reply-indicator" [ngClass]="{'reply-me': message.replyTo.sender === 'me', 'reply-other': message.replyTo.sender === 'other'}"></div>
+            <div class="reply-content">
+              <div class="reply-sender">{{ message.replyTo.sender === 'me' ? 'Anda' : otherUser?.name }}</div>
+              
+              <!-- Preview gambar jika ada -->
+              <div class="reply-image" *ngIf="message.replyTo.image">
+                <img [src]="message.replyTo.image" alt="Reply image">
+              </div>
+              
+              <div class="reply-text">{{ message.replyTo.text }}</div>
+            </div>
+          </div>
+          
+          <!-- Gambar jika ada -->
+          <div class="message-image" *ngIf="message.image">
+            <img [src]="message.image" alt="Image" (click)="openImageViewer(message.image); $event.stopPropagation()">
+          </div>
+          
+          <!-- Dokumen jika ada -->
+          <div class="document-container" *ngIf="message.document" (click)="openDocument(message.document, message.sender); $event.stopPropagation()">
+            <div class="document-icon">
+              <ion-icon [name]="getDocumentIcon(message.document.type)"></ion-icon>
+            </div>
+            <div class="document-info">
+              <div class="document-name">{{ message.document.name }}</div>
+              <div class="document-details">
+                <span class="document-type">{{ message.document.type.toUpperCase() }}</span>
+                <span class="document-size">{{ message.document.size }}</span>
+              </div>
+            </div>
+            <div class="document-actions">
+              <!-- Tampilkan icon sesuai status dokumen dan pengirim -->
+              <ion-button *ngIf="message.sender === 'other' && !isDownloading(message.document.id)" fill="clear" size="small" class="download-btn">
+                <ion-icon name="download-outline"></ion-icon>
+              </ion-button>
+              <ion-button *ngIf="message.sender === 'other' && isDownloading(message.document.id)" fill="clear" size="small" class="download-btn loading">
+                <ion-spinner name="dots" class="loading-spinner"></ion-spinner>
+              </ion-button>
+              <ion-button *ngIf="message.sender === 'other' && isDownloaded(message.document.id)" fill="clear" size="small" class="download-btn">
+                <ion-icon name="open-outline"></ion-icon>
+              </ion-button>
+              <ion-button *ngIf="message.sender === 'me'" fill="clear" size="small" class="download-btn">
+                <ion-icon name="open-outline"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+          
+          <!-- Teks pesan -->
+          <div class="message-text" *ngIf="message.sender !== 'system' && !message.isLocalWarning">{{ message.text }}</div>
+          
+          <!-- Teks pesan untuk pesan sistem/peringatan -->
+          <div class="message-text" *ngIf="message.sender === 'system' || message.isLocalWarning">
+            <ion-icon name="warning"></ion-icon>
+            <span>Pesan tidak terkirim karena mengandung kata kasar, kekerasan, atau rasis.</span>
+          </div>
+          
+          <!-- Waktu dan status -->
+          <div class="message-time" *ngIf="message.sender !== 'system' && !message.isLocalWarning">
+            {{ formatTime(message.time) }}
+            <ion-icon *ngIf="message.read && message.sender === 'me'" name="checkmark-done" class="read-status"></ion-icon>
+            <ion-icon *ngIf="!message.read && message.sender === 'me' && !message.sending && !message.sendFailed" name="checkmark" class="read-status single-check"></ion-icon>
+            <ion-icon *ngIf="message.sendFailed" name="alert-circle" class="failed-status"></ion-icon>
+          </div>
+          
+          <!-- Tampilkan tombol coba kirim ulang jika pesan gagal terkirim -->
+          <div *ngIf="message.sendFailed" class="retry-button" (click)="retryMessage(message); $event.stopPropagation()">
+            <ion-button size="small" fill="clear" color="danger">
+              <ion-icon name="refresh-outline" slot="start"></ion-icon>
+              Coba Lagi
+            </ion-button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Indikator sedang mengetik -->
+      <div class="message-wrapper incoming" *ngIf="isTyping">
+        <div class="message-bubble">
+          <div class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tidak ada pesan -->
+      <div *ngIf="messages.length === 0" class="no-messages">
+        <ion-icon name="chatbubble-outline"></ion-icon>
+        <p>Belum ada pesan. Mulai percakapan sekarang!</p>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+<!-- Footer untuk input pesan -->
+<ion-footer class="ion-no-border chat-footer" *ngIf="!isSelectionMode && !isBlocked && !isLoading && !loadingError">
+  <!-- Reply Preview -->
+  <div class="reply-preview" *ngIf="replyingTo">
+    <div class="reply-preview-content">
+      <div class="reply-preview-indicator" [ngClass]="{'reply-me': replyingTo.sender === 'me', 'reply-other': replyingTo.sender === 'other'}"></div>
+      <div class="reply-preview-info">
+        <div class="reply-preview-sender">{{ replyingTo.sender === 'me' ? 'Anda' : otherUser?.name }}</div>
+        
+        <!-- Preview gambar jika ada -->
+        <div class="reply-preview-media" *ngIf="replyingTo.image">
+          <ion-icon name="image-outline"></ion-icon>
+          <span>Foto</span>
+        </div>
+        
+        <!-- Preview dokumen jika ada -->
+        <div class="reply-preview-media" *ngIf="replyingTo.document">
+          <ion-icon [name]="getDocumentIcon(replyingTo.document.type)"></ion-icon>
+          <span>{{ replyingTo.document.name }}</span>
+        </div>
+        
+        <div class="reply-preview-text">{{ replyingTo.text }}</div>
+      </div>
+      <div class="reply-close-button">
+        <ion-button fill="clear" size="small" (click)="cancelReply()">
+          <ion-icon name="close"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-container">
+    <div class="attachment-button">
+      <ion-button fill="clear" size="small" id="attachment-options-button">
+        <ion-icon slot="icon-only" name="add-circle"></ion-icon>
+      </ion-button>
+      <ion-popover trigger="attachment-options-button" [dismissOnSelect]="true" side="top" alignment="start">
+        <ng-template>
+          <ion-list lines="none" class="attachment-options">
+            <ion-item button (click)="attachImage()">
+              <ion-icon name="image-outline" slot="start" color="primary"></ion-icon>
+              <ion-label>Gambar</ion-label>
+            </ion-item>
+            <ion-item button (click)="attachDocument()">
+              <ion-icon name="document-outline" slot="start" color="tertiary"></ion-icon>
+              <ion-label>Dokumen</ion-label>
+            </ion-item>
+          </ion-list>
+        </ng-template>
+      </ion-popover>
+    </div>
+    <div class="message-input">
+      <ion-textarea
+        placeholder="Ketik pesan..."
+        [(ngModel)]="newMessage"
+        autoGrow="true"
+        rows="1"
+        maxlength="500"
+        (keyup.enter)="sendMessage()"
+      ></ion-textarea>
+    </div>
+    <div class="send-button">
+      <ion-button fill="clear" size="small" [disabled]="!newMessage.trim()" (click)="sendMessage()">
+        <ion-icon slot="icon-only" name="paper-plane"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</ion-footer>
+
+<!-- Footer untuk kontak yang diblokir -->
+<ion-footer class="ion-no-border chat-footer blocked-footer" *ngIf="!isSelectionMode && isBlocked && !isLoading && !loadingError">
+  <div class="blocked-message">
+    <p>Anda telah memblokir kontak ini. <span class="unblock-link" (click)="blockContact()">Buka blokir</span></p>
+  </div>
+</ion-footer>
+
+<!-- Modal Image Viewer -->
+<ion-modal [isOpen]="isImageViewerOpen" (didDismiss)="closeImageViewer()" class="image-viewer-modal">
+  <ng-template>
+    <div class="image-viewer-header">
+      <ion-buttons>
+        <ion-button (click)="closeImageViewer()">
+          <ion-icon slot="icon-only" name="close"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </div>
+    
+    <div class="image-viewer-content">
+      <img [src]="viewerImage" alt="Image">
+    </div>
+  </ng-template>
+</ion-modal>

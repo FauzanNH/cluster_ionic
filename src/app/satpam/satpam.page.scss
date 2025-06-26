@@ -1,0 +1,110 @@
+ion-tab-bar {
+  --background: #fff;
+  --color: #8c8c8c;
+  --color-selected: #4a6bff;
+  --border: none;
+  box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 20px 20px 0 0;
+  height: 60px;
+  padding: 0;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Fix for black color between tabs */
+ion-tabs::part(tabbar) {
+  background: #ffffff;
+}
+
+ion-tabs {
+  background-color: #ffffff;
+}
+
+ion-tab-button {
+  --color: #8c8c8c;
+  --color-selected: #4a6bff;
+  position: relative;
+  overflow: visible;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-selected);
+    transition: transform 0.3s;
+  }
+  
+  &.tab-selected {
+    --color: #4a6bff;
+    
+    &::before {
+      transform: translateX(-50%) scale(1);
+    }
+    
+    ion-icon {
+      transform: translateY(-4px);
+    }
+  }
+  
+  ion-icon {
+    font-size: 24px;
+    transition: transform 0.3s;
+  }
+}
+
+// Pengganti label-badge
+.chat-badge {
+  position: absolute;
+  top: 4px;
+  right: 18px;
+  font-size: 11px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  z-index: 11;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-dot {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  width: 10px;
+  height: 10px;
+  background: #ff3b30;
+  border-radius: 50%;
+  z-index: 10;
+  border: 2px solid #fff;
+}
+
+// Animasi untuk pesan baru masuk
+@keyframes tab-blink {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); background-color: rgba(74, 107, 255, 0.1); }
+  100% { transform: scale(1); }
+}
+
+.new-message {
+  animation: tab-blink 1s ease-in-out;
+  
+  ion-icon {
+    color: var(--ion-color-primary);
+  }
+  
+  ion-label {
+    color: var(--ion-color-primary);
+  }
+}

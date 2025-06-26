@@ -1,0 +1,84 @@
+<ion-header class="modal-header">
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ otpSent ? 'Verifikasi OTP' : 'Update Email' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding light-theme">
+  <div *ngIf="!otpSent" class="email-form-container">
+    <div class="form-info">
+      <ion-icon name="mail-outline"></ion-icon>
+      <h3>Update Email</h3>
+      <p>Masukkan alamat email baru Anda. Kami akan mengirimkan kode OTP ke email Anda untuk verifikasi.</p>
+    </div>
+
+    <form [formGroup]="emailForm" (ngSubmit)="requestOTP()">
+      <ion-item lines="none" class="custom-input">
+        <ion-label position="stacked">Alamat Email</ion-label>
+        <ion-input type="email" formControlName="email" placeholder="contoh@email.com"></ion-input>
+      </ion-item>
+      
+      <div class="error-container" *ngIf="emailForm.get('email')?.invalid && emailForm.get('email')?.touched">
+        <span class="error-message" *ngIf="emailForm.get('email')?.errors?.['required']">
+          Email wajib diisi
+        </span>
+        <span class="error-message" *ngIf="emailForm.get('email')?.errors?.['email']">
+          Format email tidak valid
+        </span>
+      </div>
+
+      <div class="button-container">
+        <ion-button expand="block" type="submit" [disabled]="emailForm.invalid">
+          Kirim Kode OTP
+        </ion-button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="otpSent" class="otp-form-container">
+    <div class="form-info">
+      <ion-icon name="shield-checkmark-outline"></ion-icon>
+      <h3>Verifikasi OTP</h3>
+      <p>Masukkan kode OTP 6 digit yang telah dikirim ke email Anda.</p>
+    </div>
+
+    <form [formGroup]="otpForm" (ngSubmit)="verifyOTP()">
+      <ion-item lines="none" class="custom-input">
+        <ion-label position="stacked">Kode OTP</ion-label>
+        <ion-input type="number" formControlName="otp" placeholder="Masukkan 6 digit kode OTP"></ion-input>
+      </ion-item>
+      
+      <div class="error-container" *ngIf="otpForm.get('otp')?.invalid && otpForm.get('otp')?.touched">
+        <span class="error-message" *ngIf="otpForm.get('otp')?.errors?.['required']">
+          Kode OTP wajib diisi
+        </span>
+        <span class="error-message" *ngIf="otpForm.get('otp')?.errors?.['minlength'] || otpForm.get('otp')?.errors?.['maxlength']">
+          Kode OTP harus 6 digit
+        </span>
+      </div>
+
+      <div class="countdown-container" *ngIf="countdownTime > 0">
+        <p>Kirim ulang kode dalam {{ countdownTime }} detik</p>
+      </div>
+
+      <div class="button-container">
+        <ion-button expand="block" type="submit" [disabled]="otpForm.invalid">
+          Verifikasi
+        </ion-button>
+        
+        <ion-button expand="block" fill="outline" (click)="backToEmailInput()">
+          Kembali
+        </ion-button>
+        
+        <ion-button expand="block" fill="clear" (click)="requestOTP()" [disabled]="countdownTime > 0">
+          Kirim Ulang OTP
+        </ion-button>
+      </div>
+    </form>
+  </div>
+</ion-content> 

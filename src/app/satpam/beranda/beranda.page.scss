@@ -1,0 +1,961 @@
+:host {
+  --ion-color-primary: #3e64ff; /* Warna biru yang lebih cerah */
+  --ion-color-secondary: #5a67d8; /* Ungu-biru medium */
+  --ion-card-background: #ffffff;
+}
+
+/* Transparent Toolbar */
+.transparent-toolbar {
+  --background: transparent;
+  --border-color: transparent;
+  
+  .toolbar-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+ion-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
+ion-content {
+  --background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); 
+  --padding-bottom: 24px;
+  position: relative;
+  overflow: visible;
+}
+
+/* Background decorative shapes */
+ion-content::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  right: -80px;
+  width: 240px;
+  height: 240px;
+  background: linear-gradient(135deg, rgba(62, 100, 255, 0.12), rgba(62, 100, 255, 0.18));
+  border-radius: 50%;
+  z-index: -1;
+}
+
+ion-content::after {
+  content: '';
+  position: absolute;
+  bottom: -100px;
+  left: -80px;
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(135deg, rgba(62, 100, 255, 0.12), rgba(62, 100, 255, 0.18));
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.content-container {
+  padding: 16px;
+  padding-top: 40px;
+  position: relative;
+}
+
+/* Notification Bell */
+.notification-bell {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.notification-bell ion-icon {
+  font-size: 22px;
+  color: #3e64ff;
+  font-weight: bold;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 18px;
+  height: 18px;
+  background-color: #ff4757;
+  color: white;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ffffff;
+}
+
+/* Page header with subtitle only */
+.page-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.page-subtitle {
+  display: inline-block;
+  text-align: left;
+  font-size: 14px;
+  color: #333333;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 8px 16px;
+  border-radius: 20px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  width: auto;
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+/* Add styles for status bar spacer for better spacing */
+.status-bar-spacer {
+  height: 45px;
+}
+
+/* Content wrapper to adjust top padding */
+.content-wrapper {
+  padding-top: 15px;
+  position: relative;
+}
+
+// Profile Card
+.profile-card {
+  display: flex;
+  align-items: center;
+  background: var(--ion-card-background);
+  border-radius: 20px;
+  padding: 18px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
+  border: 1px solid rgba(230, 235, 245, 0.8);
+  overflow: hidden;
+}
+
+.profile-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100%;
+  background: linear-gradient(to left, rgba(62, 100, 255, 0.05), transparent);
+  z-index: 0;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e6eeff;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid #3e64ff;
+  box-shadow: 0 4px 10px rgba(62, 100, 255, 0.3);
+}
+
+.avatar img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-info h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-info p {
+  margin: 5px 0 0;
+  font-size: 14px;
+  color: #5a67d8;
+  font-weight: 500;
+}
+
+/* Logout button */
+.logout-button {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.logout-button:active {
+  transform: scale(0.92);
+  background-color: #e9ecef;
+}
+
+.logout-button:hover {
+  background-color: #ff4757;
+}
+
+.logout-button:hover ion-icon {
+  color: #ffffff;
+}
+
+.logout-button ion-icon {
+  font-size: 18px;
+  color: #495057;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.05));
+}
+
+// Visitor Overview
+.visitor-overview {
+  margin-bottom: 20px;
+}
+
+// Card tamu yang disatukan
+.visitor-card-unified {
+  background: var(--ion-card-background);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(230, 235, 245, 0.8);
+}
+
+.visitor-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+.visitor-stat-item {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.visitor-divider {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.03));
+  margin: 0 20px;
+}
+
+.visitor-icon-enhanced {
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #3e64ff, #5a67d8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 14px;
+  flex-shrink: 0;
+  box-shadow: 0 6px 12px rgba(62, 100, 255, 0.4);
+}
+
+.active-visitor {
+  background: linear-gradient(135deg, #ff4757, #ff6b81);
+  box-shadow: 0 6px 12px rgba(255, 71, 87, 0.4);
+}
+
+.visitor-icon-enhanced ion-icon {
+  font-size: 24px;
+  color: white;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
+}
+
+.visitor-info {
+  flex: 1;
+}
+
+.visitor-label {
+  font-size: 13px;
+  color: #868e96;
+  margin: 0 0 4px 0;
+  font-weight: 500;
+}
+
+.visitor-count {
+  font-size: 26px;
+  font-weight: 700;
+  color: #333333;
+  margin: 0;
+  background: linear-gradient(to right, #3e64ff, #5a67d8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.visitor-decoration-unified {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 180px;
+  height: 180px;
+  background: linear-gradient(135deg, rgba(62, 100, 255, 0.05), rgba(116, 143, 252, 0.08));
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.visitor-card-unified::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  left: -30px;
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, rgba(62, 100, 255, 0.05), rgba(116, 143, 252, 0.08));
+  border-radius: 50%;
+  z-index: 0;
+}
+
+// Responsif untuk layar kecil
+@media (max-width: 360px) {
+  .visitor-stats {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .visitor-stat-item {
+    margin-bottom: 16px;
+  }
+  
+  .visitor-stat-item:last-child {
+    margin-bottom: 0;
+  }
+  
+  .visitor-divider {
+    width: 100%;
+    height: 1px;
+    margin: 16px 0;
+  }
+}
+
+// Visitor cards grid (untuk skeleton loading)
+.visitor-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+// Visitor card enhanced (untuk skeleton loading)
+.visitor-card-enhanced {
+  background: var(--ion-card-background);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(230, 235, 245, 0.8);
+}
+
+.visitor-card-enhanced:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+.visitor-content {
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.visitor-decoration {
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, rgba(62, 100, 255, 0.08), rgba(116, 143, 252, 0.12));
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.visitor-card-enhanced::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: -20px;
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, rgba(62, 100, 255, 0.08), rgba(116, 143, 252, 0.12));
+  border-radius: 50%;
+  z-index: 0;
+}
+
+// Section Titles
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333333;
+  margin: 0 0 16px 0;
+}
+
+// Menu Card
+.actions-section {
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.menu-card {
+  background: var(--ion-card-background);
+  border-radius: 20px;
+  padding: 20px 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(230, 235, 245, 0.8);
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 16px 0;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.menu-item:active {
+  transform: scale(0.92);
+}
+
+.menu-item:hover {
+  background: rgba(62, 100, 255, 0.08);
+}
+
+.menu-item:hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(62, 100, 255, 0.12);
+  border-radius: 12px;
+  z-index: -1;
+}
+
+.menu-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.menu-icon img {
+  width: 40px;
+  height: 40px;
+  transition: all 0.3s ease;
+}
+
+.menu-item:hover .menu-icon img {
+  transform: scale(1.15);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.menu-label {
+  font-size: 12px;
+  text-align: center;
+  margin: 0;
+  color: #333333;
+}
+
+@media (max-width: 480px) {
+  .menu-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  
+  .menu-label {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 380px) {
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 16px;
+  }
+}
+
+/* Skeleton Loading Styles */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.2) 20%,
+    rgba(255, 255, 255, 0.5) 60%,
+    rgba(255, 255, 255, 0)
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+}
+
+.skeleton-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+}
+
+.skeleton-icon {
+  background-color: #e9ecef !important;
+}
+
+.skeleton-line {
+  height: 14px;
+  background-color: #e9ecef;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.title-line {
+  width: 120px;
+  height: 16px;
+  margin-bottom: 16px;
+}
+
+.name-line {
+  width: 80%;
+  height: 18px;
+}
+
+.id-line {
+  width: 60%;
+  height: 14px;
+}
+
+.small-line {
+  width: 60px;
+}
+
+.medium-line {
+  width: 100px;
+}
+
+.count-line {
+  width: 30px;
+  height: 20px;
+  margin: 8px auto;
+}
+
+.label-line {
+  width: 80%;
+  height: 12px;
+  margin: 4px auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 360px) {
+  .visitor-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 361px) and (max-width: 480px) {
+  .visitor-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tambahan animasi hover untuk kartu */
+.profile-card, .visitor-card-enhanced, .menu-card {
+  transition: all 0.3s ease;
+}
+
+.profile-card:hover, .visitor-card-enhanced:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
+}
+
+/* Tambahan efek glassmorphism untuk app-header */
+.app-header {
+  margin-bottom: 16px;
+}
+
+.app-header .page-subtitle {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Welcome Message */
+.welcome-message {
+  background: linear-gradient(135deg, #3e64ff, #5a67d8);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 20px rgba(62, 100, 255, 0.4);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.welcome-message::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+}
+
+.welcome-message::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  left: -30px;
+  width: 120px;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+}
+
+.welcome-message p {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  letter-spacing: 0.3px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Recent Activity */
+.recent-activity {
+  margin-bottom: 24px;
+}
+
+.activity-list {
+  background: var(--ion-card-background);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(230, 235, 245, 0.8);
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  margin: 0 -8px 8px -8px;
+  transition: all 0.3s ease;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.activity-item:hover {
+  background-color: rgba(62, 100, 255, 0.08);
+  transform: translateX(4px);
+}
+
+.activity-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #c9d6ff, #3e64ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 14px;
+  flex-shrink: 0;
+  box-shadow: 0 6px 12px rgba(62, 100, 255, 0.3);
+}
+
+.activity-icon ion-icon {
+  font-size: 22px;
+  color: #ffffff;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
+}
+
+.activity-icon.exit {
+  background: linear-gradient(145deg, #ffcccb, #ff4757);
+  box-shadow: 0 6px 12px rgba(255, 71, 87, 0.3);
+}
+
+.activity-icon.password {
+  background: linear-gradient(145deg, #a5b4fc, #6366f1);
+  box-shadow: 0 6px 12px rgba(99, 102, 241, 0.3);
+}
+
+.activity-icon.other {
+  background: linear-gradient(145deg, #fde68a, #f59e0b);
+  box-shadow: 0 6px 12px rgba(245, 158, 11, 0.3);
+}
+
+.activity-info {
+  flex: 1;
+}
+
+.activity-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+  margin: 0 0 2px 0;
+}
+
+.activity-desc {
+  font-size: 12px;
+  color: #5a67d8;
+  margin: 0 0 2px 0;
+  font-weight: 500;
+}
+
+.activity-time {
+  font-size: 11px;
+  color: #777777;
+  margin: 0;
+}
+
+/* Tambahan animasi hover untuk kartu */
+.profile-card, .visitor-card-enhanced, .menu-card, .activity-list {
+  transition: all 0.3s ease;
+}
+
+.profile-card:hover, .visitor-card-enhanced:hover, .activity-list:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
+}
+
+/* Empty Activity */
+.empty-activity {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+}
+
+.empty-activity p {
+  color: #adb5bd;
+  font-size: 14px;
+  text-align: center;
+  margin: 0;
+}
+
+/* Perbaikan welcome message */
+.welcome-message.skeleton {
+  background: #f8f9fa;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(230, 235, 245, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcome-message.skeleton .medium-line {
+  width: 80%;
+  margin: 0 auto;
+}
+
+/* Bottom Tab Navigation */
+ion-footer {
+  --background: transparent;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+}
+
+ion-footer ion-toolbar {
+  --background: #ffffff;
+  --border-width: 0;
+  --min-height: 60px;
+  padding: 0;
+}
+
+.tab-navigation {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  height: 60px;
+  background: #ffffff;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  padding: 8px 0;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.tab-item ion-icon {
+  font-size: 22px;
+  color: #adb5bd;
+  margin-bottom: 4px;
+  transition: all 0.3s ease;
+}
+
+.tab-item span {
+  font-size: 10px;
+  color: #adb5bd;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.tab-item.active {
+  transform: translateY(-2px);
+}
+
+.tab-item.active ion-icon {
+  color: #3e64ff;
+  filter: drop-shadow(0 2px 4px rgba(62, 100, 255, 0.3));
+}
+
+.tab-item.active span {
+  color: #3e64ff;
+  font-weight: 600;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
+  background: #3e64ff;
+  border-radius: 10px 10px 0 0;
+}
+
+.tab-badge {
+  position: absolute;
+  top: 4px;
+  right: calc(50% - 14px);
+  width: 16px;
+  height: 16px;
+  background-color: #ff4757;
+  color: white;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ffffff;
+}
+
+/* Profile card dengan warna ungu */
+.purple-card {
+  background: linear-gradient(135deg, #5a67d8, #4c51bf);
+  border: none;
+}
+
+.purple-card .user-info h2 {
+  color: #ffffff;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.purple-card .user-info p {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.purple-card .avatar {
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.purple-card .logout-button {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.purple-card .logout-button ion-icon {
+  color: #ffffff;
+}
+
+.purple-card::before {
+  background: linear-gradient(to left, rgba(255, 255, 255, 0.1), transparent);
+}

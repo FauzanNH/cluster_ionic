@@ -1,0 +1,26 @@
+<ion-content [fullscreen]="true">
+  <router-outlet></router-outlet>
+</ion-content>
+
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="beranda" [routerLink]="['/warga/beranda']" routerDirection="root" (click)="onTabClick('beranda')">
+      <ion-icon name="home"></ion-icon>
+      <ion-label>Beranda</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="chat" [routerLink]="['/warga/chat']" routerDirection="root" (click)="onTabClick('chat')">
+      <ion-icon name="chatbubble-ellipses"></ion-icon>
+      <ion-label>Chat</ion-label>
+      <ion-badge *ngIf="chatUnreadCount > 0" color="danger" class="chat-badge">{{ chatUnreadCount }}</ion-badge>
+      <span *ngIf="chatUnreadCount > 0" class="chat-dot"></span>
+    </ion-tab-button>
+    <ion-tab-button tab="profile" [routerLink]="['/warga/profile']" routerDirection="root" (click)="onTabClick('profile')">
+      <ion-icon name="person"></ion-icon>
+      <ion-label>Profile</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="lainnya" [routerLink]="['/warga/lainnya']" routerDirection="root" (click)="onTabClick('lainnya')">
+      <ion-icon name="apps"></ion-icon>
+      <ion-label>Lainnya</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

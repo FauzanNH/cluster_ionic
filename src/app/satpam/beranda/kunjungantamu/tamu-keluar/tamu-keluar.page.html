@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/satpam/beranda/kunjungantamu" text="" icon="arrow-back-outline"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Scan QR Tamu Keluar</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Scanner Container -->
+  <div class="scanner-container" [class.scanning]="isScanning">
+    <!-- Scanner Header -->
+    <div class="scanner-header">
+      <ion-icon name="exit-outline"></ion-icon>
+      <h2>Scan QR Code Tamu Keluar</h2>
+      <p>Posisikan QR Code di dalam area scan</p>
+    </div>
+    
+    <!-- Scanner View dengan overlay -->
+    <div class="scanner-view">
+      <!-- Overlay container -->
+      <div class="scan-overlay">
+        <!-- Bagian transparan tengah (area scan) -->
+        <div class="scan-area">
+          <!-- Sudut-sudut area scan -->
+          <div class="scan-corner top-left"></div>
+          <div class="scan-corner top-right"></div>
+          <div class="scan-corner bottom-left"></div>
+          <div class="scan-corner bottom-right"></div>
+          <!-- Garis pemindai animasi -->
+          <div class="scan-line" *ngIf="isScanning"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Scanner Actions -->
+    <div class="scanner-actions">
+      <ion-button expand="block" color="danger" (click)="stopScan()" *ngIf="isScanning">
+        <ion-icon name="stop-outline" slot="start"></ion-icon>
+        Berhenti Scan
+      </ion-button>
+      <ion-button expand="block" color="primary" (click)="startScan()" *ngIf="!isScanning">
+        <ion-icon name="scan-outline" slot="start"></ion-icon>
+        Mulai Scan
+      </ion-button>
+    </div>
+    
+    <!-- Alternative Options -->
+    <div class="alternative-options" *ngIf="!isScanning">
+      <div class="divider">
+        <span>atau</span>
+      </div>
+      
+      <!-- Gallery Option -->
+      <div class="gallery-option">
+        <ion-button expand="block" fill="outline" (click)="scanFromGallery()">
+          <ion-icon name="image-outline" slot="start"></ion-icon>
+          Pilih dari Galeri
+        </ion-button>
+      </div>
+      
+      <!-- Manual Input Option -->
+      <div class="manual-input">
+        <p>Masukkan ID Kunjungan secara manual</p>
+        <div class="input-container">
+          <ion-input placeholder="Masukkan ID Kunjungan" [(ngModel)]="manualKunjunganId"></ion-input>
+          <ion-button fill="clear" (click)="processManualInput()">
+            <ion-icon name="arrow-forward-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Loading Indicator -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Memproses...</p>
+  </div>
+</ion-content> 

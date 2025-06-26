@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tamu/dashboard" text="" icon="arrow-back-outline"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Aktivitas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  
+  <div class="search-container">
+    <ion-searchbar placeholder="Cari aktivitas" animated (ionInput)="onSearchChange($event)"></ion-searchbar>
+    <ion-button fill="clear" class="filter-button" (click)="openFilterModal()">
+      <ion-icon name="options-outline"></ion-icon>
+    </ion-button>
+  </div>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Pull-to-refresh -->
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="chevron-down-circle-outline"
+      pullingText="Tarik untuk menyegarkan"
+      refreshingSpinner="circles"
+      refreshingText="Memuat data...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Loading Indicator -->
+  <div class="loading-container" *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Memuat aktivitas...</p>
+  </div>
+
+  <!-- Empty State jika tidak ada aktivitas sama sekali -->
+  <div class="empty-state" *ngIf="!isLoading && allAktivitas.length === 0">
+    <ion-icon name="calendar-outline"></ion-icon>
+    <h3>Tidak Ada Aktivitas</h3>
+    <p>Belum ada aktivitas yang tercatat</p>
+  </div>
+
+  <!-- Section Hari Ini -->
+  <div class="date-section" *ngIf="!isLoading && allAktivitas.length > 0">
+    <div class="date-header">
+      <h3>Hari Ini</h3>
+      <div class="date-badge">{{ todayAktivitas.length }}</div>
+    </div>
+    
+    <div class="visit-list" *ngIf="todayAktivitas.length > 0">
+      <ion-item *ngFor="let aktivitas of todayAktivitas" class="visit-item" lines="none">
+        <div class="visit-content">
+          <div class="visit-header">
+            <h2>{{ aktivitas.judul }}</h2>
+          </div>
+          
+          <div class="visit-details">
+            <p class="ellipsis-text">{{ aktivitas.subjudul }}</p>
+          </div>
+          
+          <div class="card-footer">
+            <div class="tanggal">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>{{ aktivitas.tanggal }}</span>
+              <span>{{ aktivitas.waktu }}</span>
+            </div>
+          </div>
+        </div>
+      </ion-item>
+    </div>
+    
+    <div class="empty-state small" *ngIf="todayAktivitas.length === 0">
+      <ion-icon name="calendar-outline"></ion-icon>
+      <p>Tidak ada aktivitas hari ini</p>
+    </div>
+  </div>
+  
+  <!-- Section Minggu Ini -->
+  <div class="date-section" *ngIf="!isLoading && allAktivitas.length > 0">
+    <div class="date-header">
+      <h3>Minggu Ini</h3>
+      <div class="date-badge">{{ weekAktivitas.length }}</div>
+    </div>
+    
+    <div class="visit-list" *ngIf="weekAktivitas.length > 0">
+      <ion-item *ngFor="let aktivitas of weekAktivitas" class="visit-item" lines="none">
+        <div class="visit-content">
+          <div class="visit-header">
+            <h2>{{ aktivitas.judul }}</h2>
+          </div>
+          
+          <div class="visit-details">
+            <p class="ellipsis-text">{{ aktivitas.subjudul }}</p>
+          </div>
+          
+          <div class="card-footer">
+            <div class="tanggal">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>{{ aktivitas.tanggal }}</span>
+              <span>{{ aktivitas.waktu }}</span>
+            </div>
+          </div>
+        </div>
+      </ion-item>
+    </div>
+    
+    <div class="empty-state small" *ngIf="weekAktivitas.length === 0">
+      <ion-icon name="calendar-outline"></ion-icon>
+      <p>Tidak ada aktivitas minggu ini</p>
+    </div>
+  </div>
+  
+  <!-- Section Bulan Ini -->
+  <div class="date-section" *ngIf="!isLoading && allAktivitas.length > 0">
+    <div class="date-header">
+      <h3>Bulan Ini</h3>
+      <div class="date-badge">{{ monthAktivitas.length }}</div>
+    </div>
+    
+    <div class="visit-list" *ngIf="monthAktivitas.length > 0">
+      <ion-item *ngFor="let aktivitas of monthAktivitas" class="visit-item" lines="none">
+        <div class="visit-content">
+          <div class="visit-header">
+            <h2>{{ aktivitas.judul }}</h2>
+          </div>
+          
+          <div class="visit-details">
+            <p class="ellipsis-text">{{ aktivitas.subjudul }}</p>
+          </div>
+          
+          <div class="card-footer">
+            <div class="tanggal">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>{{ aktivitas.tanggal }}</span>
+              <span>{{ aktivitas.waktu }}</span>
+            </div>
+          </div>
+        </div>
+      </ion-item>
+    </div>
+    
+    <div class="empty-state small" *ngIf="monthAktivitas.length === 0">
+      <ion-icon name="calendar-outline"></ion-icon>
+      <p>Tidak ada aktivitas bulan ini</p>
+    </div>
+  </div>
+</ion-content>
+
+<!-- Modal Filter -->
+<ion-modal [isOpen]="isFilterModalOpen" (didDismiss)="closeFilterModal()" class="filter-modal" [initialBreakpoint]="1" [breakpoints]="[0, 1]">
+  <ng-template>
+    <div class="modal-wrapper">
+      <div class="modal-header">
+        <ion-button fill="clear" class="close-button" (click)="closeFilterModal()">
+          <ion-icon name="close-outline"></ion-icon>
+        </ion-button>
+        <div class="modal-title">Filter Aktivitas</div>
+        <div class="spacer"></div>
+      </div>
+      
+      <div class="modal-content">
+        <!-- Tanggal -->
+        <div class="filter-card">
+          <h3>Tanggal</h3>
+          <div class="date-input">
+            <input type="text" placeholder="Pilih tanggal yang mau ditampilkan" readonly (click)="showDatePicker()" [value]="selectedDate ? formatDateDisplay(selectedDate) : ''">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </div>
+        </div>
+        
+        <!-- Periode -->
+        <div class="filter-card">
+          <h3>Pilih periode yang mau ditampilkan</h3>
+          <div class="period-options">
+            <div class="period-item">
+              <input type="radio" id="today" name="period" value="today" [(ngModel)]="selectedPeriod">
+              <label for="today">Hari Ini</label>
+            </div>
+            
+            <div class="period-item">
+              <input type="radio" id="yesterday" name="period" value="yesterday" [(ngModel)]="selectedPeriod">
+              <label for="yesterday">Kemarin</label>
+            </div>
+            
+            <div class="period-item">
+              <input type="radio" id="7days" name="period" value="7days" [(ngModel)]="selectedPeriod">
+              <label for="7days">7 Hari Terakhir</label>
+            </div>
+            
+            <div class="period-item">
+              <input type="radio" id="30days" name="period" value="30days" [(ngModel)]="selectedPeriod">
+              <label for="30days">30 Hari Terakhir</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <ion-button expand="block" fill="outline" class="reset-button" (click)="resetFilter()">RESET</ion-button>
+        <ion-button expand="block" class="apply-button" (click)="applyFilter()" style="background-color: #0099ff; color: white; border: 1px solid #0099ff;">TERAPKAN</ion-button>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- Date Picker Modal -->
+<ion-modal [isOpen]="isDatePickerOpen" (didDismiss)="closeDatePicker()" class="date-picker-modal" [initialBreakpoint]="1" [breakpoints]="[0, 1]">
+  <ng-template>
+    <div class="date-picker-wrapper">
+      <div class="modal-header">
+        <div class="modal-title">Pilih Tanggal</div>
+        <ion-button fill="clear" class="close-button" (click)="closeDatePicker()">
+          <ion-icon name="close-outline"></ion-icon>
+        </ion-button>
+      </div>
+      
+      <div class="simple-date-display">
+        <div class="date-label">PILIH TANGGAL</div>
+        <div class="selected-date">{{ selectedDate ? formatDateForDisplay(selectedDate) : 'Pilih Tanggal' }}</div>
+      </div>
+      
+      <div class="month-year-display">
+        <div class="month-year" (click)="toggleYearMonthView()">
+          {{ viewMode === 'calendar' ? (currentMonth + ' ' + currentYear) : (currentYear) }}
+          <ion-icon name="chevron-down-outline"></ion-icon>
+        </div>
+        <div class="navigation-buttons" *ngIf="viewMode === 'calendar'">
+          <button class="nav-button" (click)="prevMonth()">
+            <ion-icon name="chevron-back-outline"></ion-icon>
+          </button>
+          <button class="nav-button" (click)="nextMonth()">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Calendar View -->
+      <div *ngIf="viewMode === 'calendar'">
+        <div class="calendar-days">
+          <div class="day-header" *ngFor="let day of dayNames">{{ day }}</div>
+        </div>
+        
+        <div class="calendar-grid">
+          <div class="day-cell" *ngFor="let day of calendarDays" 
+               [ngClass]="{'other-month': day.otherMonth, 'selected': day.selected, 'today': day.today}"
+               (click)="selectDate(day)">
+            <div class="day-number" [ngClass]="{'selected-circle': day.selected}">
+              {{ day.day }}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Year-Month View -->
+      <div *ngIf="viewMode === 'year'" class="year-view-container">
+        <div class="year-selector">
+          <button class="nav-button big-nav-button" (click)="prevYearSet()">
+            <ion-icon name="chevron-back-outline" size="large"></ion-icon>
+          </button>
+          <div class="year-range-button">
+            {{ yearRangeStart }} - {{ yearRangeStart + 11 }}
+          </div>
+          <button class="nav-button big-nav-button" (click)="nextYearSet()">
+            <ion-icon name="chevron-forward-outline" size="large"></ion-icon>
+          </button>
+        </div>
+        
+        <div class="years-grid">
+          <button 
+            class="year-cell" 
+            *ngFor="let year of years" 
+            [ngClass]="{'selected': year === currentYear}"
+            (click)="selectYear(year)">
+            {{ year }}
+          </button>
+        </div>
+      </div>
+      
+      <!-- Month View -->
+      <div *ngIf="viewMode === 'month'">
+        <div class="months-grid">
+          <button 
+            class="month-cell" 
+            *ngFor="let month of monthNames; let i = index" 
+            [ngClass]="{'selected': i === currentMonthIndex}"
+            (click)="selectMonth(i)">
+            {{ month }}
+          </button>
+        </div>
+      </div>
+      
+      <div class="calendar-footer">
+        <ion-button fill="clear" class="cancel-button" (click)="closeDatePicker()">BATAL</ion-button>
+        <div class="footer-actions">
+          <ion-button fill="clear" class="clear-button" (click)="clearDate()">CLEAR</ion-button>
+          <ion-button fill="clear" class="select-button" (click)="confirmDateSelection()">PILIH</ion-button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>

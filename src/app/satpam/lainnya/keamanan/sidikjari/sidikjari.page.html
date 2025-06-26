@@ -1,0 +1,88 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/satpam/lainnya/keamanan" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <div class="toolbar-title">Sidik Jari</div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+ 
+  <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-down-outline"
+      refreshingSpinner="crescent"
+      pullingText="Tarik untuk refresh"
+      refreshingText="Merefresh...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div class="status-bar-spacer"></div>
+  
+  <div class="content-wrapper">
+    <!-- Header with page title -->
+    <div class="app-header">
+      <p class="page-subtitle">Bukit Asri Cluster · Pengaturan Sidik Jari</p>
+    </div>
+    
+    <!-- Fingerprint Info Card -->
+    <div class="info-card">
+      <div class="info-icon">
+        <ion-icon name="finger-print-outline"></ion-icon>
+      </div>
+      <div class="info-content">
+        <h3>Autentikasi Biometrik</h3>
+        <p>Gunakan sidik jari untuk membuka aplikasi dengan cepat dan aman tanpa perlu memasukkan PIN atau kata sandi.</p>
+      </div>
+    </div>
+    
+    <!-- Fingerprint Status Card -->
+    <div class="status-card">
+      <div class="status-icon">
+        <ion-icon name="information-circle-outline"></ion-icon>
+      </div>
+      <div class="status-info">
+        <p class="status-label">Status Sidik Jari</p>
+        <div class="status-value" [ngClass]="{'active': fingerprintActive, 'inactive': !fingerprintActive}">
+          {{ fingerprintStatus }}
+        </div>
+      </div>
+    </div>
+    
+    <!-- Fingerprint Security Toggle Card -->
+    <div class="toggle-card">
+      <div class="toggle-content">
+        <div class="toggle-icon">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+        </div>
+        <div class="toggle-info">
+          <h3>Gunakan Sidik Jari Untuk Login</h3>
+          <p>Aktifkan untuk menggunakan sidik jari setiap kali membuka aplikasi</p>
+          <p class="note"><ion-icon name="information-circle-outline"></ion-icon> Anda harus mengaktifkan PIN terlebih dahulu untuk menggunakan fitur sidik jari</p>
+        </div>
+        <div class="toggle-switch-container">
+          <ion-toggle [(ngModel)]="fingerprintSecurityEnabled" 
+                     (ionChange)="toggleFingerprintSecurity($event)" 
+                     [disabled]="isTogglingFingerprintSecurity || !deviceSupported"></ion-toggle>
+          <div class="toggle-status" *ngIf="isTogglingFingerprintSecurity">
+            <div class="loading-text">...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Device Support Status -->
+    <div class="device-support-card" [ngClass]="{'supported': deviceSupported, 'not-supported': !deviceSupported}">
+      <div class="device-icon">
+        <ion-icon [name]="deviceSupported ? 'checkmark-circle-outline' : 'close-circle-outline'"></ion-icon>
+      </div>
+      <div class="device-info">
+        <h3>{{ deviceSupported ? 'Perangkat Didukung' : 'Perangkat Tidak Didukung' }}</h3>
+        <p>{{ deviceSupported ? 'Perangkat Anda mendukung autentikasi sidik jari' : 'Perangkat Anda tidak mendukung autentikasi sidik jari' }}</p>
+      </div>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,164 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/satpam/beranda" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <div class="toolbar-title"></div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <div class="notification-bell">
+        <ion-icon name="notifications-outline"></ion-icon>
+        <span class="notification-badge">2</span>
+      </div>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <div class="status-bar-spacer"></div>
+  
+  <div class="content-wrapper">
+    <!-- Header with cluster name -->
+    <div class="app-header">
+      <p class="page-subtitle">Bukit Asri Cluster · Pengaturan</p>
+    </div>
+
+    <div class="profile-card">
+      <div class="avatar-wrapper">
+        <div class="avatar">
+          <img src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/svg/person-circle-outline.svg" alt="Profile">
+        </div>
+        <div class="status-badge online"></div>
+      </div>
+      <div class="user-info">
+        <h2>{{ nama || 'Memuat data...' }}</h2>
+        <p>Bergabung sejak {{ createdAt || 'Memuat data...' }}</p>
+        <div class="user-tags">
+          <span class="user-tag">Petugas Keamanan</span>
+          <span class="user-tag">Sedang Bertugas</span>
+        </div>
+      </div>
+      <div class="edit-profile" routerLink="/satpam/profile">
+        <ion-icon name="create-outline"></ion-icon>
+      </div>
+    </div>
+
+    <div class="menu-container">
+      <div class="section-header">
+        <h3 class="section-title">Pengaturan Akun</h3>
+        <span class="subtitle">Kelola data pribadi dan keamanan</span>
+      </div>
+      
+      <div class="menu-items">
+        <div class="menu-item ripple" routerLink="/satpam/profile">
+          <div class="menu-icon profile-icon">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+          <div class="menu-content">
+            <p class="menu-label">Pengaturan Profil</p>
+            <p class="menu-description">Update informasi pribadi Anda</p>
+          </div>
+          <div class="menu-arrow">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </div>
+        </div>
+        
+        <div class="menu-item ripple" routerLink="/satpam/lainnya/keamanan">
+          <div class="menu-icon security-icon">
+            <ion-icon name="shield-outline"></ion-icon>
+          </div>
+          <div class="menu-content">
+            <p class="menu-label">Pengaturan Keamanan</p>
+            <p class="menu-description">Password dan autentikasi</p>
+          </div>
+          <div class="menu-arrow">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-container">
+      <div class="section-header">
+        <h3 class="section-title">Tugas & Aktivitas</h3>
+        <span class="subtitle">Kelola aktivitas penjagaan</span>
+      </div>
+      
+      <div class="menu-items">
+        <div class="menu-item ripple" routerLink="/satpam/darurat">
+          <div class="menu-icon emergency-icon">
+            <ion-icon name="warning-outline"></ion-icon>
+          </div>
+          <div class="menu-content">
+            <p class="menu-label">Kontak Darurat</p>
+            <p class="menu-description">Nomor penting untuk keadaan darurat</p>
+          </div>
+          <div class="menu-arrow">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-container">
+      <div class="section-header">
+        <h3 class="section-title">Informasi</h3>
+        <span class="subtitle">Bantuan dan informasi aplikasi</span>
+      </div>
+      
+      <div class="menu-items">
+        <div class="menu-item ripple" routerLink="/satpam/lainnya/guide">
+          <div class="menu-icon guide-icon">
+            <ion-icon name="book-outline"></ion-icon>
+          </div>
+          <div class="menu-content">
+            <p class="menu-label">Panduan Penggunaan</p>
+            <p class="menu-description">Cara menggunakan aplikasi</p>
+          </div>
+          <div class="menu-arrow">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </div>
+        </div>
+        
+        <div class="menu-item ripple" routerLink="/satpam/lainnya/policy">
+          <div class="menu-icon terms-icon">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+          </div>
+          <div class="menu-content">
+            <p class="menu-label">Syarat dan Ketentuan</p>
+            <p class="menu-description">Ketentuan penggunaan aplikasi</p>
+          </div>
+          <div class="menu-arrow">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-container">
+      <div class="info-card">
+        <div class="info-icon">
+          <ion-icon name="information-circle-outline"></ion-icon>
+        </div>
+        <div class="info-content">
+          <p>Ada pertanyaan atau kendala? Hubungi supervisor melalui menu Chat.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-version">
+      <div class="version-pill">
+        <ion-icon name="code-slash-outline"></ion-icon>
+        <p>Bukit Asri Cluster App V.1.0.0</p>
+      </div>
+    </div>
+
+    <div class="logout-container">
+      <ion-button expand="block" (click)="logout()" class="logout-button">
+        <ion-icon name="log-out-outline" slot="start"></ion-icon>
+        <span>LogOut</span>
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

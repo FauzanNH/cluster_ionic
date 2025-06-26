@@ -1,0 +1,200 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import '@ionic/angular/css/display.css';
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/**
+ * Ionic Dark Mode
+ * -----------------------------------------------------
+ * For more info, please see:
+ * https://ionicframework.com/docs/theming/dark-mode
+ */
+
+/* @import "@ionic/angular/css/palettes/dark.always.css"; */
+/* @import "@ionic/angular/css/palettes/dark.class.css"; */
+@import "@ionic/angular/css/palettes/dark.system.css";
+
+.no-card-loading .loading-wrapper {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+.no-card-loading .loading-content {
+  display: none !important;
+}
+
+// Modal dengan background terang
+ion-modal {
+  --background: #ffffff;
+  --ion-background-color: #ffffff;
+  
+  ion-content {
+    --background: #ffffff;
+  }
+  
+  .modal-wrapper {
+    background-color: #ffffff;
+  }
+}
+
+// Class untuk modal dengan tema terang
+.light-theme-modal {
+  --background: #ffffff;
+  --ion-background-color: #ffffff;
+  
+  ion-content {
+    --background: #ffffff;
+  }
+  
+  ion-item {
+    --background: #f5f7fa;
+    --color: #333;
+  }
+  
+  ion-label {
+    color: #333;
+  }
+  
+  ion-input {
+    --color: #333;
+  }
+}
+
+// Mengatur style untuk modal satpam
+.modern-phone-modal,
+.modern-email-modal,
+.modern-password-modal {
+  --background: #ffffff;
+  --ion-background-color: #ffffff;
+  
+  .modal-wrapper {
+    background-color: #ffffff;
+  }
+}
+
+/* Contact Search Modal Styles */
+.contact-search-modal {
+  --backdrop-opacity: 0.8;
+  
+  .modal-wrapper {
+    border-radius: 16px;
+    box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    max-width: 400px;
+    margin: 0 16px;
+    height: 80%;
+  }
+
+  /* Animasi untuk item kontak */
+  ion-item {
+    animation: fadeInUp 0.3s ease-out;
+    animation-fill-mode: both;
+  }
+
+  @for $i from 1 through 20 {
+    ion-item:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.05}s;
+    }
+  }
+
+  /* Efek ketika item kontak ditekan */
+  ion-item.contact-item:active {
+    animation: pressEffect 0.2s ease-out;
+  }
+}
+
+/* Animasi fadeIn dan fadeInUp untuk item-item list */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Animasi untuk efek saat item kontak ditekan */
+@keyframes pressEffect {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.97);
+  }
+  100% {
+    transform: scale(0.99);
+  }
+}
+
+/* Styling untuk badge role */
+ion-badge.role-badge {
+  text-transform: capitalize;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 18px;
+}
+
+@media (min-width: 768px) {
+  .contact-search-modal .modal-wrapper {
+    max-width: 500px;
+  }
+}
+
+/* Scanner Mode Styles */
+body.scanner-active {
+  --background: transparent;
+  background: transparent;
+  background-color: transparent;
+  
+  ion-app, ion-content, ion-page, .ion-page, ion-header, ion-toolbar {
+    --background: transparent;
+    background: transparent;
+    background-color: transparent;
+  }
+}
+
+.scanner-active {
+  visibility: hidden;
+  opacity: 0;
+  --background: transparent;
+  background: transparent;
+}
+

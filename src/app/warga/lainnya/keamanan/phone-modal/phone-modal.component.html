@@ -1,0 +1,127 @@
+<!-- Phone Number Modal -->
+<ion-header class="blue-header ion-no-border">
+  <ion-toolbar class="blue-toolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="dismissModal()" class="close-button">
+        <ion-icon name="close-outline" color="light"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Nomor HP</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="modal-content">
+    <!-- Current Phone Number Card -->
+    <div class="phone-card current-phone">
+      <div class="card-header">
+        <div class="header-icon blue-icon">
+          <ion-icon name="call-outline"></ion-icon>
+        </div>
+        <h2>Nomor HP Saat Ini</h2>
+      </div>
+      <div class="phone-number">
+        <ng-container *ngIf="!isLoadingPhone; else loadingPhoneTpl">
+          <ion-text class="current-number">{{ currentPhoneNumber }}</ion-text>
+          <div class="verification-badge">Terverifikasi</div>
+        </ng-container>
+        <ng-template #loadingPhoneTpl>
+          <div class="loading-container">
+            <ion-spinner name="circles"></ion-spinner>
+            <ion-text color="medium">Memuat nomor HP...</ion-text>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Update Phone Number Form -->
+    <div class="phone-card update-phone" *ngIf="!showVerification">
+      <div class="card-header">
+        <div class="header-icon blue-icon">
+          <ion-icon name="create-outline"></ion-icon>
+        </div>
+        <h2>Ubah Nomor HP</h2>
+      </div>
+      
+      <form class="phone-form">
+        <div class="input-label">Nomor HP Baru</div>
+        <div class="phone-input-wrapper">
+          <ion-input type="tel" class="phone-input" [(ngModel)]="newPhoneNumber" name="newPhoneNumber" required></ion-input>
+        </div>
+        
+        <ion-note color="medium" class="info-note">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          pastikan nomor yang anda masukkan benar
+        </ion-note>
+        
+        <ion-button expand="block" class="update-button" (click)="requestOTP()" [disabled]="!newPhoneNumber">
+          UBAH NOMOR
+          <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+        </ion-button>
+      </form>
+    </div>
+    
+    <!-- Verification Section -->
+    <div class="phone-card verification-card" *ngIf="showVerification">
+      <div class="card-header">
+        <div class="header-icon blue-icon">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+        </div>
+        <h2>Verifikasi Nomor</h2>
+      </div>
+      
+      <div class="verification-content">
+        <p class="verification-info">
+          Kode 6-digit dikirim ke <strong>{{ newPhoneNumber }}</strong>
+        </p>
+        
+        <div class="otp-inputs">
+          <input type="text" maxlength="1" inputmode="numeric" class="otp-input" [(ngModel)]="otpValues[0]" name="otp0" (input)="onOtpInput($event, 0)" (keyup)="onOtpKeyup($event, 0)">
+          <input type="text" maxlength="1" inputmode="numeric" class="otp-input" [(ngModel)]="otpValues[1]" name="otp1" (input)="onOtpInput($event, 1)" (keyup)="onOtpKeyup($event, 1)">
+          <input type="text" maxlength="1" inputmode="numeric" class="otp-input" [(ngModel)]="otpValues[2]" name="otp2" (input)="onOtpInput($event, 2)" (keyup)="onOtpKeyup($event, 2)">
+          <input type="text" maxlength="1" inputmode="numeric" class="otp-input" [(ngModel)]="otpValues[3]" name="otp3" (input)="onOtpInput($event, 3)" (keyup)="onOtpKeyup($event, 3)">
+          <input type="text" maxlength="1" inputmode="numeric" class="otp-input" [(ngModel)]="otpValues[4]" name="otp4" (input)="onOtpInput($event, 4)" (keyup)="onOtpKeyup($event, 4)">
+          <input type="text" maxlength="1" inputmode="numeric" class="otp-input" [(ngModel)]="otpValues[5]" name="otp5" (input)="onOtpInput($event, 5)" (keyup)="onOtpKeyup($event, 5)">
+        </div>
+        
+        <div class="timer-resend">
+          <div class="spacer"></div>
+          
+          <ion-button fill="clear" size="small" class="resend-button" (click)="resendOTP()" *ngIf="!resendCooldown" [disabled]="isResendingOTP">
+            <ng-container *ngIf="!isResendingOTP">Kirim Ulang</ng-container>
+            <ng-container *ngIf="isResendingOTP"><ion-spinner name="dots" class="resend-spinner"></ion-spinner></ng-container>
+          </ion-button>
+          <div class="cooldown-text" *ngIf="resendCooldown">
+            Tunggu {{ cooldownTime }}
+          </div>
+        </div>
+        
+        <ion-button expand="block" class="verify-button" (click)="verifyOTP()" [disabled]="isUpdatingPhone">
+          <ng-container *ngIf="!isUpdatingPhone; else updatingPhoneTpl">
+            VERIFIKASI
+            <ion-icon name="shield-checkmark-outline" slot="end"></ion-icon>
+          </ng-container>
+          <ng-template #updatingPhoneTpl>
+            <ion-spinner name="dots" class="update-spinner"></ion-spinner>
+            MEMPERBARUI...
+          </ng-template>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+<style>
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+.update-spinner {
+  margin-right: 8px;
+  color: white;
+}
+</style> 

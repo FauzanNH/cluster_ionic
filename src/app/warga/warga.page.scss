@@ -1,0 +1,87 @@
+ion-tab-bar {
+  --background: #ffffff;
+  --border: none;
+  box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 20px 20px 0 0;
+  height: 60px;
+  padding: 0 10px;
+}
+
+ion-tab-button {
+  --color: #8c8c8c;
+  --color-selected: #4a6bff;
+  position: relative;
+  overflow: visible;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-selected);
+    transition: transform 0.3s;
+  }
+  
+  &.tab-selected {
+    --color: #4a6bff;
+    
+    &::before {
+      transform: translateX(-50%) scale(1);
+    }
+    
+    ion-icon {
+      transform: translateY(-4px);
+    }
+  }
+  
+  ion-icon {
+    font-size: 24px;
+    transition: transform 0.3s;
+  }
+}
+
+.label-badge {
+  position: absolute;
+  top: 0;
+  right: 25%;
+  background: #ff4a4a;
+  color: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-badge {
+  position: absolute;
+  top: 4px;
+  right: 18px;
+  font-size: 11px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  z-index: 11;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-dot {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  width: 10px;
+  height: 10px;
+  background: #ff3b30;
+  border-radius: 50%;
+  z-index: 10;
+  border: 2px solid #fff;
+}

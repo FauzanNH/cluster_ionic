@@ -1,0 +1,215 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/satpam/beranda" style="color: white;"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="color: white;">Tambah Akun Tamu</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="status-bar-spacer"></div>
+  
+  <!-- Step Indicator -->
+  <div class="step-indicator" *ngIf="currentStep < 4">
+    <div class="step-progress">
+      <div class="progress-bar" [style.width]="(currentStep / (totalSteps-1)) * 100 + '%'"></div>
+    </div>
+    <div class="step-labels">
+      <div class="step-label" [ngClass]="{'active': currentStep >= 1}">
+        <div class="step-number">1</div>
+        <div class="step-text">Scan KTP</div>
+      </div>
+      <div class="step-label" [ngClass]="{'active': currentStep >= 2}">
+        <div class="step-number">2</div>
+        <div class="step-text">Data KTP</div>
+      </div>
+      <div class="step-label" [ngClass]="{'active': currentStep >= 3}">
+        <div class="step-number">3</div>
+        <div class="step-text">Kontak</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 1: Scan KTP -->
+  <div *ngIf="currentStep === 1">
+    <h2 class="ion-text-center">Scan KTP Tamu</h2>
+    <p class="ion-text-center">Silakan ambil foto KTP tamu atau pilih dari galeri</p>
+    
+    <div class="image-container" *ngIf="ktpImage">
+      <img [src]="ktpImage" alt="KTP Preview" (error)="onImageError()">
+      <div class="loading-indicator" *ngIf="isOcrLoading">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Memproses KTP...</p>
+      </div>
+      
+      <div class="image-info" *ngIf="imageInfo && !isOcrLoading">
+        <div>
+          <ion-icon name="image-outline"></ion-icon> 
+          {{ imageInfo.width }} x {{ imageInfo.height }} px
+        </div>
+        <div>
+          <ion-icon name="document-outline"></ion-icon>
+          {{ (imageInfo.filesize / 1024).toFixed(1) }} KB
+        </div>
+      </div>
+    </div>
+    
+    <!-- Error message when OCR fails -->
+    <div class="error-container" *ngIf="ocrErrorMessage && !isOcrLoading">
+      <ion-icon name="warning-outline" color="danger"></ion-icon>
+      <h3>Proses OCR Gagal</h3>
+      <p [innerHTML]="ocrErrorMessage"></p>
+      <ion-button expand="block" fill="outline" color="medium" (click)="enterDataManually()">
+        <ion-icon name="create-outline" slot="start"></ion-icon>
+        Isi Data Manual
+      </ion-button>
+    </div>
+    
+    <div class="button-container">
+      <ion-button expand="block" color="primary" (click)="takePicture()" [disabled]="isOcrLoading" style="--color: white;">
+        <ion-icon name="camera-outline" slot="start"></ion-icon>
+        Ambil Foto KTP
+      </ion-button>
+      
+      <ion-button expand="block" color="secondary" (click)="selectFromGallery()" [disabled]="isOcrLoading" style="--color: white;">
+        <ion-icon name="image-outline" slot="start"></ion-icon>
+        Pilih dari Galeri
+      </ion-button>
+      
+      <ion-button expand="block" fill="outline" color="medium" (click)="enterDataManually()">
+        <ion-icon name="create-outline" slot="start"></ion-icon>
+        Isi Data Manual
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Step 2: Preview Data KTP -->
+  <div *ngIf="currentStep === 2">
+    <h2 class="ion-text-center">Data KTP</h2>
+    <p class="ion-text-center">Verifikasi data hasil scan KTP</p>
+    
+    <form [formGroup]="ktpForm">
+      <ion-item>
+        <ion-label position="floating">NIK</ion-label>
+        <ion-input type="text" formControlName="nik"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Nama Lengkap</ion-label>
+        <ion-input type="text" formControlName="nama"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Tempat Lahir</ion-label>
+        <ion-input type="text" formControlName="tempat_lahir"></ion-input>
+      </ion-item>
+      <!-- Tanggal Lahir dengan ikon kalender -->
+      <ion-item>
+        <ion-label position="floating">Tanggal Lahir</ion-label>
+        <div class="date-input-container">
+          <ion-input type="date" formControlName="tgl_lahir" placeholder="mm/dd/yyyy"></ion-input>
+          <ion-button fill="clear" size="small" class="calendar-btn">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Kewarganegaraan</ion-label>
+        <ion-input type="text" formControlName="kewarganegaraan"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Alamat</ion-label>
+        <ion-textarea formControlName="alamat"></ion-textarea>
+      </ion-item>
+      
+      <div class="rt-rw-container">
+        <ion-item class="rt-item">
+          <ion-label position="floating">RT</ion-label>
+          <ion-input type="text" formControlName="rt"></ion-input>
+        </ion-item>
+        <ion-item class="rw-item">
+          <ion-label position="floating">RW</ion-label>
+          <ion-input type="text" formControlName="rw"></ion-input>
+        </ion-item>
+      </div>
+      
+      <ion-item>
+        <ion-label position="floating">Kelurahan/Desa</ion-label>
+        <ion-input type="text" formControlName="kel_desa"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Kecamatan</ion-label>
+        <ion-input type="text" formControlName="kecamatan"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Kabupaten</ion-label>
+        <ion-input type="text" formControlName="kabupaten"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Agama</ion-label>
+        <ion-input type="text" formControlName="agama"></ion-input>
+      </ion-item>
+    </form>
+    
+    <div class="button-container">
+      <ion-button expand="block" color="medium" (click)="prevStep()" style="--color: white;">
+        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+        Kembali
+      </ion-button>
+      <ion-button expand="block" color="primary" [disabled]="ktpForm.invalid" (click)="nextStep()" style="--color: white;">
+        <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+        Lanjut
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Step 3: Input Kontak -->
+  <div *ngIf="currentStep === 3">
+    <h2 class="ion-text-center">Data Kontak</h2>
+    <p class="ion-text-center">Masukkan informasi kontak tamu</p>
+    
+    <form [formGroup]="contactForm">
+      <ion-item>
+        <ion-label position="floating">Nomor HP</ion-label>
+        <ion-input type="tel" formControlName="no_hp"></ion-input>
+      </ion-item>
+      <div class="error-message" *ngIf="contactForm.get('no_hp')?.invalid && contactForm.get('no_hp')?.touched">
+        Nomor HP wajib diisi
+      </div>
+      
+      <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input type="email" formControlName="email"></ion-input>
+      </ion-item>
+      <div class="error-message" *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched">
+        Email tidak valid
+      </div>
+    </form>
+    
+    <div class="button-container">
+      <ion-button expand="block" color="medium" (click)="prevStep()" style="--color: white;">
+        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+        Kembali
+      </ion-button>
+      <ion-button expand="block" color="primary" [disabled]="contactForm.invalid" (click)="saveTamu()" style="--color: white;">
+        <ion-icon name="save-outline" slot="end"></ion-icon>
+        Simpan
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Step 4: Success -->
+  <div *ngIf="currentStep === 4" class="success-container">
+    <ion-icon name="checkmark-circle" color="success" class="success-icon"></ion-icon>
+    <h2 class="ion-text-center">Akun Tamu Berhasil Dibuat</h2>
+    <div class="tamu-id-container">
+      <p class="ion-text-center">ID Tamu:</p>
+      <div class="tamu-id">{{ successData?.tamu_id || 'T-123456' }}</div>
+    </div>
+    <p class="ion-text-center">Simpan ID ini untuk keperluan check-in tamu</p>
+    
+    <ion-button expand="block" color="primary" (click)="goToHome()" style="--color: white;">
+      <ion-icon name="home-outline" slot="start"></ion-icon>
+      Kembali ke Beranda
+    </ion-button>
+  </div>
+</ion-content>

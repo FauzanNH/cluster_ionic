@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-title>
+      <div class="toolbar-title"></div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-down-outline"
+      refreshingSpinner="crescent"
+      pullingText="Tarik untuk refresh"
+      refreshingText="Merefresh...">
+    </ion-refresher-content>
+  </ion-refresher>
+  
+  <div class="status-bar-spacer"></div>
+  
+  <!-- Notification Bell (Always Visible) -->
+    <div class="notification-bell">
+      <ion-icon name="notifications-outline"></ion-icon>
+      <span class="notification-badge">2</span>
+    </div>
+    
+  <!-- Header with cluster name (Always Visible) -->
+    <div class="app-header">
+      <p class="page-subtitle">Bukit Asri Cluster · Panel Tamu</p>
+    </div>
+
+  <!-- Skeleton Loading View -->
+  <div class="content-wrapper" *ngIf="isLoading">
+    <!-- Profile Card Skeleton -->
+    <div class="profile-card skeleton">
+      <div class="avatar skeleton-avatar"></div>
+      <div class="user-info">
+        <div class="skeleton-line name-line"></div>
+        <div class="skeleton-line id-line"></div>
+      </div>
+      <div class="skeleton-circle"></div>
+    </div>
+
+    <!-- Stats Overview Skeleton -->
+    <div class="stats-overview">
+      <div class="stats-grid">
+        <div class="stat-card family-card skeleton">
+          <div class="stat-icon skeleton-icon"></div>
+          <div class="stat-details">
+            <div class="skeleton-line small-line"></div>
+            <div class="skeleton-line medium-line"></div>
+            <div class="skeleton-line small-line"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Aktivitas Terbaru Skeleton -->
+    <div class="visitor-overview">
+      <div class="skeleton-line title-line"></div>
+      <div class="activity-list skeleton">
+        <div class="activity-item skeleton">
+          <div class="activity-icon skeleton-icon"></div>
+          <div class="activity-content">
+            <div class="skeleton-line medium-line"></div>
+            <div class="skeleton-line small-line"></div>
+          </div>
+          <div class="skeleton-line small-line"></div>
+        </div>
+        <div class="activity-item skeleton">
+          <div class="activity-icon skeleton-icon"></div>
+          <div class="activity-content">
+            <div class="skeleton-line medium-line"></div>
+            <div class="skeleton-line small-line"></div>
+          </div>
+          <div class="skeleton-line small-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layanan Skeleton -->
+    <div class="actions-section">
+      <div class="skeleton-line title-line"></div>
+      
+      <div class="action-cards">
+        <div class="action-card skeleton">
+          <div class="action-icon skeleton-icon"></div>
+          <div class="skeleton-line label-line"></div>
+        </div>
+        
+        <div class="action-card skeleton">
+          <div class="action-icon skeleton-icon"></div>
+          <div class="skeleton-line label-line"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Actual Content -->
+  <div class="content-wrapper" *ngIf="!isLoading">
+    <!-- Profile Card -->
+    <div class="profile-card">
+      <div class="avatar">
+        <img src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/svg/person-circle-outline.svg" alt="Profile">
+      </div>
+      <div class="user-info">
+        <h2>Halo, {{ nama || 'Tamu' }}</h2>
+        <p>ID Tamu: {{ tamu_id || 'T-0001' }}</p>
+      </div>
+      <div class="logout-button" (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-overview">
+      <div class="stats-grid">
+        <div class="stat-card family-card">
+          <div class="stat-icon">
+            <img src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/svgs/solid/calendar-check.svg" alt="Visits">
+          </div>
+          <div class="stat-details">
+            <p class="stat-label">Total Kunjungan</p>
+            <h2 class="stat-value">{{ totalKunjungan }}</h2>
+            <p class="stat-unit">Kunjungan</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Aktivitas Terbaru -->
+    <div class="visitor-overview">
+      <div class="section-header">
+        <h3 class="section-title">
+          <ion-icon name="time-outline"></ion-icon>
+          Aktivitas Terbaru
+        </h3>
+        <ion-button size="small" fill="clear" routerLink="/tamu/aktivitas" class="see-all-button">
+          Lihat Semua
+          <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+        </ion-button>
+      </div>
+      
+      <div class="activity-list" *ngIf="aktivitasTerbaru.length > 0">
+        <div class="activity-item" *ngFor="let activity of aktivitasTerbaru">
+          <div class="activity-icon" [ngClass]="activity.status">
+            <ion-icon [name]="activity.icon"></ion-icon>
+          </div>
+          <div class="activity-content">
+            <div class="activity-header">
+              <h4 class="activity-title">{{ activity.title }}</h4>
+              <span class="activity-time">{{ activity.time }}</span>
+            </div>
+            <p class="ellipsis-text">{{ activity.description }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Empty state if no activities -->
+      <div class="empty-activity" *ngIf="!isLoading && aktivitasTerbaru.length === 0">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <p>Belum ada aktivitas</p>
+        <ion-button size="small" fill="outline" routerLink="/tamu/dashboard/kunjungan">
+          Buat Kunjungan
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Layanan -->
+    <div class="actions-section">
+      <h3 class="section-title">Layanan</h3>
+      <div class="layanan-card">
+        <div class="layanan-menu-grid">
+          <div class="layanan-menu-item" (click)="goToPermintaanKunjungan()">
+            <img src="assets/icon/tamu/beranda/kunjungan.png" alt="Permintaan Kunjungan" width="40" height="40">
+            <p class="layanan-menu-label">Kunjungan</p>
+          </div>
+          <div class="layanan-menu-item" (click)="goToSewaBeliRumah()">
+            <img src="assets/icon/tamu/beranda/beli.png" alt="Sewa/Beli Rumah" width="40" height="40">
+            <p class="layanan-menu-label">Sewa/Beli Rumah</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

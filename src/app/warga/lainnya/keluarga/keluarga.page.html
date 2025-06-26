@@ -1,0 +1,109 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/warga/lainnya"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <div class="toolbar-title"></div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <div class="notification-bell">
+        <ion-icon name="people-outline"></ion-icon>
+      </div>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <div class="status-bar-spacer"></div>
+  
+  <div class="content-wrapper" *ngIf="!isLoading">
+    <!-- Header with page title -->
+    <div class="app-header">
+      <p class="page-subtitle">Bukit Asri Cluster · Anggota Keluarga</p>
+    </div>
+
+    <!-- Info Card -->
+    <div class="info-card">
+      <div class="house-info">
+        <div class="house-icon">
+          <ion-icon name="id-card-outline"></ion-icon>
+        </div>
+        <div class="house-details">
+          <h3>Nomor KK: {{ noKK || '-' }}</h3>
+          <p>Kepemilikan rumah: <span class="status-owner">{{ statusKepemilikan || '-' }}</span></p>
+        </div>
+      </div>
+      <div class="family-stats">
+        <div class="stat-item">
+          <span class="stat-value">{{ totalAnggota }}</span>
+          <span class="stat-label">Anggota</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Family Members Section -->
+    <div class="section-container">
+      <div class="section-header">
+        <h3 class="section-title">Anggota Keluarga</h3>
+        <span class="subtitle">Data penghuni rumah tangga</span>
+      </div>
+      
+      <div class="add-member-button">
+        <ion-button fill="outline" expand="block" (click)="addNewMember()">
+          <ion-icon name="person-add-outline" slot="start"></ion-icon>
+          Tambah Anggota Keluarga
+        </ion-button>
+      </div>
+
+      <!-- Family Members List -->
+      <div class="members-list">
+        <div class="member-card" *ngFor="let member of anggota">
+          <div class="member-avatar primary">
+            <ion-icon name="person"></ion-icon>
+          </div>
+          <div class="member-info">
+            <div class="member-header">
+              <h4 class="member-name">{{ member.nama }}</h4>
+              <span class="member-tag primary" *ngIf="member.warga_id === kepalaKeluargaId">Kepala Keluarga</span>
+            </div>
+            <p class="member-nik">NIK: {{ member.nik }}</p>
+            <div class="member-details">
+              <span class="detail-item">
+                <ion-icon name="calendar-outline" class="date-icon"></ion-icon>
+                {{ member.tanggal_lahir | date:'dd-MM-yyyy' }}
+              </span>
+              <span class="detail-item">
+                <ion-icon [name]="getGenderLabel(member.gender) === 'Laki-laki' ? 'male-outline' : 'female-outline'" class="gender-icon"></ion-icon>
+                {{ getGenderLabel(member.gender) }}
+              </span>
+            </div>
+          </div>
+          <div class="member-actions">
+            <ion-button fill="clear" color="medium" (click)="editMember(member.warga_id)">
+              <ion-icon name="create-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="notes-container">
+      <div class="info-alert">
+        <div class="info-icon">
+          <ion-icon name="information-circle-outline"></ion-icon>
+        </div>
+        <p>Data anggota keluarga digunakan untuk keperluan administrasi cluster. Pastikan data sudah sesuai dengan Kartu Keluarga (KK).</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Centered Spinner -->
+  <div class="centered-content" *ngIf="isLoading">
+    <div class="spinner-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p class="loading-text">Memuat data</p>
+    </div>
+  </div>
+</ion-content>

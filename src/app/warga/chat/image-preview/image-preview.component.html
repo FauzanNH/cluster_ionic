@@ -1,0 +1,61 @@
+<div class="preview-container">
+  <div class="preview-header">
+    <ion-buttons>
+      <ion-button (click)="cancel()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <div class="preview-title">Preview Gambar</div>
+    <div class="spacer"></div>
+  </div>
+
+  <div class="preview-content">
+    <!-- Loading indicator -->
+    <div class="loading-container" *ngIf="isLoading">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Memuat gambar...</p>
+    </div>
+    
+    <!-- Empty state -->
+    <div class="empty-image" *ngIf="!isLoading && !previewImage">
+      <div class="empty-image-icon">
+        <ion-icon name="image-outline"></ion-icon>
+      </div>
+      <p>Tidak ada gambar yang dipilih</p>
+      <ion-button (click)="openGallery()">Pilih dari Galeri</ion-button>
+    </div>
+    
+    <!-- Image preview -->
+    <div class="image-preview" *ngIf="!isLoading && previewImage">
+      <img [src]="previewImage" alt="Preview">
+    </div>
+  </div>
+  
+  <!-- Action buttons -->
+  <div class="image-actions" *ngIf="previewImage">
+    <ion-button fill="clear" (click)="takePhoto()">
+      <ion-icon slot="start" name="camera"></ion-icon>
+      Ambil Foto
+    </ion-button>
+    <ion-button fill="clear" (click)="chooseAnotherImage()">
+      <ion-icon slot="start" name="images"></ion-icon>
+      Pilih Gambar Lain
+    </ion-button>
+  </div>
+  
+  <!-- Caption input with send button -->
+  <div class="caption-container" *ngIf="previewImage">
+    <div class="caption-input-wrapper">
+      <ion-textarea
+        placeholder="Tambahkan keterangan (opsional)"
+        [(ngModel)]="imageCaption"
+        autoGrow="true"
+        rows="1"
+        maxlength="500"
+      ></ion-textarea>
+      <ion-button class="send-button" (click)="send()" [disabled]="!previewImage">
+        <ion-icon name="paper-plane"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</div> 

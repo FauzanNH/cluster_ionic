@@ -1,0 +1,543 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/satpam/lainnya"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <div class="toolbar-title">Panduan Penggunaan</div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <div class="status-bar-spacer"></div>
+  
+  <div class="content-wrapper">
+    <!-- Page Header -->
+    <div class="app-header">
+      <p class="page-subtitle">Bukit Asri Cluster · Panduan Penggunaan</p>
+    </div>
+
+    <!-- Welcome Banner -->
+    <div class="welcome-banner">
+      <div class="banner-content">
+        <h1>Selamat Datang di Aplikasi Satpam</h1>
+        <p>Panduan lengkap untuk membantu Anda menggunakan aplikasi dengan efektif</p>
+      </div>
+      <div class="banner-image">
+        <img src="assets/icon/satpam/guide/security-app.svg" onerror="this.src='https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/svgs/solid/shield-halved.svg'" alt="Security App">
+      </div>
+    </div>
+
+    <!-- Quick Navigation -->
+    <div class="quick-nav-container">
+      <div class="quick-nav-title">
+        <ion-icon name="compass-outline"></ion-icon>
+        <h3>Navigasi Cepat</h3>
+      </div>
+      <div class="quick-nav-buttons">
+        <div class="quick-nav-button" (click)="toggleSection('beranda'); scrollToSection('beranda-section')">
+          <ion-icon name="home-outline"></ion-icon>
+          <span>Beranda</span>
+        </div>
+        <div class="quick-nav-button" (click)="toggleSection('kunjunganTamu'); scrollToSection('kunjungan-section')">
+          <ion-icon name="people-outline"></ion-icon>
+          <span>Kunjungan</span>
+        </div>
+        <div class="quick-nav-button" (click)="toggleSection('laporanHarian'); scrollToSection('laporan-section')">
+          <ion-icon name="document-text-outline"></ion-icon>
+          <span>Laporan</span>
+        </div>
+        <div class="quick-nav-button" (click)="toggleSection('jadwalKerja'); scrollToSection('jadwal-section')">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <span>Jadwal</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guide Card -->
+    <div class="guide-card">
+      <!-- Beranda Section -->
+      <div id="beranda-section" class="feature-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <ion-icon name="home-outline"></ion-icon>
+          </div>
+          <h2>Beranda</h2>
+        </div>
+        
+        <div class="feature-description">
+          <p>Beranda adalah tampilan utama aplikasi yang menampilkan informasi penting dan akses cepat ke fitur-fitur utama.</p>
+          
+          <div class="image-container">
+            <img src="assets/icon/satpam/guide/beranda-preview.png" onerror="this.src='https://placehold.co/600x400/e3f2fd/0288d1?text=Tampilan+Beranda'" class="guide-image" alt="Tampilan Beranda">
+            <p class="image-caption">Tampilan halaman beranda aplikasi satpam</p>
+          </div>
+          
+          <div class="step-container">
+            <div class="step-item">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <p class="step-title">Informasi Profil</p>
+                <p class="step-description">Di bagian atas beranda, Anda dapat melihat informasi profil Anda termasuk nama dan ID pegawai. Tombol logout tersedia di pojok kanan profil.</p>
+              </div>
+            </div>
+            
+            <div class="step-item">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <p class="step-title">Informasi Tamu</p>
+                <p class="step-description">Menampilkan jumlah total tamu hari ini dan tamu yang sedang berkunjung. Data ini diperbarui secara otomatis.</p>
+              </div>
+            </div>
+            
+            <div class="step-item">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <p class="step-title">Menu Layanan</p>
+                <p class="step-description">Akses cepat ke fitur utama: Kunjungan Tamu, Laporan Harian Tamu, dan Jadwal Kerja.</p>
+              </div>
+            </div>
+            
+            <div class="step-item">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <p class="step-title">Riwayat Aktivitas</p>
+                <p class="step-description">Menampilkan aktivitas terbaru seperti check-in dan check-out tamu. Memudahkan Anda untuk memantau aktivitas terkini.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="tips-section">
+            <div class="tips-header">
+              <ion-icon name="bulb-outline"></ion-icon>
+              <h4>Tips Beranda</h4>
+            </div>
+            <ul>
+              <li>Tarik layar ke bawah untuk memperbarui data</li>
+              <li>Klik pada notifikasi untuk melihat detail pemberitahuan</li>
+              <li>Pastikan untuk memeriksa beranda secara berkala untuk informasi terbaru</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Kunjungan Tamu Section -->
+      <div id="kunjungan-section" class="feature-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <ion-icon name="people-outline"></ion-icon>
+          </div>
+          <h2>Kunjungan Tamu</h2>
+        </div>
+        
+        <div class="feature-description">
+          <p>Fitur Kunjungan Tamu memungkinkan Anda untuk mengelola dan mencatat semua tamu yang masuk dan keluar dari cluster.</p>
+          
+          <div class="image-container">
+            <img src="assets/icon/satpam/guide/kunjungan-preview.png" onerror="this.src='https://placehold.co/600x400/e3f2fd/0288d1?text=Tampilan+Kunjungan+Tamu'" class="guide-image" alt="Tampilan Kunjungan Tamu">
+            <p class="image-caption">Tampilan halaman kunjungan tamu</p>
+          </div>
+          
+          <div class="feature-highlights">
+            <div class="highlight-item">
+              <div class="highlight-icon">
+                <ion-icon name="add-circle-outline"></ion-icon>
+              </div>
+              <div class="highlight-content">
+                <h4>Tambah Tamu</h4>
+                <p>Catat informasi lengkap tamu yang berkunjung</p>
+              </div>
+            </div>
+            
+            <div class="highlight-item">
+              <div class="highlight-icon">
+                <ion-icon name="enter-outline"></ion-icon>
+              </div>
+              <div class="highlight-content">
+                <h4>Check-in Tamu</h4>
+                <p>Catat waktu masuk tamu ke cluster</p>
+              </div>
+            </div>
+            
+            <div class="highlight-item">
+              <div class="highlight-icon">
+                <ion-icon name="exit-outline"></ion-icon>
+              </div>
+              <div class="highlight-content">
+                <h4>Check-out Tamu</h4>
+                <p>Catat waktu keluar tamu dari cluster</p>
+              </div>
+            </div>
+            
+            <div class="highlight-item">
+              <div class="highlight-icon">
+                <ion-icon name="filter-outline"></ion-icon>
+              </div>
+              <div class="highlight-content">
+                <h4>Filter & Cari</h4>
+                <p>Temukan data kunjungan dengan cepat</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="step-container">
+            <div class="step-item">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <p class="step-title">Mencatat Tamu Baru</p>
+                <p class="step-description">Klik tombol "+" di pojok kanan atas untuk menambahkan tamu baru. Isi formulir dengan data tamu termasuk nama, tujuan, dan blok yang dikunjungi.</p>
+              </div>
+            </div>
+            
+            <div class="step-item">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <p class="step-title">Mencatat Tamu Masuk</p>
+                <p class="step-description">Untuk tamu dengan status "Menunggu Menuju Cluster", klik tombol "Masuk" untuk mencatat waktu masuk tamu.</p>
+              </div>
+            </div>
+            
+            <div class="step-item">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <p class="step-title">Mencatat Tamu Keluar</p>
+                <p class="step-description">Untuk tamu dengan status "Sedang Berlangsung", klik tombol "Keluar" untuk mencatat waktu keluar tamu.</p>
+              </div>
+            </div>
+            
+            <div class="step-item">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <p class="step-title">Filter dan Pencarian</p>
+                <p class="step-description">Gunakan tab filter (Semua, Menunggu, Berlangsung, Selesai) untuk melihat tamu berdasarkan status. Gunakan kotak pencarian untuk mencari tamu berdasarkan nama atau ID kunjungan.</p>
+              </div>
+            </div>
+            
+            <div class="step-item">
+              <div class="step-number">5</div>
+              <div class="step-content">
+                <p class="step-title">Detail Kunjungan</p>
+                <p class="step-description">Klik pada kartu kunjungan atau tombol "DETAIL" untuk melihat informasi lengkap tentang kunjungan tersebut.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="tips-section">
+            <div class="tips-header">
+              <ion-icon name="bulb-outline"></ion-icon>
+              <h4>Tips Kunjungan Tamu</h4>
+            </div>
+            <ul>
+              <li>Selalu verifikasi identitas tamu sebelum mencatat kunjungan</li>
+              <li>Pastikan untuk mencatat waktu masuk dan keluar dengan akurat</li>
+              <li>Gunakan fitur filter untuk memudahkan pencarian tamu aktif</li>
+              <li>Jika tamu adalah pengunjung rutin, gunakan fitur "Tambah Akun Tamu" untuk menyimpan data mereka</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Laporan Harian Tamu Section -->
+      <div id="laporan-section" class="feature-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <ion-icon name="document-text-outline"></ion-icon>
+          </div>
+          <h2>Laporan Harian Tamu</h2>
+        </div>
+        
+        <div class="feature-description">
+          <p>Fitur Laporan Harian Tamu memungkinkan Anda untuk melihat dan menganalisis data kunjungan tamu dalam berbagai periode waktu.</p>
+          
+          <div class="image-container">
+            <img src="assets/icon/satpam/guide/laporan-preview.png" onerror="this.src='https://placehold.co/600x400/e3f2fd/0288d1?text=Tampilan+Laporan+Harian'" class="guide-image" alt="Tampilan Laporan Harian">
+            <p class="image-caption">Tampilan halaman laporan harian tamu</p>
+          </div>
+          
+          <div class="feature-highlights">
+            <div class="highlight-item">
+              <div class="highlight-icon">
+                <ion-icon name="stats-chart-outline"></ion-icon>
+              </div>
+              <div class="highlight-content">
+                <h4>Statistik Tamu</h4>
+                <p>Lihat jumlah tamu harian dan bulanan</p>
+              </div>
+            </div>
+            
+            <div class="highlight-item">
+              <div class="highlight-icon">
+                <ion-icon name="calendar-number-outline"></ion-icon>
+              </div>
+              <div class="highlight-content">
+                <h4>Laporan Periode</h4>
+                <p>Lihat data berdasarkan periode waktu</p>
+              </div>
+            </div>
+            
+            <div class="highlight-item">
+              <div class="highlight-icon">
+                <ion-icon name="download-outline"></ion-icon>
+              </div>
+              <div class="highlight-content">
+                <h4>Ekspor Data</h4>
+                <p>Unduh laporan dalam format PDF/Excel</p>
+              </div>
+            </div>
+            
+            <div class="highlight-item">
+              <div class="highlight-icon">
+                <ion-icon name="search-outline"></ion-icon>
+              </div>
+              <div class="highlight-content">
+                <h4>Pencarian</h4>
+                <p>Cari data kunjungan spesifik</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="step-container">
+            <div class="step-item">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <p class="step-title">Melihat Statistik Tamu</p>
+                <p class="step-description">Di bagian atas halaman, Anda dapat melihat statistik jumlah tamu hari ini dan bulan ini.</p>
+              </div>
+            </div>
+            
+            <div class="step-item">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <p class="step-title">Melihat Laporan Berdasarkan Periode</p>
+                <p class="step-description">Laporan dikelompokkan berdasarkan periode: Hari Ini, Kemarin, Minggu Ini, dan Bulan Ini. Klik pada setiap bagian untuk melihat daftar kunjungan dalam periode tersebut.</p>
+              </div>
+            </div>
+            
+            <div class="step-item">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <p class="step-title">Pencarian dan Filter</p>
+                <p class="step-description">Gunakan kotak pencarian untuk mencari kunjungan berdasarkan nama tamu atau ID kunjungan. Klik ikon filter untuk memfilter berdasarkan tanggal atau kriteria lainnya.</p>
+              </div>
+            </div>
+            
+            <div class="step-item">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <p class="step-title">Ekspor Laporan</p>
+                <p class="step-description">Klik tombol unduh di pojok kanan bawah untuk mengekspor laporan dalam format yang dapat dibagikan (PDF atau Excel).</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="tips-section">
+            <div class="tips-header">
+              <ion-icon name="bulb-outline"></ion-icon>
+              <h4>Tips Laporan Harian</h4>
+            </div>
+            <ul>
+              <li>Ekspor laporan secara berkala untuk dokumentasi</li>
+              <li>Gunakan filter tanggal untuk melihat laporan periode tertentu</li>
+              <li>Perhatikan tren kunjungan untuk mengidentifikasi pola</li>
+              <li>Laporan dapat digunakan untuk evaluasi keamanan berkala</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Jadwal Kerja Section -->
+      <div id="jadwal-section" class="feature-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </div>
+          <h2>Jadwal Kerja</h2>
+        </div>
+        
+        <div class="feature-description">
+          <p>Fitur Jadwal Kerja memungkinkan Anda untuk melihat dan mengelola jadwal shift kerja Anda.</p>
+          
+          <div class="image-container">
+            <img src="assets/icon/satpam/guide/jadwal-preview.png" onerror="this.src='https://placehold.co/600x400/e3f2fd/0288d1?text=Tampilan+Jadwal+Kerja'" class="guide-image" alt="Tampilan Jadwal Kerja">
+            <p class="image-caption">Tampilan halaman jadwal kerja</p>
+          </div>
+          
+          <div class="feature-highlights">
+            <div class="highlight-item">
+              <div class="highlight-icon">
+                <ion-icon name="calendar-number-outline"></ion-icon>
+              </div>
+              <div class="highlight-content">
+                <h4>Kalender Shift</h4>
+                <p>Lihat jadwal shift dalam tampilan kalender</p>
+              </div>
+            </div>
+            
+            <div class="highlight-item">
+              <div class="highlight-icon">
+                <ion-icon name="time-outline"></ion-icon>
+              </div>
+              <div class="highlight-content">
+                <h4>Detail Shift</h4>
+                <p>Lihat informasi lengkap tentang shift</p>
+              </div>
+            </div>
+            
+            <div class="highlight-item">
+              <div class="highlight-icon">
+                <ion-icon name="people-outline"></ion-icon>
+              </div>
+              <div class="highlight-content">
+                <h4>Rekan Tugas</h4>
+                <p>Lihat siapa yang bertugas bersama Anda</p>
+              </div>
+            </div>
+            
+            <div class="highlight-item">
+              <div class="highlight-icon">
+                <ion-icon name="location-outline"></ion-icon>
+              </div>
+              <div class="highlight-content">
+                <h4>Lokasi Tugas</h4>
+                <p>Informasi lokasi penempatan tugas</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="step-container">
+            <div class="step-item">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <p class="step-title">Navigasi Kalender</p>
+                <p class="step-description">Gunakan tombol panah di bagian atas untuk berpindah antar bulan. Hari dengan jadwal shift akan ditandai dengan warna sesuai jenis shift.</p>
+              </div>
+            </div>
+            
+            <div class="step-item">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <p class="step-title">Melihat Detail Shift</p>
+                <p class="step-description">Klik pada tanggal di kalender untuk melihat detail jadwal pada hari tersebut, termasuk jenis shift, waktu, dan lokasi tugas.</p>
+              </div>
+            </div>
+            
+            <div class="step-item">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <p class="step-title">Informasi Rekan Tugas</p>
+                <p class="step-description">Pada detail shift, Anda dapat melihat rekan kerja yang bertugas bersama Anda pada shift tersebut.</p>
+              </div>
+            </div>
+            
+            <div class="step-item">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <p class="step-title">Catatan Shift</p>
+                <p class="step-description">Periksa bagian catatan untuk informasi khusus atau instruksi tambahan terkait shift tersebut.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="tips-section">
+            <div class="tips-header">
+              <ion-icon name="bulb-outline"></ion-icon>
+              <h4>Tips Jadwal Kerja</h4>
+            </div>
+            <ul>
+              <li>Periksa jadwal secara rutin untuk mengetahui perubahan</li>
+              <li>Perhatikan kode warna: Pagi (biru), Siang (kuning), Malam (ungu)</li>
+              <li>Tarik layar ke bawah untuk memperbarui jadwal</li>
+              <li>Koordinasikan dengan rekan kerja jika ada perubahan mendadak</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Troubleshooting Section -->
+      <div class="feature-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <ion-icon name="help-circle-outline"></ion-icon>
+          </div>
+          <h2>Pemecahan Masalah</h2>
+        </div>
+        
+        <div class="feature-description">
+          <p>Berikut adalah solusi untuk masalah umum yang mungkin Anda temui saat menggunakan aplikasi.</p>
+          
+          <div class="faq-container">
+            <div class="faq-item">
+              <div class="faq-question">
+                <ion-icon name="help-outline"></ion-icon>
+                <p>Aplikasi tidak memuat data terbaru?</p>
+              </div>
+              <div class="faq-answer">
+                <p>Tarik layar ke bawah untuk memperbarui data. Pastikan Anda terhubung ke internet. Jika masalah berlanjut, coba keluar dan masuk kembali ke aplikasi.</p>
+              </div>
+            </div>
+            
+            <div class="faq-item">
+              <div class="faq-question">
+                <ion-icon name="help-outline"></ion-icon>
+                <p>Tidak bisa mencatat tamu masuk/keluar?</p>
+              </div>
+              <div class="faq-answer">
+                <p>Pastikan status tamu sudah benar (Menunggu untuk masuk, Berlangsung untuk keluar). Periksa koneksi internet Anda. Jika masalah berlanjut, hubungi supervisor.</p>
+              </div>
+            </div>
+            
+            <div class="faq-item">
+              <div class="faq-question">
+                <ion-icon name="help-outline"></ion-icon>
+                <p>Jadwal kerja tidak muncul?</p>
+              </div>
+              <div class="faq-answer">
+                <p>Periksa koneksi internet Anda. Pastikan Anda sudah memiliki jadwal yang ditetapkan. Jika jadwal kosong, hubungi koordinator keamanan.</p>
+              </div>
+            </div>
+            
+            <div class="faq-item">
+              <div class="faq-question">
+                <ion-icon name="help-outline"></ion-icon>
+                <p>Lupa password?</p>
+              </div>
+              <div class="faq-answer">
+                <p>Klik "Lupa Password" di halaman login atau hubungi administrator sistem untuk mereset password Anda.</p>
+              </div>
+            </div>
+            
+            <div class="faq-item">
+              <div class="faq-question">
+                <ion-icon name="help-outline"></ion-icon>
+                <p>Bagaimana cara menghubungi bantuan teknis?</p>
+              </div>
+              <div class="faq-answer">
+                <p>Gunakan fitur Chat di menu utama untuk menghubungi supervisor atau tim teknis. Alternatif, hubungi nomor bantuan di 021-XXXXXXX.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="contact-support">
+            <div class="contact-icon">
+              <ion-icon name="headset-outline"></ion-icon>
+            </div>
+            <div class="contact-info">
+              <h4>Butuh Bantuan Lebih Lanjut?</h4>
+              <p>Hubungi tim dukungan kami melalui fitur Chat atau telepon ke 021-XXXXXXX (Jam kerja: 08.00-17.00)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="guide-footer">
+        <div class="footer-logo">
+          <img src="assets/icon/logo.png" onerror="this.src='https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/svgs/solid/shield-halved.svg'" alt="Logo">
+          <p>Bukit Asri Cluster</p>
+        </div>
+        <p>Untuk informasi lebih lanjut atau bantuan, silakan hubungi supervisor melalui fitur Chat.</p>
+        <p class="version">Versi Panduan: 1.0 (Mei 2025)</p>
+      </div>
+    </div>
+  </div>
+</ion-content>

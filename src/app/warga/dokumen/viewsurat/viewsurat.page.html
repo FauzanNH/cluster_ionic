@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<ion-content [fullscreen]="true">
+  <ion-header class="ion-no-border" collapse="fade">
+    <ion-toolbar class="transparent-toolbar">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/warga/dokumen" text="" icon="arrow-back-outline"></ion-back-button>
+      </ion-buttons>
+      <ion-title>Detail Surat Pengajuan</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-down-outline"
+      refreshingSpinner="crescent"
+      pullingText="Tarik untuk refresh"
+      refreshingText="Merefresh...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div class="content-container">
+    <!-- Loading state with skeleton -->
+    <div *ngIf="isLoading">
+      <div class="loading-animation">
+        <div class="loading-circle"></div>
+        <div class="loading-circle"></div>
+        <div class="loading-circle"></div>
+      </div>
+      
+      <!-- Skeleton Status Badge -->
+      <div class="status-badge-container">
+        <div class="skeleton-badge"></div>
+      </div>
+      
+      <!-- Skeleton Surat Card -->
+      <div class="surat-card skeleton">
+        <div class="card-header">
+          <div class="skeleton-header-icon"></div>
+          <div style="width: 100%">
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line medium"></div>
+          </div>
+        </div>
+        
+        <div class="card-content">
+          <!-- Skeleton Section Title -->
+          <div class="section-title skeleton">
+            <div class="skeleton-section-icon"></div>
+            <div class="skeleton-line short"></div>
+          </div>
+          
+          <!-- Skeleton Info List -->
+          <div class="info-list">
+            <div class="info-item">
+              <div class="skeleton-line very-short"></div>
+              <div class="skeleton-line medium"></div>
+            </div>
+            <div class="info-item">
+              <div class="skeleton-line very-short"></div>
+              <div class="skeleton-line medium"></div>
+            </div>
+            <div class="info-item">
+              <div class="skeleton-line very-short"></div>
+              <div class="skeleton-line medium"></div>
+            </div>
+          </div>
+          
+          <!-- Skeleton Section Title -->
+          <div class="section-title skeleton">
+            <div class="skeleton-section-icon"></div>
+            <div class="skeleton-line short"></div>
+          </div>
+          
+          <!-- Skeleton Info List -->
+          <div class="info-list">
+            <div class="info-item">
+              <div class="skeleton-line very-short"></div>
+              <div class="skeleton-line medium"></div>
+            </div>
+            <div class="info-item">
+              <div class="skeleton-line very-short"></div>
+              <div class="skeleton-line medium"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data found state -->
+    <div *ngIf="!isLoading && surat">
+      <!-- Status Badge -->
+      <div class="status-badge-container">
+        <div class="status-badge" [ngClass]="
+          surat.status_penegerjaan === 'disetujui' ? 'status-approved' : 
+          surat.status_penegerjaan === 'sedang di validasi' ? 'status-validating' : 
+          surat.status_penegerjaan === 'ditolak' ? 'status-rejected' : 'status-pending'
+        ">
+          <ion-icon [name]="
+            surat.status_penegerjaan === 'disetujui' ? 'checkmark-circle-outline' : 
+            surat.status_penegerjaan === 'sedang di validasi' ? 'time-outline' : 
+            surat.status_penegerjaan === 'ditolak' ? 'close-circle-outline' : 'information-circle-outline'
+          "></ion-icon>
+          {{ surat.status_penegerjaan | titlecase }}
+        </div>
+      </div>
+
+      <!-- Surat Info Card -->
+      <div class="surat-card">
+        <div class="card-header">
+          <div class="header-icon">
+            <ion-icon name="document-text-outline"></ion-icon>
+          </div>
+          <div>
+            <h3 class="card-title">No. Surat: <span class="highlight">{{ surat.surat_id }}</span></h3>
+            <p class="card-subtitle">Jenis Surat: <span class="highlight">{{ surat.jenis_surat }}</span></p>
+          </div>
+        </div>
+        
+        <div class="card-content">
+          <div class="section-title">
+            <div class="section-icon">
+              <ion-icon name="person-outline"></ion-icon>
+            </div>
+            <h2>Informasi Pemohon</h2>
+          </div>
+          <div class="info-list">
+            <div class="info-item">
+              <div class="info-label">Nama</div>
+              <div class="info-value">{{ surat.nama }}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Warga ID</div>
+              <div class="info-value">{{ surat.warga_id }}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">NIK</div>
+              <div class="info-value">{{ surat.nik }}</div>
+            </div>
+          </div>
+
+          <div class="section-title">
+            <div class="section-icon">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </div>
+            <h2>Informasi Pengajuan</h2>
+          </div>
+          <div class="info-list">
+            <div class="info-item">
+              <div class="info-label">Status</div>
+              <div class="info-value status-value" [ngClass]="
+                surat.status_penegerjaan === 'disetujui' ? 'status-approved-text' : 
+                surat.status_penegerjaan === 'sedang di validasi' ? 'status-validating-text' : 
+                surat.status_penegerjaan === 'ditolak' ? 'status-rejected-text' : 'status-pending-text'
+              ">
+                <ion-icon [name]="
+                  surat.status_penegerjaan === 'disetujui' ? 'checkmark-circle-outline' : 
+                  surat.status_penegerjaan === 'sedang di validasi' ? 'time-outline' : 
+                  surat.status_penegerjaan === 'ditolak' ? 'close-circle-outline' : 'information-circle-outline'
+                "></ion-icon>
+                {{ surat.status_penegerjaan | titlecase }}
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Tanggal Pengajuan</div>
+              <div class="info-value">
+                <ion-icon name="time-outline"></ion-icon>
+                {{ surat.created_at | date:'dd/MM/yyyy HH:mm' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Pemberitahuan untuk surat yang disetujui -->
+      <div class="notification-card approved-card" *ngIf="surat.status_penegerjaan === 'disetujui'">
+        <div class="notification-icon">
+          <ion-icon name="checkmark-circle"></ion-icon>
+        </div>
+        <div class="notification-content">
+          <h3>Surat udah disetujuin RT nih !!</h3>
+          <p>Yuk ambil surat nya di kantor RT. Jangan lupa tunjukin No Surat nya ya !!</p>
+        </div>
+      </div>
+
+      <!-- Tombol Batal Pengajuan -->
+      <div class="cancel-button-container" *ngIf="surat.status_penegerjaan === 'menunggu verifikasi'">
+        <button class="cancel-button" (click)="cancelSurat()">
+          <div class="cancel-icon">
+            <ion-icon name="close-circle-outline"></ion-icon>
+          </div>
+          <span>Batal Pengajuan</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Error state -->
+    <div class="empty-state" *ngIf="!isLoading && !surat">
+      <div class="empty-icon">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+      </div>
+      <h3 class="empty-title">Data Tidak Ditemukan</h3>
+      <p class="empty-description">Maaf, data surat yang Anda cari tidak ditemukan atau telah dihapus.</p>
+      <ion-button expand="block" class="action-button" routerLink="/warga/dokumen">
+        Kembali ke Daftar Surat
+        <ion-icon name="arrow-forward-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</ion-content>
+

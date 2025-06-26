@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<ion-header [translucent]="true">
+  <ion-toolbar class="transparent-toolbar">
+    <div class="toolbar-section">
+      <div class="toolbar-left">
+        <div class="back-button" routerLink="/tamu/dashboard/kunjungan">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </div>
+      </div>
+      <div class="toolbar-title">
+        <h2>Tambah Kunjungan Baru</h2>
+      </div>
+      <div class="toolbar-right"></div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-down-outline"
+      refreshingSpinner="crescent"
+      pullingText="Tarik untuk refresh"
+      refreshingText="Merefresh...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div class="content-container">
+    <!-- Form Card -->
+    <div class="form-card">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <!-- Data Kunjungan Section -->
+        <div class="section-header">
+          <div class="section-icon visit-icon">
+            <ion-icon name="home-outline"></ion-icon>
+          </div>
+          <h3>Tiket Kunjungan</h3>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Kunjungan Ke</label>
+          <div class="search-container">
+            <div class="search-icon">
+              <ion-icon name="search-outline"></ion-icon>
+            </div>
+            <ion-searchbar formControlName="rumah_id" 
+                          placeholder="Cari rumah atau nama pemilik" 
+                          debounce="500"
+                          class="custom-searchbar"
+                          [showCancelButton]="false"
+                          [showClearButton]="'always'"
+                          animated="true">
+            </ion-searchbar>
+            <div class="search-loading" *ngIf="isSearching">
+              <ion-spinner name="crescent" size="small"></ion-spinner>
+            </div>
+          </div>
+          
+          <div class="search-results-wrapper" *ngIf="rumahOptions.length > 0">
+            <div class="search-results-header">
+              <span>Hasil Pencarian</span>
+              <small>{{ rumahOptions.length }} hasil ditemukan</small>
+            </div>
+            <ion-list class="search-results-list">
+              <ion-item *ngFor="let rumah of rumahOptions" (click)="selectRumah(rumah.rumah_id)" button detail="true" class="search-result-item">
+                <div class="avatar-container" slot="start">
+                  <ion-icon name="person"></ion-icon>
+                </div>
+                <ion-label>
+                  <h2 class="result-name">{{ rumah.nama || 'Tidak diketahui' }}</h2>
+                  <div class="result-details">
+                    <span class="result-address">
+                      <ion-icon name="home"></ion-icon>
+                      {{ rumah.alamat }} {{ rumah.blok_rt ? '(' + rumah.blok_rt + ')' : '' }}
+                    </span>
+                    <span class="result-id">
+                      <ion-icon name="key"></ion-icon>
+                      {{ rumah.rumah_id }}
+                    </span>
+                    <span class="result-phone" *ngIf="rumah.no_hp">
+                      <ion-icon name="call"></ion-icon>
+                      {{ rumah.no_hp }}
+                    </span>
+                  </div>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </div>
+          
+          <div class="field-error" *ngIf="form.get('rumah_id')?.invalid && form.get('rumah_id')?.touched">
+            Wajib dipilih
+          </div>
+          
+          <!-- Tampilkan pesan error pencarian -->
+          <div *ngIf="searchErrorMessage" class="error-message">
+            <ion-text color="danger">
+              <p>{{ searchErrorMessage }}</p>
+            </ion-text>
+          </div>
+          
+          <!-- Spinner saat loading -->
+          <div *ngIf="isSearching" class="loading-indicator">
+            <ion-spinner name="crescent" color="primary"></ion-spinner>
+            <span>Mencari alamat...</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tujuan Kunjungan</label>
+          <div class="input-wrapper textarea-wrapper">
+            <ion-textarea formControlName="tujuan_kunjungan" placeholder="Jelaskan tujuan kunjungan Anda" rows="4"></ion-textarea>
+          </div>
+          <div class="field-error" *ngIf="form.get('tujuan_kunjungan')?.invalid && form.get('tujuan_kunjungan')?.touched">
+            Wajib diisi
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <ion-button expand="block" type="submit" [disabled]="form.invalid || isLoading" class="submit-button">
+            <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+            <span *ngIf="!isLoading">
+              <ion-icon name="paper-plane-outline"></ion-icon>
+              Kirim
+            </span>
+          </ion-button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ion-content>

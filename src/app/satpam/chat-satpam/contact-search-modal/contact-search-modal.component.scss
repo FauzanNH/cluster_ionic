@@ -1,0 +1,128 @@
+:host {
+  --app-primary: #0099ff;
+  --app-background: #f5f5f5;
+  --app-item-bg: #ffffff;
+  --app-text-dark: #333333;
+  --app-text-medium: #666666;
+  --app-text-light: #8a8a8a;
+  --app-divider: #f4f4f4;
+}
+
+ion-header {
+  ion-toolbar {
+    --background: var(--app-primary);
+    --color: #ffffff;
+    
+    ion-title {
+      font-size: 18px;
+      font-weight: 500;
+    }
+    
+    ion-button {
+      --color: #ffffff;
+    }
+  }
+  
+  ion-searchbar {
+    --background: #ffffff;
+    --border-radius: 8px;
+    --box-shadow: none;
+    --placeholder-color: #666;
+    --icon-color: #666;
+    --color: #333;
+    margin: 0 8px;
+  }
+}
+
+ion-content {
+  --background: #f5f5f5;
+}
+
+.loading-container, .error-container, .empty-search, .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 20px;
+  text-align: center;
+  
+  ion-spinner {
+    margin-bottom: 16px;
+  }
+  
+  .error-icon, .empty-icon {
+    font-size: 48px;
+    color: var(--app-text-light);
+    margin-bottom: 16px;
+  }
+  
+  p {
+    color: var(--app-text-medium);
+    margin-bottom: 16px;
+  }
+}
+
+ion-list {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+.contact-item {
+  --background: var(--app-item-bg);
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --inner-padding-end: 0;
+  margin-bottom: 1px;
+  
+  ion-avatar {
+    width: 48px;
+    height: 48px;
+    margin-right: 12px;
+  }
+  
+  ion-label {
+    margin-top: 0;
+    margin-bottom: 0;
+    
+    h2 {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--app-text-dark);
+      margin-bottom: 4px;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--app-text-light);
+      font-size: 13px;
+    }
+    
+    .role-badge {
+      text-transform: capitalize;
+      font-size: 10px;
+      font-weight: 500;
+      height: 16px;
+      padding: 2px 6px;
+      --padding-end: 6px;
+      --padding-start: 6px;
+      margin-right: 6px;
+    }
+    
+    .user-id {
+      font-size: 12px;
+      color: var(--app-text-light);
+    }
+  }
+  
+  ion-icon[name="chevron-forward"] {
+    color: #cccccc;
+    font-size: 20px;
+    margin-right: 8px;
+  }
+} 

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<ion-content [fullscreen]="true">
+  <ion-header class="ion-no-border" collapse="fade">
+    <ion-toolbar class="transparent-toolbar">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/tamu/dashboard/kunjungan" text="" icon="arrow-back-outline"></ion-back-button>
+      </ion-buttons>
+      <ion-title>Detail Kunjungan</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-down-outline"
+      refreshingSpinner="crescent"
+      pullingText="Tarik untuk refresh"
+      refreshingText="Merefresh...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div class="content-container">
+    <!-- Loading state with enhanced animation -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="loading-animation">
+        <div class="loading-circle"></div>
+        <div class="loading-circle"></div>
+        <div class="loading-circle"></div>
+      </div>
+      
+      <!-- Skeleton Status Badge -->
+      <div class="status-badge-container">
+        <div class="skeleton-badge skeleton"></div>
+      </div>
+      
+      <!-- Skeleton Cards -->
+      <div class="header-card skeleton"></div>
+      <div class="detail-card skeleton" style="height: 180px; margin-top: 20px;"></div>
+      <div class="detail-card skeleton" style="height: 200px; margin-top: 20px;"></div>
+    </div>
+
+    <!-- Error Message -->
+    <div class="error-container" *ngIf="!isLoading && errorMessage">
+      <ion-icon name="alert-circle-outline" class="error-icon animated-bounce"></ion-icon>
+      <p>{{ errorMessage }}</p>
+      <ion-button (click)="loadKunjunganDetail()" expand="block" fill="outline" class="retry-button">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Coba Lagi
+      </ion-button>
+    </div>
+
+    <!-- Kunjungan Detail with animations -->
+    <div *ngIf="!isLoading && !errorMessage && kunjungan" class="detail-content animate-fade-in">
+      <!-- Status Badge -->
+      <div class="status-badge-container">
+        <div class="status-badge animate-scale-in" [ngClass]="getStatusColor(kunjungan.status_kunjungan)">
+          <ion-icon [name]="
+            kunjungan.status_kunjungan === 'Sedang Berlangsung' ? 'checkmark-circle-outline' : 
+            kunjungan.status_kunjungan === 'Menunggu Menuju Cluster' ? 'time-outline' : 
+            kunjungan.status_kunjungan === 'Meninggalkan Cluster' ? 'log-out-outline' : 'information-circle-outline'
+          "></ion-icon>
+          {{ kunjungan.status_kunjungan }}
+        </div>
+      </div>
+
+      <!-- Header Card -->
+      <div class="header-card animate-slide-up">
+        <div class="card-header">
+          <div class="header-icon pulse-animation">
+            <ion-icon name="id-card-outline"></ion-icon>
+          </div>
+          <div>
+            <h3 class="card-title">ID Kunjungan: <span class="highlight">{{ kunjungan.kunjungan_id }}</span></h3>
+            <p class="card-subtitle">Dibuat pada {{ formatDateTime(kunjungan.created_at) }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- QR Code Button -->
+      <div class="qr-button-container animate-slide-up" style="animation-delay: 0.05s" *ngIf="kunjungan.status_kunjungan !== 'Meninggalkan Cluster'">
+        <ion-button expand="block" color="primary" (click)="showQRCode()" class="qr-button">
+          <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+          Tampilkan QR Code
+        </ion-button>
+      </div>
+
+      <!-- Tamu Info -->
+      <div class="detail-card animate-slide-up" style="animation-delay: 0.1s">
+        <div class="card-header">
+          <div class="section-icon">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+          <h3>Informasi Tamu</h3>
+        </div>
+        <div class="card-content" *ngIf="kunjungan.tamu">
+          <div class="info-item">
+            <div class="info-label">ID Tamu</div>
+            <div class="info-value">{{ kunjungan.tamu.tamu_id }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Nama Tamu</div>
+            <div class="info-value highlight-text">{{ kunjungan.tamu.nama || 'Tidak tersedia' }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Nomor HP</div>
+            <div class="info-value">
+              <ion-icon name="call-outline" class="info-icon"></ion-icon>
+              {{ kunjungan.tamu.no_hp || '-' }}
+            </div>
+          </div>
+        </div>
+        <div class="card-content" *ngIf="!kunjungan.tamu">
+          <div class="empty-info">
+            <ion-icon name="alert-circle-outline" class="animated-pulse"></ion-icon>
+            <p>Data tamu tidak tersedia</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rumah Info -->
+      <div class="detail-card animate-slide-up" style="animation-delay: 0.2s">
+        <div class="card-header">
+          <div class="section-icon">
+            <ion-icon name="home-outline"></ion-icon>
+          </div>
+          <h3>Tujuan Kunjungan</h3>
+        </div>
+        <div class="card-content" *ngIf="kunjungan.rumah">
+          <div class="info-item">
+            <div class="info-label">ID Rumah</div>
+            <div class="info-value">{{ kunjungan.rumah.rumah_id }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Pemilik Rumah</div>
+            <div class="info-value highlight-text">
+              <ion-icon name="person-circle-outline" class="info-icon"></ion-icon>
+              {{ kunjungan.rumah.pemilik?.nama || 'Tidak tersedia' }}
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Alamat</div>
+            <div class="info-value">
+              <ion-icon name="location-outline" class="info-icon"></ion-icon>
+              {{ kunjungan.rumah.alamat_cluster || '-' }}
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Blok/RT</div>
+            <div class="info-value">{{ kunjungan.rumah.blok_rt || '-' }}</div>
+          </div>
+        </div>
+        <div class="card-content" *ngIf="!kunjungan.rumah">
+          <div class="empty-info">
+            <ion-icon name="alert-circle-outline" class="animated-pulse"></ion-icon>
+            <p>Data rumah tidak tersedia</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kunjungan Info -->
+      <div class="detail-card animate-slide-up" style="animation-delay: 0.3s">
+        <div class="card-header">
+          <div class="section-icon">
+            <ion-icon name="document-text-outline"></ion-icon>
+          </div>
+          <h3>Detail Kunjungan</h3>
+        </div>
+        <div class="card-content">
+          <div class="info-item">
+            <div class="info-label">Tujuan Kunjungan</div>
+            <div class="info-value highlight-text">
+              <ion-icon name="chatbox-outline" class="info-icon"></ion-icon>
+              {{ kunjungan.tujuan_kunjungan }}
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Tanggal Dibuat</div>
+            <div class="info-value">
+              <ion-icon name="calendar-outline" class="info-icon"></ion-icon>
+              {{ formatDateTime(kunjungan.created_at) }}
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Status</div>
+            <div class="info-value status-badge" [ngClass]="getStatusColor(kunjungan.status_kunjungan)">
+              <ion-icon [name]="
+                kunjungan.status_kunjungan === 'Sedang Berlangsung' ? 'checkmark-circle-outline' : 
+                kunjungan.status_kunjungan === 'Menunggu Menuju Cluster' ? 'time-outline' : 
+                kunjungan.status_kunjungan === 'Meninggalkan Cluster' ? 'log-out-outline' : 'information-circle-outline'
+              "></ion-icon>
+              {{ kunjungan.status_kunjungan }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="detail-card animate-slide-up" style="animation-delay: 0.4s">
+        <div class="card-header">
+          <div class="section-icon">
+            <ion-icon name="time-outline"></ion-icon>
+          </div>
+          <h3>Timeline Kunjungan</h3>
+        </div>
+        <div class="card-content">
+          <div class="timeline">
+            <!-- Created -->
+            <div class="timeline-item completed animate-fade-in" style="animation-delay: 0.5s">
+              <div class="timeline-icon">
+                <ion-icon name="create-outline"></ion-icon>
+              </div>
+              <div class="timeline-content">
+                <div class="timeline-title">Kunjungan Dibuat</div>
+                <div class="timeline-time">{{ formatDateTime(kunjungan.created_at) }}</div>
+              </div>
+            </div>
+            
+            <!-- Masuk -->
+            <div class="timeline-item animate-fade-in" [ngClass]="{'completed': kunjungan.waktu_masuk}" style="animation-delay: 0.6s">
+              <div class="timeline-icon">
+                <ion-icon name="log-in-outline"></ion-icon>
+              </div>
+              <div class="timeline-content">
+                <div class="timeline-title">Masuk Cluster</div>
+                <div class="timeline-time" *ngIf="kunjungan.waktu_masuk">{{ formatDateTime(kunjungan.waktu_masuk) }}</div>
+                <div class="timeline-time pending" *ngIf="!kunjungan.waktu_masuk">Belum masuk cluster</div>
+              </div>
+            </div>
+            
+            <!-- Keluar -->
+            <div class="timeline-item animate-fade-in" [ngClass]="{'completed': kunjungan.waktu_keluar}" style="animation-delay: 0.7s">
+              <div class="timeline-icon">
+                <ion-icon name="log-out-outline"></ion-icon>
+              </div>
+              <div class="timeline-content">
+                <div class="timeline-title">Keluar Cluster</div>
+                <div class="timeline-time" *ngIf="kunjungan.waktu_keluar">{{ formatDateTime(kunjungan.waktu_keluar) }}</div>
+                <div class="timeline-time pending" *ngIf="!kunjungan.waktu_keluar">Belum keluar cluster</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+<!-- QR Code Modal -->
+<ion-modal [isOpen]="isQRModalOpen" (didDismiss)="closeQRModal()">
+  <ng-template>
+    <ion-header class="ion-no-border">
+      <ion-toolbar>
+        <ion-title>QR Code Kunjungan</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeQRModal()">
+            <ion-icon name="close-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <div class="qr-container">
+        <div class="qr-code-wrapper" [ngClass]="{'expired': qrCodeExpired, 'used': qrCodeUsed}">
+          <div class="qr-overlay" *ngIf="qrCodeExpired || qrCodeUsed">
+            <div class="overlay-content">
+              <ion-icon [name]="qrCodeUsed ? 'checkmark-circle' : 'time'"></ion-icon>
+              <span>{{ qrCodeUsed ? 'QR Telah Digunakan' : 'QR Kadaluarsa' }}</span>
+              <ion-button *ngIf="!qrCodeUsed" (click)="regenerateQRCode()" color="light" fill="outline">
+                <ion-icon name="refresh-outline" slot="start"></ion-icon>
+                Buat Ulang QR
+              </ion-button>
+            </div>
+          </div>
+          <qrcode 
+            *ngIf="qrCodeData"
+            [qrdata]="qrCodeData"
+            [width]="250"
+            [errorCorrectionLevel]="'M'">
+          </qrcode>
+        </div>
+        <div class="qr-timer" [ngClass]="{'warning': qrCodeTimer <= 30}">
+          <ion-icon name="time-outline"></ion-icon>
+          <span>{{ formatTimer(qrCodeTimer) }}</span>
+        </div>
+        <div class="qr-info">
+          <h3>Tunjukkan QR Code ini kepada petugas keamanan</h3>
+          <p>Gunakan untuk masuk dan keluar dari cluster</p>
+          <p class="qr-note">QR Code berlaku selama 3 menit</p>
+          <div class="kunjungan-id">
+            <span>ID: {{ kunjungan?.kunjungan_id }}</span>
+          </div>
+        </div>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>

@@ -1,0 +1,272 @@
+<ion-header class="ion-no-border">
+  <!-- Toolbar standar (tidak dalam mode seleksi) -->
+  <ion-toolbar *ngIf="!isSelectionMode">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/satpam/chat-satpam" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <div class="chat-profile">
+        <ion-avatar>
+          <img [src]="otherUser?.avatar || 'https://ionicframework.com/docs/img/demos/avatar.svg'" alt="Avatar">
+        </ion-avatar>
+        <div class="chat-info">
+          <h2>{{ otherUser?.name || 'Loading...' }}</h2>
+          <p>{{ otherUser?.status || 'Online' }}</p>
+        </div>
+      </div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button id="chat-options-button">
+        <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+      </ion-button>
+      <ion-popover trigger="chat-options-button" [dismissOnSelect]="true">
+        <ng-template>
+          <ion-list lines="none">
+            <ion-item button (click)="blockUser()">
+              <ion-icon name="ban-outline" slot="start" color="danger"></ion-icon>
+              <ion-label>Blokir Kontak</ion-label>
+            </ion-item>
+            <ion-item button (click)="clearAllMessages()">
+              <ion-icon name="trash-outline" slot="start" color="medium"></ion-icon>
+              <ion-label>Bersihkan Chat</ion-label>
+            </ion-item>
+          </ion-list>
+        </ng-template>
+      </ion-popover>
+    </ion-buttons>
+  </ion-toolbar>
+  
+  <!-- Toolbar untuk mode seleksi -->
+  <ion-toolbar *ngIf="isSelectionMode" color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="exitSelectionMode()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ selectedMessages.length }} dipilih</ion-title>
+    <ion-buttons slot="end">
+      <ion-button *ngIf="selectedMessages.length === 1" (click)="replyToMessage(selectedMessages[0])">
+        <ion-icon slot="icon-only" name="arrow-undo-outline"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="selectedMessages.length > 0" (click)="deleteSelectedMessages()">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="selectedMessages.length === 1" (click)="presentMessageOptions(selectedMessages[0], $event)">
+        <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="chat-content" (ionScroll)="onScroll($event)">
+  <!-- Loading spinner -->
+  <div class="loading-container" *ngIf="isLoading">
+    <ion-spinner name="circular"></ion-spinner>
+    <p>Memuat pesan...</p>
+  </div>
+
+  <div class="chat-background" *ngIf="!isLoading">
+    <div class="message-container" #messageContainer>
+      <!-- Tanggal -->
+      <div class="date-divider">
+        <span>{{ messages.length > 0 ? (messages[0].created_at | date:'EEEE, d MMMM yyyy') : (now | date:'EEEE, d MMMM yyyy') }}</span>
+      </div>
+      
+      <!-- Pesan dinamis dari array messages -->
+      <div *ngFor="let message of messages" 
+           class="message-wrapper" 
+           [class.outgoing]="message.sender === 'me'" 
+           [class.incoming]="message.sender === 'other'">
+        <div class="message-bubble" 
+             [class.selected]="message.selected"
+             [class.sending]="message.sending" 
+             [class.send-failed]="message.sendFailed"
+             (click)="selectMessage(message)"
+             (press)="selectMessage(message)"
+             (contextmenu)="presentMessageOptions(message, $event)">
+          
+          <!-- Pesan yang dibalas (Reply) -->
+          <div class="reply-container" *ngIf="message.replyTo">
+            <div class="reply-indicator" [ngClass]="{'reply-me': message.replyTo.sender === 'me', 'reply-other': message.replyTo.sender === 'other'}"></div>
+            <div class="reply-content">
+              <div class="reply-sender">{{ message.replyTo.sender === 'me' ? 'Anda' : otherUser?.name }}</div>
+              
+              <!-- Preview gambar jika ada -->
+              <div class="reply-image" *ngIf="message.replyTo.image">
+                <img [src]="message.replyTo.image" alt="Reply image">
+              </div>
+              
+              <!-- Preview dokumen jika ada -->
+              <div class="reply-document" *ngIf="message.replyTo.document">
+                <ion-icon [name]="getDocumentIcon(message.replyTo.document.type)"></ion-icon>
+                <span>{{ message.replyTo.document.name }}</span>
+              </div>
+              
+              <div class="reply-text">{{ message.replyTo.text }}</div>
+            </div>
+          </div>
+          
+          <!-- Gambar jika ada -->
+          <div class="message-image" *ngIf="message.image">
+            <img [src]="message.image" alt="Image" (click)="viewImage(message.image); $event.stopPropagation()">
+          </div>
+          
+          <!-- Dokumen jika ada -->
+          <div class="document-container" *ngIf="message.document" (click)="downloadDocument(message.id); $event.stopPropagation()">
+            <div class="document-icon">
+              <ion-icon [name]="getDocumentIcon(message.document.type)"></ion-icon>
+            </div>
+            <div class="document-info">
+              <div class="document-name">{{ message.document.name }}</div>
+              <div class="document-size">{{ message.document.size }}</div>
+            </div>
+          </div>
+          
+          <!-- Teks pesan -->
+          <div class="message-text">{{ message.text }}</div>
+          
+          <!-- Waktu dan status -->
+          <div class="message-time">
+            {{ getTimeFormatted(message.created_at) }}
+            <span class="status-indicator" [innerHTML]="getMessageStatus(message)"></span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Indikator sedang mengetik -->
+      <div class="message-wrapper incoming" *ngIf="isTyping">
+        <div class="message-bubble">
+          <div class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+<!-- Footer untuk input pesan -->
+<ion-footer class="ion-no-border chat-footer keyboard-attach" *ngIf="!isSelectionMode">
+  <!-- Reply Preview -->
+  <div class="reply-preview" *ngIf="replyingTo">
+    <div class="reply-preview-content">
+      <div class="reply-preview-indicator" [ngClass]="{'reply-me': replyingTo.sender === 'me', 'reply-other': replyingTo.sender === 'other'}"></div>
+      <div class="reply-preview-info">
+        <div class="reply-preview-sender">{{ replyingTo.sender === 'me' ? 'Anda' : otherUser?.name }}</div>
+        
+        <!-- Preview gambar jika ada -->
+        <div class="reply-preview-media" *ngIf="replyingTo.image">
+          <ion-icon name="image-outline"></ion-icon>
+          <span>Foto</span>
+        </div>
+        
+        <!-- Preview dokumen jika ada -->
+        <div class="reply-preview-media" *ngIf="replyingTo.document">
+          <ion-icon [name]="getDocumentIcon(replyingTo.document.type)"></ion-icon>
+          <span>{{ replyingTo.document.name }}</span>
+        </div>
+        
+        <div class="reply-preview-text">{{ replyingTo.text }}</div>
+      </div>
+      <div class="reply-close-button">
+        <ion-button fill="clear" size="small" (click)="cancelReply()">
+          <ion-icon name="close"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Preview -->
+  <div class="attachment-preview" *ngIf="selectedImagePreview">
+    <div class="attachment-preview-content">
+      <div class="attachment-image">
+        <img [src]="selectedImagePreview" alt="Selected image">
+      </div>
+      <div class="attachment-close-button">
+        <ion-button fill="clear" size="small" (click)="removeSelectedImage()">
+          <ion-icon name="close-circle"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Document Preview -->
+  <div class="attachment-preview" *ngIf="selectedDocument">
+    <div class="attachment-preview-content">
+      <div class="attachment-document">
+        <ion-icon [name]="getDocumentIcon(selectedDocument.type)"></ion-icon>
+        <span>{{ selectedDocument.name }}</span>
+      </div>
+      <div class="attachment-close-button">
+        <ion-button fill="clear" size="small" (click)="removeSelectedDocument()">
+          <ion-icon name="close-circle"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- File upload progress -->
+  <div class="upload-progress" *ngIf="showUploadProgress">
+    <ion-progress-bar [value]="fileUploadProgress / 100"></ion-progress-bar>
+    <span>{{ fileUploadProgress }}%</span>
+  </div>
+
+  <!-- Hidden file inputs -->
+  <input type="file" #fileInput (change)="onDocumentSelected($event)" style="display: none" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt">
+  <input type="file" #imageInput (change)="onImageSelected($event)" style="display: none" accept="image/*">
+
+  <div class="input-container">
+    <div class="attachment-button">
+      <ion-button fill="clear" size="small" id="attachment-button">
+        <ion-icon slot="icon-only" name="attach-outline"></ion-icon>
+      </ion-button>
+      <ion-popover trigger="attachment-button" [dismissOnSelect]="true">
+        <ng-template>
+          <ion-list lines="none">
+            <ion-item button (click)="selectImage()">
+              <ion-icon name="image-outline" slot="start" color="primary"></ion-icon>
+              <ion-label>Gambar</ion-label>
+            </ion-item>
+            <ion-item button (click)="selectDocument()">
+              <ion-icon name="document-outline" slot="start" color="tertiary"></ion-icon>
+              <ion-label>Dokumen</ion-label>
+            </ion-item>
+          </ion-list>
+        </ng-template>
+      </ion-popover>
+    </div>
+    <div class="message-input">
+      <ion-textarea
+        placeholder="Ketik pesan..."
+        [(ngModel)]="newMessage"
+        autoGrow="true"
+        rows="1"
+        maxlength="500"
+      ></ion-textarea>
+    </div>
+    <div class="send-button">
+      <ion-button fill="clear" size="small" [disabled]="!canSendMessage()" (click)="sendMessage()">
+        <ion-icon slot="icon-only" name="paper-plane"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</ion-footer>
+
+<!-- Modal Image Viewer -->
+<ion-modal [isOpen]="isImageViewerOpen" (didDismiss)="closeImageViewer()" class="image-viewer-modal">
+  <ng-template>
+    <div class="image-viewer-header">
+      <ion-buttons>
+        <ion-button (click)="closeImageViewer()">
+          <ion-icon slot="icon-only" name="close"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </div>
+    
+    <div class="image-viewer-content">
+      <img [src]="viewerImage" alt="Image">
+    </div>
+  </ng-template>
+</ion-modal>

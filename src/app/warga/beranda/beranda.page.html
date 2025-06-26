@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-title>
+      <div class="toolbar-title"></div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-down-outline"
+      refreshingSpinner="crescent"
+      pullingText="Tarik untuk refresh"
+      refreshingText="Merefresh...">
+    </ion-refresher-content>
+  </ion-refresher>
+  
+  <div class="status-bar-spacer"></div>
+  
+  <!-- Notification Bell (Always Visible) -->
+    <div class="notification-bell">
+      <ion-icon name="notifications-outline"></ion-icon>
+      <span class="notification-badge">2</span>
+    </div>
+    
+  <!-- Header with cluster name (Always Visible) -->
+    <div class="app-header">
+      <p class="page-subtitle">Bukit Asri Cluster · Panel Warga</p>
+    </div>
+
+  <!-- Skeleton Loading View -->
+  <div class="content-wrapper" *ngIf="isLoading">
+    <!-- Profile Card Skeleton -->
+    <div class="profile-card skeleton">
+      <div class="avatar skeleton-avatar"></div>
+      <div class="user-info">
+        <div class="skeleton-line name-line"></div>
+        <div class="skeleton-line id-line"></div>
+      </div>
+      <div class="skeleton-circle"></div>
+    </div>
+
+    <!-- Stats Overview Skeleton -->
+    <div class="stats-overview">
+      <div class="stats-grid">
+        <div class="stat-card family-card skeleton">
+          <div class="stat-icon skeleton-icon"></div>
+          <div class="stat-details">
+            <div class="skeleton-line small-line"></div>
+            <div class="skeleton-line medium-line"></div>
+            <div class="skeleton-line small-line"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Visitor Overview Skeleton -->
+    <div class="visitor-overview">
+      <div class="skeleton-line title-line"></div>
+      <div class="visitor-card-enhanced skeleton">
+        <div class="visitor-content">
+          <div class="visitor-icon-enhanced skeleton-icon"></div>
+          <div class="visitor-info">
+            <div class="skeleton-line small-line"></div>
+            <div class="skeleton-line medium-line"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Document Tracking Skeleton -->
+    <div class="tracking-container skeleton">
+      <div class="skeleton-line title-line"></div>
+      
+      <div class="tracking-cards">
+        <div class="track-card skeleton">
+          <div class="track-icon skeleton-icon"></div>
+          <div class="skeleton-line count-line"></div>
+          <div class="skeleton-line label-line"></div>
+        </div>
+        
+        <div class="track-card skeleton">
+          <div class="track-icon skeleton-icon"></div>
+          <div class="skeleton-line count-line"></div>
+          <div class="skeleton-line label-line"></div>
+        </div>
+        
+        <div class="track-card skeleton">
+          <div class="track-icon skeleton-icon"></div>
+          <div class="skeleton-line count-line"></div>
+          <div class="skeleton-line label-line"></div>
+        </div>
+        
+        <div class="track-card skeleton">
+          <div class="track-icon skeleton-icon"></div>
+          <div class="skeleton-line count-line"></div>
+          <div class="skeleton-line label-line"></div>
+        </div>
+      </div>
+      
+      <div class="total-track skeleton">
+        <div class="total-icon skeleton-icon"></div>
+        <div class="total-info">
+          <div class="skeleton-line medium-line"></div>
+          <div class="skeleton-line small-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions Skeleton -->
+    <div class="actions-section">
+      <div class="skeleton-line title-line"></div>
+      
+      <div class="action-cards">
+        <div class="action-card skeleton">
+          <div class="action-icon skeleton-icon"></div>
+          <div class="skeleton-line label-line"></div>
+        </div>
+        
+        <div class="action-card skeleton">
+          <div class="action-icon skeleton-icon"></div>
+          <div class="skeleton-line label-line"></div>
+        </div>
+        
+        <div class="action-card skeleton">
+          <div class="action-icon skeleton-icon"></div>
+          <div class="skeleton-line label-line"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Actual Content -->
+  <div class="content-wrapper" *ngIf="!isLoading">
+    <!-- Profile Card -->
+    <div class="profile-card">
+      <div class="avatar">
+        <img src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/svg/person-circle-outline.svg" alt="Profile">
+      </div>
+      <div class="user-info">
+        <h2>Halo, {{ nama || 'Penghuni' }}</h2>
+        <p>ID Rumah: {{ rumah_id || '-' }}</p>
+      </div>
+      <div class="logout-button" (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-overview">
+      <div class="stats-grid">
+        <div class="stat-card family-card">
+          <div class="stat-icon">
+            <img src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/svgs/solid/users.svg" alt="Family">
+          </div>
+          <div class="stat-details">
+            <p class="stat-label">Total Anggota Keluarga</p>
+            <h2 class="stat-value">{{ totalAnggota }}</h2>
+            <p class="stat-unit">Orang/Rumah</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Visitor Overview -->
+    <div class="visitor-overview">
+      <h3 class="section-title">Informasi Tamu</h3>
+      <div class="visitor-card-enhanced">
+        <div class="visitor-content">
+          <div class="visitor-icon-enhanced">
+            <img src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/svgs/solid/user-check.svg" alt="Visitors">
+          </div>
+          <div class="visitor-info">
+            <p class="visitor-label">Total Tamu Hari Ini</p>
+            <h3 class="visitor-count">{{ totalTamuHariIni || 0 }}</h3>
+          </div>
+        </div>
+        <div class="visitor-decoration"></div>
+      </div>
+    </div>
+
+    <!-- Document Tracking -->
+    <div class="tracking-container">
+      <h3 class="section-title">Tracking Pengajuan Dokumen</h3>
+      
+      <div class="tracking-cards">
+        <div class="track-card">
+          <div class="track-icon pending">
+            <img src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/svg/time-outline.svg" alt="Pending">
+          </div>
+          <p class="track-count">{{ suratStats.menunggu_verifikasi }}</p>
+          <p class="track-label">Menunggu Verifikasi</p>
+        </div>
+        
+        <div class="track-card">
+          <div class="track-icon validating">
+            <img src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/svg/hourglass-outline.svg" alt="Validating">
+          </div>
+          <p class="track-count">{{ suratStats.sedang_divalidasi }}</p>
+          <p class="track-label">Sedang Divalidasi</p>
+        </div>
+        
+        <div class="track-card">
+          <div class="track-icon approved">
+            <img src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/svg/checkmark-circle-outline.svg" alt="Approved">
+          </div>
+          <p class="track-count">{{ suratStats.disetujui }}</p>
+          <p class="track-label">Disetujui</p>
+        </div>
+        
+        <div class="track-card">
+          <div class="track-icon rejected">
+            <img src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/svg/close-circle-outline.svg" alt="Rejected">
+          </div>
+          <p class="track-count">{{ suratStats.ditolak }}</p>
+          <p class="track-label">Ditolak</p>
+        </div>
+      </div>
+      
+      <div class="total-track">
+        <div class="total-icon">
+          <img src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/svg/list-circle-outline.svg" alt="Total">
+        </div>
+        <div class="total-info">
+          <p class="total-label">Total Pengajuan</p>
+          <p class="total-count">{{ suratStats.total }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions-section">
+      <h3 class="section-title">Layanan</h3>
+      <div class="layanan-card">
+        <div class="layanan-menu-grid">
+          <div class="layanan-menu-item" (click)="goToDokumen()">
+            <img src="assets/icon/warga/beranda/dokumen.png" alt="Surat Pengantar" width="40" height="40">
+            <p class="layanan-menu-label">Surat Pengantar</p>
+          </div>
+          <div class="layanan-menu-item" (click)="goToPengumuman()">
+            <img src="assets/icon/warga/beranda/pengumuman.png" alt="Pengumuman" width="40" height="40">
+            <p class="layanan-menu-label">Pengumuman</p>
+          </div>
+          <a class="layanan-menu-item" [routerLink]="['/warga/beranda/pengaduan']">
+            <img src="assets/icon/warga/beranda/keluhan.png" alt="Keluhan dan Aspirasi" width="40" height="40">
+            <p class="layanan-menu-label">Keluhan dan Aspirasi</p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

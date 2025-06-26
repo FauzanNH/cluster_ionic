@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/satpam/beranda/kunjungantamu" text="" icon="arrow-back-outline"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Scan Berhasil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Memuat data kunjungan...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="!isLoading && errorMessage">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+    <h2>Terjadi Kesalahan</h2>
+    <p>{{ errorMessage }}</p>
+    <ion-button expand="block" (click)="kembali()">
+      Kembali
+    </ion-button>
+  </div>
+
+  <!-- Success State -->
+  <div class="success-container" *ngIf="!isLoading && !errorMessage && kunjunganData">
+    <!-- Success Animation -->
+    <div class="success-animation">
+      <div class="checkmark-circle">
+        <div class="checkmark draw"></div>
+      </div>
+    </div>
+
+    <!-- Success Message -->
+    <div class="success-message">
+      <h1>Scan Berhasil!</h1>
+      <p *ngIf="tipe === 'masuk'">Tamu berhasil diproses masuk</p>
+      <p *ngIf="tipe === 'keluar'">Tamu berhasil diproses keluar</p>
+    </div>
+
+    <!-- Kunjungan Info -->
+    <div class="kunjungan-info">
+      <div class="info-card">
+        <div class="info-header">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          <h2>Informasi Kunjungan</h2>
+        </div>
+        <div class="info-content">
+          <div class="info-item">
+            <span class="label">ID Kunjungan:</span>
+            <span class="value">{{ kunjunganData.kunjungan_id }}</span>
+          </div>
+          <div class="info-item" *ngIf="kunjunganData.tamu?.detailTamu">
+            <span class="label">Nama Tamu:</span>
+            <span class="value">{{ kunjunganData.tamu?.detailTamu?.nama || '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Status:</span>
+            <span class="value status" [ngClass]="{
+              'status-active': kunjunganData.status_kunjungan === 'Sedang Berlangsung',
+              'status-waiting': kunjunganData.status_kunjungan === 'Menunggu Menuju Cluster',
+              'status-completed': kunjunganData.status_kunjungan === 'Meninggalkan Cluster'
+            }">{{ kunjunganData.status_kunjungan }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <ion-button expand="block" color="primary" (click)="lihatDetail()">
+        <ion-icon name="eye-outline" slot="start"></ion-icon>
+        Lihat Detail Kunjungan
+      </ion-button>
+      <ion-button expand="block" fill="outline" (click)="kembali()">
+        <ion-icon name="home-outline" slot="start"></ion-icon>
+        Kembali ke Beranda
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

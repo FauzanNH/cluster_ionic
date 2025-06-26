@@ -1,0 +1,30 @@
+<div class="fingerprint-modal-container">
+  <div class="fingerprint-modal-content">
+    <div class="modal-header">
+      <div class="header-icon">
+        <ion-icon name="finger-print"></ion-icon>
+      </div>
+      <h2>Autentikasi Sidik Jari</h2>
+      <p>Pindai sidik jari Anda untuk login</p>
+    </div>
+    
+    <div class="fingerprint-animation" [class.scanning]="isVerifying">
+      <div class="fingerprint-icon">
+        <ion-icon name="finger-print"></ion-icon>
+      </div>
+    </div>
+    
+    <div class="error-message" *ngIf="showError">
+      <ion-icon name="alert-circle"></ion-icon>
+      <span>{{ errorMessage }}</span>
+    </div>
+    
+    <div class="action-buttons">
+      <button class="btn-cancel" (click)="usePinInstead()">Gunakan PIN</button>
+      <button class="btn-verify" [disabled]="isVerifying" (click)="verifyFingerprint()">
+        <span *ngIf="!isVerifying">Coba Lagi</span>
+        <span *ngIf="isVerifying">Memverifikasi...</span>
+      </button>
+    </div>
+  </div>
+</div> 

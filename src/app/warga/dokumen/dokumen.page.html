@@ -1,0 +1,133 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-down-outline"
+      refreshingSpinner="crescent"
+      pullingText="Tarik untuk refresh"
+      refreshingText="Merefresh...">
+    </ion-refresher-content>
+  </ion-refresher>
+  
+  <!-- Fixed Top Section -->
+  <div class="fixed-top-section">
+    <!-- Combined Toolbar & Search Card -->
+    <div class="combined-card">
+      <div class="toolbar-section">
+        <div class="toolbar-left">
+          <div class="back-button" (click)="goBack()">
+            <ion-icon name="arrow-back-outline"></ion-icon>
+          </div>
+        </div>
+        <div class="toolbar-title">
+          <h2>Surat Pengajuan RT</h2>
+        </div>
+        <div class="toolbar-right">
+          <!-- This is now hidden via CSS -->
+          <div class="add-button-toolbar">
+            <ion-icon name="add-outline"></ion-icon>
+          </div>
+        </div>
+      </div>
+      
+      <div class="search-section">
+        <div class="search-wrapper">
+          <ion-icon name="search-outline" class="search-icon"></ion-icon>
+          <input type="text" placeholder="Temukan Riwayat Pengajuan" class="search-input" (input)="onSearchChange($event)">
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Card with Riwayat Header -->
+    <div class="filter-card">
+      <div class="filter-header">
+        <div class="header-title">
+          <h2>Riwayat Pengajuan</h2>
+        </div>
+        <div class="counter" *ngIf="!isEmpty && !isLoading">
+          {{ filteredDokumen.length }} dokumen
+        </div>
+      </div>
+
+      <div class="filter-title">Filter Jenis Surat:</div>
+      <div class="filter-chips-container">
+        <div class="filter-chip" 
+             [ngClass]="{'active': activeFilter === 'semua'}" 
+             (click)="filterByType('semua')">
+          Semua
+        </div>
+        <div class="filter-chip" 
+             [ngClass]="{'active': activeFilter === 'Surat Domisili'}" 
+             (click)="filterByType('Surat Domisili')">
+          Domisili
+        </div>
+        <div class="filter-chip" 
+             [ngClass]="{'active': activeFilter === 'Surat Pengantar'}" 
+             (click)="filterByType('Surat Pengantar')">
+          Pengantar
+        </div>
+        <div class="filter-chip" 
+             [ngClass]="{'active': activeFilter === 'Surat Izin Keramaian'}" 
+             (click)="filterByType('Surat Izin Keramaian')">
+          Izin Keramaian
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading indicator -->
+  <div class="loading-container" *ngIf="isLoading">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Memuat data</p>
+  </div>
+
+  <!-- Empty state -->
+  <div class="empty-state" *ngIf="isEmpty && !isLoading">
+    <div class="empty-icon">
+      <ion-icon name="document-text-outline"></ion-icon>
+    </div>
+    <h3 class="empty-title">Tidak ada dokumen</h3>
+    <p class="empty-description">Anda belum memiliki riwayat pengajuan dokumen</p>
+  </div>
+
+  <!-- Scrollable Document list -->
+  <div class="dokumen-list-container" *ngIf="!isEmpty && !isLoading">
+    <div class="dokumen-card" *ngFor="let dokumen of filteredDokumen" (click)="lihatDetail(dokumen.surat_id)">
+      <div class="card-header">
+        <div class="kategori-label">{{ dokumen.jenis_surat }}</div>
+        <div class="status-badge"
+              [ngClass]="{
+                'status-approved': dokumen.status_penegerjaan === 'disetujui',
+                'status-validating': dokumen.status_penegerjaan === 'sedang di validasi',
+                'status-rejected': dokumen.status_penegerjaan === 'ditolak',
+                'status-pending': dokumen.status_penegerjaan === 'menunggu verifikasi'
+              }">
+          {{ dokumen.status_penegerjaan | titlecase }}
+        </div>
+      </div>
+      <h3 class="dokumen-title">No. Surat: {{ dokumen.surat_id }}</h3>
+      <p class="dokumen-deskripsi" *ngIf="dokumen.keperluan_keramaian">Keperluan: {{ dokumen.keperluan_keramaian }}</p>
+      <div class="card-footer">
+        <div class="tanggal">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <span>{{ dokumen.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="view-detail">
+          <span>Lihat Detail</span>
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- FAB Button -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="tambahDokumen()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

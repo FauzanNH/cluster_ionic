@@ -1,0 +1,190 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <!-- Fixed Top Section -->
+  <div class="fixed-top-section">
+    <!-- Combined Toolbar & Title Card -->
+    <div class="combined-card">
+      <div class="toolbar-section">
+        <div class="toolbar-left">
+          <div class="back-button" (click)="goBack()">
+            <ion-icon name="arrow-back-outline"></ion-icon>
+          </div>
+        </div>
+        <div class="toolbar-title">
+          <h2>Detail Pengaduan</h2>
+        </div>
+        <div class="toolbar-right">
+          <div class="placeholder"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading indicator -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="loading-animation">
+      <div class="loading-circle"></div>
+      <div class="loading-circle"></div>
+      <div class="loading-circle"></div>
+    </div>
+    
+    <!-- Skeleton Loading -->
+    <div class="skeleton-container">
+      <!-- Skeleton Info Card -->
+      <div class="info-card skeleton">
+        <div class="card-header">
+          <div class="skeleton-label"></div>
+          <div class="skeleton-badge"></div>
+        </div>
+        <div class="ticket-info">
+          <div class="info-row">
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line medium"></div>
+          </div>
+          <div class="info-row">
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line medium"></div>
+          </div>
+          <div class="info-row">
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line medium"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Skeleton Detail Card -->
+      <div class="detail-card skeleton">
+        <div class="skeleton-line short"></div>
+        <div class="skeleton-line full"></div>
+        <div class="skeleton-line full"></div>
+        <div class="skeleton-line medium"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Container -->
+  <div class="content-container" *ngIf="!isLoading && pengaduan">
+    <!-- Ticket Header Banner -->
+    <div class="ticket-header-banner">
+      <div class="ticket-header-content">
+        <div class="ticket-id">
+          <ion-icon name="ticket-outline"></ion-icon>
+          <span>{{ pengaduan.pengaduan_id }}</span>
+        </div>
+        <div class="ticket-date">{{ pengaduan.formatted_date }}</div>
+      </div>
+    </div>
+
+    <!-- Jenis & Status -->
+    <div class="status-panel">
+      <div class="status-panel-item">
+        <div class="status-panel-label">Jenis</div>
+        <div class="kategori-label" [ngClass]="{
+          'keluhan-label': pengaduan.jenis_pengaduan === 'Keluhan',
+          'gangguan-label': pengaduan.jenis_pengaduan === 'Gangguan',
+          'aspirasi-label': pengaduan.jenis_pengaduan === 'Aspirasi'
+        }">{{ pengaduan.jenis_pengaduan }}</div>
+      </div>
+      <div class="status-panel-item">
+        <div class="status-panel-label">Status</div>
+        <div class="status-badge"
+              [ngClass]="{
+                'status-approved': pengaduan.status_pengaduan === 'Tersampaikan',
+                'status-validating': pengaduan.status_pengaduan === 'Dibaca RT'
+              }">
+          <ion-icon [name]="pengaduan.status_pengaduan === 'Tersampaikan' ? 'checkmark-circle-outline' : 'eye-outline'"></ion-icon>
+          {{ pengaduan.status_pengaduan }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Pelapor -->
+    <div class="pelapor-card">
+      <div class="pelapor-avatar">
+        <ion-icon name="person"></ion-icon>
+      </div>
+      <div class="pelapor-info">
+        <div class="pelapor-name">{{ pengaduan.nama_user || 'Tidak diketahui' }}</div>
+        <div class="pelapor-label">Pelapor</div>
+      </div>
+    </div>
+
+    <!-- Detail Pengaduan Card -->
+    <div class="detail-card modern-card">
+      <h3 class="section-title">
+        <ion-icon name="chatbubble-outline"></ion-icon>
+        Detail Pengaduan
+      </h3>
+      <p class="detail-text">{{ pengaduan.detail_pengaduan }}</p>
+    </div>
+
+    <!-- Remark Card (only if status is 'Dibaca RT' and remark exists) -->
+    <div class="remark-card modern-card" *ngIf="pengaduan.status_pengaduan === 'Dibaca RT' && pengaduan.remark">
+      <h3 class="section-title">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        Respon Jawaban RT
+      </h3>
+      <p class="remark-text">{{ pengaduan.remark }}</p>
+    </div>
+
+    <!-- Lokasi Card (if available) -->
+    <div class="lokasi-card modern-card" *ngIf="pengaduan.lokasi">
+      <h3 class="section-title">
+        <ion-icon name="location-outline"></ion-icon>
+        Lokasi
+      </h3>
+      <p class="lokasi-text">{{ pengaduan.lokasi }}</p>
+    </div>
+
+    <!-- Dokumen Pendukung Card -->
+    <div class="dokumen-card modern-card" *ngIf="dokumen1Url || dokumen2Url">
+      <h3 class="section-title">
+        <ion-icon name="document-attach-outline"></ion-icon>
+        Dokumen Pendukung
+      </h3>
+      
+      <div class="dokumen-grid">
+        <!-- Dokumen 1 -->
+        <div class="dokumen-grid-item" *ngIf="dokumen1Url" (click)="openDocument(dokumen1Url)">
+          <div class="dokumen-grid-icon" [class.is-pdf]="pengaduan.dokumen1.includes('.pdf')" [class.is-image]="!pengaduan.dokumen1.includes('.pdf')">
+            <ion-icon [name]="pengaduan.dokumen1.includes('.pdf') ? 'document-text-outline' : 'image-outline'"></ion-icon>
+          </div>
+          <div class="dokumen-grid-info">
+            <div class="dokumen-grid-name">Dokumen 1</div>
+            <div class="dokumen-grid-type">{{ pengaduan.dokumen1.split('.').pop().toUpperCase() }}</div>
+          </div>
+        </div>
+
+        <!-- Dokumen 2 -->
+        <div class="dokumen-grid-item" *ngIf="dokumen2Url" (click)="openDocument(dokumen2Url)">
+          <div class="dokumen-grid-icon" [class.is-pdf]="pengaduan.dokumen2.includes('.pdf')" [class.is-image]="!pengaduan.dokumen2.includes('.pdf')">
+            <ion-icon [name]="pengaduan.dokumen2.includes('.pdf') ? 'document-text-outline' : 'image-outline'"></ion-icon>
+          </div>
+          <div class="dokumen-grid-info">
+            <div class="dokumen-grid-name">Dokumen 2</div>
+            <div class="dokumen-grid-type">{{ pengaduan.dokumen2.split('.').pop().toUpperCase() }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Tombol Batal Ajukan di bawah -->
+    <button class="cancel-button" *ngIf="pengaduan.status_pengaduan === 'Tersampaikan'" (click)="batalAjukanPengaduan()">
+      <ion-icon name="close-circle-outline"></ion-icon>
+      <span>Batal Ajukan</span>
+    </button>
+  </div>
+</ion-content>
+
+<!-- Modal Preview Image -->
+<div class="image-preview-modal" [ngClass]="{'show': isModalOpen}" (click)="closeImageModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-close-button" (click)="closeImageModal($event)">
+      <ion-icon name="close-circle"></ion-icon>
+    </div>
+    <img [src]="currentImageUrl" alt="Dokumen Pengaduan" class="preview-image" *ngIf="currentImageUrl">
+  </div>
+</div>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<ion-header [translucent]="true">
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-down-outline"
+      refreshingSpinner="crescent"
+      pullingText="Tarik untuk refresh"
+      refreshingText="Merefresh...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div class="content-container">
+    <!-- Custom header with back button -->
+    <div class="toolbar-section">
+      <div class="toolbar-left">
+        <div class="back-button" routerLink="/warga/dokumen">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </div>
+      </div>
+      <div class="toolbar-title">
+        <h2>Pengajuan Surat Baru</h2>
+      </div>
+      <div class="toolbar-right"></div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="form-card">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <!-- Data Pemohon Section -->
+        <div class="section-header">
+          <div class="section-icon">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+          <h3>Data Pemohon</h3>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Nama Yang Bersangkutan</label>
+          <div class="select-wrapper">
+            <ion-select formControlName="warga_id" interface="popover" placeholder="Pilih Warga">
+              <ion-select-option *ngFor="let w of wargaOptions" [value]="w.warga_id">{{w.nama}} ({{w.warga_id}})</ion-select-option>
+            </ion-select>
+          </div>
+          <div class="field-error" *ngIf="form.get('warga_id')?.invalid && form.get('warga_id')?.touched">
+            Wajib dipilih
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Jenis Surat</label>
+          <div class="select-wrapper">
+            <ion-select formControlName="jenis_surat" interface="alert" placeholder="Pilih Jenis Surat" [interfaceOptions]="{ header: 'Pilih salah satu' }">
+              <ion-select-option value="Surat Domisili">Surat Domisili</ion-select-option>
+              <ion-select-option value="Surat Pengantar Nikah">Surat Pengantar Nikah</ion-select-option>
+              <ion-select-option value="Surat Izin Keramaian">Surat Izin Keramaian</ion-select-option>
+            </ion-select>
+          </div>
+          <div class="field-error" *ngIf="form.get('jenis_surat')?.invalid && form.get('jenis_surat')?.touched">
+            Wajib dipilih
+          </div>
+        </div>
+
+        <!-- Keramaian Details Section (conditionally shown) -->
+        <div *ngIf="isKeramaian">
+          <div class="section-header">
+            <div class="section-icon keramaian-icon">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </div>
+            <h3>Detail Keramaian</h3>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Keperluan Keramaian</label>
+            <div class="input-wrapper">
+              <ion-input formControlName="keperluan_keramaian" placeholder="Misalnya: Pernikahan, Syukuran, dll"></ion-input>
+            </div>
+            <div class="field-error" *ngIf="form.get('keperluan_keramaian')?.invalid && form.get('keperluan_keramaian')?.touched">
+              Wajib diisi
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tempat Keramaian</label>
+            <div class="input-wrapper">
+              <ion-input formControlName="tempat_keramaian" placeholder="Alamat lengkap tempat acara"></ion-input>
+            </div>
+            <div class="field-error" *ngIf="form.get('tempat_keramaian')?.invalid && form.get('tempat_keramaian')?.touched">
+              Wajib diisi
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half">
+              <label class="form-label">Tanggal Keramaian</label>
+              <div class="input-wrapper date-input">
+                <ion-icon name="calendar-outline"></ion-icon>
+                <ion-input type="date" formControlName="tanggal_keramaian"></ion-input>
+              </div>
+              <div class="field-error" *ngIf="form.get('tanggal_keramaian')?.invalid && form.get('tanggal_keramaian')?.touched">
+                Wajib diisi
+              </div>
+            </div>
+
+            <div class="form-group half">
+              <label class="form-label">Jam Keramaian</label>
+              <div class="input-wrapper time-input">
+                <ion-icon name="time-outline"></ion-icon>
+                <ion-input type="time" formControlName="jam_keramaian"></ion-input>
+              </div>
+              <div class="field-error" *ngIf="form.get('jam_keramaian')?.invalid && form.get('jam_keramaian')?.touched">
+                Wajib diisi
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dokumen Section -->
+        <div class="section-header">
+          <div class="section-icon document-icon">
+            <ion-icon name="document-outline"></ion-icon>
+          </div>
+          <h3>Dokumen Pendukung</h3>
+        </div>
+
+        <div class="document-section">
+          <div class="upload-item">
+            <div class="upload-label">
+              <ion-icon name="id-card-outline"></ion-icon>
+              <span>Foto KTP <span class="required">*</span></span>
+            </div>
+            <div class="upload-button" [class.has-file]="fileMap['foto_ktp']">
+              <ion-button size="default" expand="block" fill="outline" (click)="presentMediaOptions('foto_ktp')">
+                <ion-icon name="cloud-upload-outline"></ion-icon>
+                Pilih / Ambil File
+              </ion-button>
+              <span *ngIf="fileMap['foto_ktp']">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                {{ getFileName('foto_ktp') }}
+              </span>
+            </div>
+          </div>
+
+          <div class="upload-item">
+            <div class="upload-label">
+              <ion-icon name="people-outline"></ion-icon>
+              <span>Kartu Keluarga <span class="required">*</span></span>
+            </div>
+            <div class="upload-button" [class.has-file]="fileMap['kartu_keluarga']">
+              <ion-button size="default" expand="block" fill="outline" (click)="presentMediaOptions('kartu_keluarga')">
+                <ion-icon name="cloud-upload-outline"></ion-icon>
+                Pilih / Ambil File
+              </ion-button>
+              <span *ngIf="fileMap['kartu_keluarga']">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                {{ getFileName('kartu_keluarga') }}
+              </span>
+            </div>
+          </div>
+
+          <div class="upload-item">
+            <div class="upload-label">
+              <ion-icon name="document-text-outline"></ion-icon>
+              <span>Dokumen Pendukung 1</span>
+            </div>
+            <div class="upload-button" [class.has-file]="fileMap['dokumen_lainnya1']">
+              <ion-button size="default" expand="block" fill="outline" (click)="presentMediaOptions('dokumen_lainnya1')">
+                <ion-icon name="cloud-upload-outline"></ion-icon>
+                Pilih / Ambil File
+              </ion-button>
+              <span *ngIf="fileMap['dokumen_lainnya1']">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                {{ getFileName('dokumen_lainnya1') }}
+              </span>
+            </div>
+          </div>
+
+          <div class="upload-item">
+            <div class="upload-label">
+              <ion-icon name="document-text-outline"></ion-icon>
+              <span>Dokumen Pendukung 2</span>
+            </div>
+            <div class="upload-button" [class.has-file]="fileMap['dokumen_lainnya2']">
+              <ion-button size="default" expand="block" fill="outline" (click)="presentMediaOptions('dokumen_lainnya2')">
+                <ion-icon name="cloud-upload-outline"></ion-icon>
+                Pilih / Ambil File
+              </ion-button>
+              <span *ngIf="fileMap['dokumen_lainnya2']">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                {{ getFileName('dokumen_lainnya2') }}
+              </span>
+            </div>
+          </div>
+
+          <div class="upload-note">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            <p>File yang diunggah dapat berupa gambar atau PDF dengan ukuran maksimal 5MB</p>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <ion-button expand="block" type="submit" [disabled]="form.invalid || isLoading || !fileMap['foto_ktp'] || !fileMap['kartu_keluarga']" class="submit-button">
+            <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+            <span *ngIf="!isLoading">
+              <ion-icon name="paper-plane-outline"></ion-icon>
+              Ajukan Surat
+            </span>
+          </ion-button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-title>
+      <div class="toolbar-title"></div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-down-outline"
+      refreshingSpinner="crescent"
+      pullingText="Tarik untuk refresh"
+      refreshingText="Merefresh...">
+    </ion-refresher-content>
+  </ion-refresher>
+  
+  <div class="status-bar-spacer"></div>
+  
+  <!-- Notification Bell (Always Visible) -->
+    <div class="notification-bell">
+      <ion-icon name="notifications-outline"></ion-icon>
+      <span class="notification-badge">2</span>
+    </div>
+    
+  <!-- Header with cluster name (Always Visible) -->
+    <div class="app-header">
+      <p class="page-subtitle">Bukit Asri Cluster · Panel Satpam</p>
+    </div>
+
+  <!-- Skeleton Loading View -->
+  <div class="content-wrapper" *ngIf="isLoading">
+    <!-- Profile Card Skeleton -->
+    <div class="profile-card skeleton">
+      <div class="avatar skeleton-avatar"></div>
+      <div class="user-info">
+        <div class="skeleton-line name-line"></div>
+        <div class="skeleton-line id-line"></div>
+      </div>
+      <div class="skeleton-circle"></div>
+    </div>
+
+    <!-- Welcome Message Skeleton -->
+    <div class="welcome-message skeleton">
+      <div class="skeleton-line medium-line"></div>
+    </div>
+
+    <!-- Stats Overview Skeleton -->
+    <div class="visitor-overview">
+      <div class="skeleton-line title-line"></div>
+      <div class="visitor-cards-grid">
+        <div class="visitor-card-enhanced skeleton">
+          <div class="visitor-content">
+            <div class="visitor-icon-enhanced skeleton-icon"></div>
+            <div class="visitor-info">
+              <div class="skeleton-line small-line"></div>
+              <div class="skeleton-line medium-line"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="visitor-card-enhanced skeleton">
+          <div class="visitor-content">
+            <div class="visitor-icon-enhanced skeleton-icon"></div>
+            <div class="visitor-info">
+              <div class="skeleton-line small-line"></div>
+              <div class="skeleton-line medium-line"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions Skeleton -->
+    <div class="actions-section">
+      <div class="skeleton-line title-line"></div>
+      
+      <div class="menu-card skeleton">
+        <div class="menu-grid">
+          <div class="menu-item skeleton">
+            <div class="menu-icon skeleton-icon"></div>
+            <div class="skeleton-line label-line"></div>
+          </div>
+          
+          <div class="menu-item skeleton">
+            <div class="menu-icon skeleton-icon"></div>
+            <div class="skeleton-line label-line"></div>
+          </div>
+          
+          <div class="menu-item skeleton">
+            <div class="menu-icon skeleton-icon"></div>
+            <div class="skeleton-line label-line"></div>
+          </div>
+          
+          <div class="menu-item skeleton">
+            <div class="menu-icon skeleton-icon"></div>
+            <div class="skeleton-line label-line"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity Skeleton -->
+    <div class="recent-activity">
+      <div class="skeleton-line title-line"></div>
+      <div class="activity-list skeleton">
+        <div class="activity-item">
+          <div class="activity-icon skeleton-icon"></div>
+          <div class="activity-info">
+            <div class="skeleton-line small-line"></div>
+            <div class="skeleton-line medium-line"></div>
+            <div class="skeleton-line small-line"></div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon skeleton-icon"></div>
+          <div class="activity-info">
+            <div class="skeleton-line small-line"></div>
+            <div class="skeleton-line medium-line"></div>
+            <div class="skeleton-line small-line"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Actual Content -->
+  <div class="content-wrapper" *ngIf="!isLoading">
+    <!-- Profile Card -->
+    <div class="profile-card purple-card">
+      <div class="avatar">
+        <img src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/svg/person-circle-outline.svg" alt="Profile">
+      </div>
+      <div class="user-info">
+        <h2>Halo, {{ namaSatpam || 'Petugas' }}</h2>
+        <p>ID Pegawai: {{ noKep || 'SP-0000' }}</p>
+      </div>
+      <div class="logout-button" (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Visitor Overview -->
+    <div class="visitor-overview">
+      <h3 class="section-title">Informasi Tamu</h3>
+      <div class="visitor-cards-grid">
+        <div class="visitor-card-enhanced">
+          <div class="visitor-content">
+            <div class="visitor-icon-enhanced">
+              <ion-icon name="person-add-outline"></ion-icon>
+            </div>
+            <div class="visitor-info">
+              <p class="visitor-label">Total Tamu Hari Ini</p>
+              <h3 class="visitor-count">{{ totalTamuHariIni || 0 }}</h3>
+            </div>
+          </div>
+          <div class="visitor-decoration"></div>
+        </div>
+        
+        <div class="visitor-card-enhanced">
+          <div class="visitor-content">
+            <div class="visitor-icon-enhanced active-visitor">
+              <ion-icon name="people-outline"></ion-icon>
+            </div>
+            <div class="visitor-info">
+              <p class="visitor-label">Tamu Sedang Berkunjung</p>
+              <h3 class="visitor-count">{{ tamuBerkunjung || 0 }}</h3>
+            </div>
+          </div>
+          <div class="visitor-decoration"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions-section">
+      <h3 class="section-title">Layanan</h3>
+      
+      <div class="menu-card">
+        <div class="menu-grid">
+          <div class="menu-item" (click)="goToCheckinTamu()">
+            <div class="menu-icon checkin-icon">
+              <img src="assets/icon/satpam/beranda/check-in.png" alt="Check-in Tamu" width="40" height="40">
+            </div>
+            <p class="menu-label">Kunjungan Tamu</p>
+          </div>
+
+          <div class="menu-item" [routerLink]="['/satpam/beranda/kunjungantamu/pilih-scan']">
+            <div class="menu-icon scanqr-icon">
+              <img src="https://cdn.jsdelivr.net/gh/ionic-team/ionicons@5.5.2/src/svg/qr-code-outline.svg" alt="Scan QR" width="40" height="40">
+            </div>
+            <p class="menu-label">Scan QR Tamu</p>
+          </div>
+          
+          <div class="menu-item" (click)="goToLaporanTamu()">
+            <div class="menu-icon report-icon">
+              <img src="assets/icon/satpam/beranda/laporan.gif" alt="Laporan Tamu" width="40" height="40">
+            </div>
+            <p class="menu-label">Laporan Harian Tamu</p>
+          </div>
+          
+          <div class="menu-item" (click)="goToJadwalKerja()">
+            <div class="menu-icon schedule-icon">
+              <img src="assets/icon/satpam/beranda/jadwal-kerja.png" alt="Jadwal Kerja" width="40" height="40">
+            </div>
+            <p class="menu-label">Jadwal Kerja</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="recent-activity">
+      <h3 class="section-title">Riwayat Aktivitas</h3>
+      <div class="activity-list">
+        <div class="activity-item" *ngFor="let activity of recentActivities">
+          <div class="activity-icon" [ngClass]="{
+              'exit': activity.type === 'check-out',
+              'password': activity.type === 'password',
+              'other': activity.type === 'other'
+            }">
+            <ion-icon *ngIf="activity.type === 'check-in'" name="enter-outline"></ion-icon>
+            <ion-icon *ngIf="activity.type === 'check-out'" name="exit-outline"></ion-icon>
+            <ion-icon *ngIf="activity.type === 'password'" name="lock-closed-outline"></ion-icon>
+            <ion-icon *ngIf="activity.type === 'other'" name="notifications-outline"></ion-icon>
+          </div>
+          <div class="activity-info">
+            <p class="activity-title">
+              <ng-container *ngIf="activity.judul">{{ activity.judul }}</ng-container>
+              <ng-container *ngIf="!activity.judul && activity.type === 'check-in'">Tamu Check-in</ng-container>
+              <ng-container *ngIf="!activity.judul && activity.type === 'check-out'">Tamu Check-out</ng-container>
+            </p>
+            <p class="activity-desc">
+              <ng-container *ngIf="activity.sub_judul">{{ activity.sub_judul }}</ng-container>
+              <ng-container *ngIf="!activity.sub_judul && activity.name && activity.location">
+                {{ activity.name }} - {{ activity.location }}
+              </ng-container>
+            </p>
+            <p class="activity-time">{{ activity.time }}</p>
+          </div>
+        </div>
+
+        <div class="empty-activity" *ngIf="recentActivities.length === 0">
+          <p>Belum ada aktivitas terbaru</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
+

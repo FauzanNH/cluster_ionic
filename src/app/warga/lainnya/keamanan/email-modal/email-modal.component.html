@@ -1,0 +1,123 @@
+<!-- Email Modal -->
+<ion-header class="blue-header ion-no-border">
+  <ion-toolbar class="blue-toolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="dismissModal()" class="close-button">
+        <ion-icon name="close-outline" color="light"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Email</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="modal-content">
+    <!-- Current Email Card -->
+    <div class="email-card current-email">
+      <div class="card-header">
+        <div class="header-icon blue-icon">
+          <ion-icon name="mail-outline"></ion-icon>
+        </div>
+        <h2>Email Saat Ini</h2>
+      </div>
+      <div class="email-display">
+        <ng-container *ngIf="!isLoadingEmail; else loadingEmailTpl">
+          <ion-text class="current-email">{{ currentEmail }}</ion-text>
+          <div class="verification-badge">Terverifikasi</div>
+        </ng-container>
+        <ng-template #loadingEmailTpl>
+          <div class="loading-container">
+            <ion-spinner name="circles"></ion-spinner>
+            <ion-text color="medium">Memuat email...</ion-text>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Update Email Form -->
+    <div class="email-card update-email">
+      <div class="card-header">
+        <div class="header-icon blue-icon">
+          <ion-icon name="create-outline"></ion-icon>
+        </div>
+        <h2>Ubah Email</h2>
+      </div>
+      
+      <form *ngIf="!showVerification" class="email-form">
+        <div class="input-label">Email Baru</div>
+        <div class="email-input-wrapper">
+          <ion-input type="email" class="email-input" [(ngModel)]="newEmail" name="newEmail" required></ion-input>
+        </div>
+        
+        <ion-note color="medium" class="info-note">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          pastikan email yang anda masukkan benar
+        </ion-note>
+        
+        <ion-button expand="block" (click)="requestOTPEmail()" [disabled]="!newEmail || isRequestingOTP">
+          <ng-container *ngIf="!isRequestingOTP; else loadingOtpBtn">UBAH EMAIL</ng-container>
+          <ng-template #loadingOtpBtn>
+            <ion-spinner name="dots"></ion-spinner> MENGIRIM...
+          </ng-template>
+        </ion-button>
+      </form>
+
+      <!-- OTP Verification Section -->
+      <div *ngIf="showVerification" class="verification-card">
+        <div class="card-header">
+          <div class="header-icon blue-icon">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+          </div>
+          <h2>Verifikasi Email</h2>
+        </div>
+        <div class="verification-content">
+          <p class="verification-info">
+            Kode 6-digit dikirim ke <strong>{{ newEmail }}</strong>
+          </p>
+          <div class="otp-inputs">
+            <input type="text" maxlength="1" inputmode="numeric" class="otp-input" [(ngModel)]="otpValues[0]" name="eotp0" (input)="onOtpInput($event, 0)" (keyup)="onOtpKeyup($event, 0)">
+            <input type="text" maxlength="1" inputmode="numeric" class="otp-input" [(ngModel)]="otpValues[1]" name="eotp1" (input)="onOtpInput($event, 1)" (keyup)="onOtpKeyup($event, 1)">
+            <input type="text" maxlength="1" inputmode="numeric" class="otp-input" [(ngModel)]="otpValues[2]" name="eotp2" (input)="onOtpInput($event, 2)" (keyup)="onOtpKeyup($event, 2)">
+            <input type="text" maxlength="1" inputmode="numeric" class="otp-input" [(ngModel)]="otpValues[3]" name="eotp3" (input)="onOtpInput($event, 3)" (keyup)="onOtpKeyup($event, 3)">
+            <input type="text" maxlength="1" inputmode="numeric" class="otp-input" [(ngModel)]="otpValues[4]" name="eotp4" (input)="onOtpInput($event, 4)" (keyup)="onOtpKeyup($event, 4)">
+            <input type="text" maxlength="1" inputmode="numeric" class="otp-input" [(ngModel)]="otpValues[5]" name="eotp5" (input)="onOtpInput($event, 5)" (keyup)="onOtpKeyup($event, 5)">
+          </div>
+          
+          <div class="timer-resend">
+            <div class="spacer"></div>
+            
+            <ion-button fill="clear" size="small" class="resend-button" (click)="resendOTP()" *ngIf="!resendCooldown" [disabled]="isResendingOTP">
+              <ng-container *ngIf="!isResendingOTP">Kirim Ulang</ng-container>
+              <ng-container *ngIf="isResendingOTP"><ion-spinner name="dots" class="resend-spinner"></ion-spinner></ng-container>
+            </ion-button>
+            <div class="cooldown-text" *ngIf="resendCooldown">
+              Tunggu {{ cooldownTime }}
+            </div>
+          </div>
+          
+          <ion-button expand="block" class="verify-button" (click)="verifyOTPEmail()" [disabled]="isVerifyingOTP">
+            <ng-container *ngIf="!isVerifyingOTP; else loadingVerifyBtn">VERIFIKASI</ng-container>
+            <ng-template #loadingVerifyBtn>
+              <ion-spinner name="dots"></ion-spinner> MEMVERIFIKASI...
+            </ng-template>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+<style>
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+.update-spinner {
+  margin-right: 8px;
+  color: white;
+}
+</style> 

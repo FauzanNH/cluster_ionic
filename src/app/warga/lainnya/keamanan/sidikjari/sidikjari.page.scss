@@ -1,0 +1,440 @@
+:host {
+  --ion-color-primary: #29b6f6; /* Lighter blue color */
+  --ion-color-secondary: #0288d1; /* Darker blue */
+  --ion-card-background: #ffffff;
+}
+
+/* Transparent Toolbar */
+.transparent-toolbar {
+  --background: transparent;
+  --border-color: transparent;
+  
+  .toolbar-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+/* Blue back button */
+ion-back-button {
+  --color: #29b6f6;
+  font-size: 24px;
+}
+
+ion-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
+ion-content {
+  --background: #e3f2fd; /* Light blue background */
+  --padding-bottom: 24px;
+  position: relative;
+  overflow: visible;
+}
+
+/* Add styles for status bar spacer for better spacing */
+.status-bar-spacer {
+  height: 45px; /* Account for status bar and toolbar */
+}
+
+/* Content wrapper to adjust top padding */
+.content-wrapper {
+  padding-top: 20px;
+  position: relative;
+  max-width: 95%;
+  margin: 0 auto;
+}
+
+.app-header {
+  margin-bottom: 28px;
+
+  .page-subtitle {
+    display: inline-block;
+    text-align: left;
+    font-size: 14px;
+    color: #666666;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 8px 16px;
+    border-radius: 20px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+    white-space: nowrap;
+  }
+}
+
+// Status Card
+.status-card {
+  display: flex;
+  align-items: center;
+  background: var(--ion-card-background);
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.status-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: rgba(41, 182, 246, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 18px;
+  flex-shrink: 0;
+  
+  ion-icon {
+    font-size: 26px;
+    color: #29b6f6;
+  }
+}
+
+.status-info {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-label {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #666666;
+}
+
+.status-value {
+  font-size: 17px;
+  font-weight: 600;
+  
+  &.active {
+    color: #4caf50;
+  }
+  
+  &.inactive {
+    color: #9e9e9e;
+  }
+}
+
+.fingerprint-loading-overlay {
+  position: fixed;
+  z-index: 9999;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+.loading-text {
+  margin-top: 14px;
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
+}
+
+ion-spinner {
+  --color: #29b6f6;
+  width: 36px;
+  height: 36px;
+}
+
+/* Toggle Card Styles */
+.toggle-card {
+  background: var(--ion-card-background);
+  border-radius: 18px;
+  padding: 5px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-left: 4px solid #4caf50;
+  position: relative;
+  overflow: visible;
+}
+
+.toggle-content {
+  display: flex;
+  align-items: center;
+  padding: 15px 0;
+}
+
+.toggle-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: rgba(76, 175, 80, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 18px;
+  flex-shrink: 0;
+  
+  ion-icon {
+    font-size: 26px;
+    color: #4caf50;
+  }
+}
+
+.toggle-info {
+  flex: 1;
+  
+  h3 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 13px;
+    color: #666666;
+    line-height: 1.4;
+  }
+  
+  p.note {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #0288d1;
+    display: flex;
+    align-items: center;
+    
+    ion-icon {
+      margin-right: 4px;
+      font-size: 16px;
+    }
+  }
+}
+
+.toggle-switch-container {
+  display: flex;
+  position: relative;
+  margin-left: 15px;
+}
+
+.toggle-status {
+  position: absolute;
+  top: 50%;
+  right: -30px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-spinner {
+  width: 24px;
+  height: 24px;
+  --color: #29b6f6;
+}
+
+/* Override Toggle Styling */
+ion-toggle {
+  --background: #e0e0e0;
+  --background-checked: #4caf50;
+  --handle-background: #ffffff;
+  --handle-background-checked: #ffffff;
+  --handle-height: 18px;
+  --handle-width: 18px;
+  --handle-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --handle-spacing: 2px;
+  height: 24px;
+  width: 42px;
+  padding: 0;
+  transform: scale(1);
+  
+  &[disabled] {
+    opacity: 0.6;
+  }
+}
+
+/* Active toggle style override */
+:host ::ng-deep ion-toggle.toggle-checked {
+  --background-checked: #4caf50;
+  --handle-background-checked: #ffffff;
+}
+
+/* New Badge */
+.new-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ff5252;
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(211, 47, 47, 0.3);
+  z-index: 10;
+}
+
+/* Info Card Styles */
+.info-card {
+  background: var(--ion-card-background);
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: flex-start;
+}
+
+.info-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: rgba(41, 182, 246, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 18px;
+  flex-shrink: 0;
+  
+  ion-icon {
+    font-size: 26px;
+    color: #29b6f6;
+  }
+}
+
+.info-content {
+  flex: 1;
+  
+  h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 13px;
+    color: #666666;
+    line-height: 1.5;
+  }
+}
+
+/* Device Support Card Styles */
+.device-support-card {
+  background: var(--ion-card-background);
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: flex-start;
+  
+  &.supported {
+    border-left: 4px solid #4caf50;
+  }
+  
+  &.not-supported {
+    border-left: 4px solid #f44336;
+  }
+}
+
+.device-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 18px;
+  flex-shrink: 0;
+  
+  .supported & {
+    background: rgba(76, 175, 80, 0.15);
+    
+    ion-icon {
+      color: #4caf50;
+    }
+  }
+  
+  .not-supported & {
+    background: rgba(244, 67, 54, 0.15);
+    
+    ion-icon {
+      color: #f44336;
+    }
+  }
+  
+  ion-icon {
+    font-size: 26px;
+  }
+}
+
+.device-info {
+  flex: 1;
+  
+  h3 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 13px;
+    color: #666666;
+    line-height: 1.4;
+  }
+}
+
+/* Styling untuk alert warning */
+::ng-deep .alert-warning {
+  --background: #fff9e6;
+  
+  .alert-head {
+    color: #e6a700;
+    font-weight: 600;
+  }
+  
+  .alert-message {
+    color: #333;
+  }
+}
+
+/* Styling untuk toggle yang dinonaktifkan */
+ion-toggle[disabled] {
+  opacity: 0.5;
+  --handle-background: #d7d7d7;
+  --background: #e0e0e0;
+  
+  &::part(track) {
+    background: #e0e0e0 !important;
+  }
+}
+
+/* Tambahkan indikator "tidak didukung" pada device support card */
+.not-supported .device-info h3::after {
+  content: " (Tidak Tersedia)";
+  color: #f44336;
+  font-size: 0.9em;
+}

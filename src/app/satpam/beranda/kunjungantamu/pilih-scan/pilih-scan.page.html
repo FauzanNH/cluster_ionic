@@ -1,0 +1,89 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/satpam/beranda/kunjungantamu" text="" icon="arrow-back-outline"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Pilih Jenis Scan</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="scan-selection-container">
+    <div class="header-section">
+      <div class="icon-container">
+        <ion-icon name="qr-code-outline"></ion-icon>
+      </div>
+      <h2>Pilih Jenis Scan QR Code</h2>
+      <p>Pilih jenis scan QR code yang ingin dilakukan</p>
+    </div>
+    
+    <div class="options-container">
+      <!-- Tamu Masuk Section -->
+      <div class="option-section">
+        <div class="option-header">
+          <ion-icon name="enter-outline"></ion-icon>
+          <h3>Tamu Masuk</h3>
+        </div>
+        
+        <div class="option-buttons">
+          <div class="option-card" (click)="onScanMasuk()">
+            <div class="option-icon">
+              <ion-icon name="camera-outline"></ion-icon>
+            </div>
+            <div class="option-text">
+              <h4>Scan Kamera</h4>
+              <p>Gunakan kamera untuk scan QR code</p>
+            </div>
+          </div>
+          
+          <div class="option-card" (click)="onGaleriMasuk()">
+            <div class="option-icon">
+              <ion-icon name="image-outline"></ion-icon>
+            </div>
+            <div class="option-text">
+              <h4>Dari Galeri</h4>
+              <p>Pilih gambar QR dari galeri</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tamu Keluar Section -->
+      <div class="option-section">
+        <div class="option-header">
+          <ion-icon name="exit-outline"></ion-icon>
+          <h3>Tamu Keluar</h3>
+        </div>
+        
+        <div class="option-buttons">
+          <div class="option-card" (click)="onScanKeluar()">
+            <div class="option-icon">
+              <ion-icon name="camera-outline"></ion-icon>
+            </div>
+            <div class="option-text">
+              <h4>Scan Kamera</h4>
+              <p>Gunakan kamera untuk scan QR code</p>
+            </div>
+          </div>
+          
+          <div class="option-card" (click)="onGaleriKeluar()">
+            <div class="option-icon">
+              <ion-icon name="image-outline"></ion-icon>
+            </div>
+            <div class="option-text">
+              <h4>Dari Galeri</h4>
+              <p>Pilih gambar QR dari galeri</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="info-section">
+      <div class="info-icon">
+        <ion-icon name="information-circle-outline"></ion-icon>
+      </div>
+      <p>Pilih opsi "Scan Kamera" untuk memindai QR code secara langsung atau "Dari Galeri" untuk memilih gambar QR code dari galeri foto.</p>
+    </div>
+  </div>
+</ion-content> 

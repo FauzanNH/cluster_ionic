@@ -1,0 +1,147 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/warga/beranda" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <div class="toolbar-title">Keamanan</div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <div class="status-bar-spacer"></div>
+  
+  <div class="content-wrapper">
+    <!-- Header with page title -->
+    <div class="app-header">
+      <p class="page-subtitle">Bukit Asri Cluster · Panel Keamanan</p>
+    </div>
+
+    <!-- Security Progress Card -->
+    <div class="security-progress-card">
+      <div class="progress-header">
+        <h3>Progres Keamanan Akun</h3>
+        <div class="progress-percentage">
+          <span>{{ totalProgress }}%</span>
+        </div>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width]="totalProgress + '%'"></div>
+      </div>
+
+      <div class="security-features">
+        <div class="feature-item" [class.active]="isPinEnabled">
+          <div class="feature-icon">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <div class="check-indicator" *ngIf="isPinEnabled">
+              <ion-icon name="checkmark"></ion-icon>
+            </div>
+          </div>
+          <div class="feature-info">
+            <p class="feature-name">PIN Aplikasi</p>
+            <p class="feature-status">{{ isPinEnabled ? 'Aktif' : 'Tidak Aktif' }}</p>
+          </div>
+        </div>
+
+        <div class="feature-item" [class.active]="isFingerprintEnabled">
+          <div class="feature-icon">
+            <ion-icon name="finger-print-outline"></ion-icon>
+            <div class="check-indicator" *ngIf="isFingerprintEnabled">
+              <ion-icon name="checkmark"></ion-icon>
+            </div>
+          </div>
+          <div class="feature-info">
+            <p class="feature-name">Sidik Jari</p>
+            <p class="feature-status">{{ isFingerprintEnabled ? 'Aktif' : 'Tidak Aktif' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Security Settings List -->
+    <div class="security-list-card">
+      <div class="card-header">
+        <div class="header-icon">
+          <img src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/svgs/solid/shield-halved.svg" alt="Security">
+        </div>
+        <h2>Pengaturan Keamanan</h2>
+      </div>
+      
+      <ion-list class="settings-list">
+        <ion-item detail (click)="openPhoneModal()">
+          <div class="list-item-icon phone-icon">
+            <ion-icon name="call-outline"></ion-icon>
+          </div>
+          <ion-label>
+            <h4>Nomor HP</h4>
+            <p>Ubah nomor telepon</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item detail (click)="openEmailModal()">
+          <div class="list-item-icon email-icon">
+            <ion-icon name="mail-outline"></ion-icon>
+          </div>
+          <ion-label>
+            <h4>Email</h4>
+            <p>Ubah alamat email</p>
+          </ion-label>
+        </ion-item>
+        
+        <ion-item detail (click)="openPasswordModal()">
+          <div class="list-item-icon password-icon">
+            <ion-icon name="key-outline"></ion-icon>
+          </div>
+          <ion-label>
+            <h4>Password Akun</h4>
+            <p>Ubah password akun</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <!-- Security Options -->
+    <div class="security-options-container">
+      <h3 class="section-title">Pilihan Keamanan</h3>
+      
+      <div class="option-cards">
+        <div class="option-card" [routerLink]="['/warga/lainnya/keamanan/sidikjari']">
+          <div class="option-icon biometric-icon">
+            <img src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/svgs/solid/fingerprint.svg" alt="Biometric">
+          </div>
+          <p class="option-label">Login Biometrik</p>
+        </div>
+        
+        <div class="option-card" [routerLink]="['/warga/lainnya/keamanan/pin']">
+          <div class="option-icon pin-icon">
+            <img src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/svgs/solid/lock.svg" alt="PIN">
+          </div>
+          <p class="option-label">Atur PIN</p>
+        </div>
+        
+        <div class="option-card" (click)="selectSecurityOption('devices')">
+          <div class="option-icon device-icon">
+            <img src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/svgs/solid/mobile-screen.svg" alt="Devices">
+          </div>
+          <p class="option-label">Perangkat Terhubung</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Security Features -->
+    <div class="additional-features">
+      <div class="feature-item">
+        <div class="feature-icon">
+          <img src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/svgs/solid/bell.svg" alt="Notifications">
+        </div>
+        <div class="feature-details">
+          <h4>Notifikasi Keamanan</h4>
+          <p>Dapatkan peringatan saat akun diakses</p>
+        </div>
+        <ion-toggle [(ngModel)]="securityNotifications"></ion-toggle>
+      </div>
+    </div>
+  </div>
+</ion-content>

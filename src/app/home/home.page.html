@@ -1,0 +1,132 @@
+<ion-header [translucent]="true">
+  <!-- Hapus header logo dan judul aplikasi -->
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div *ngIf="showContent" class="hero-container">
+    <!-- Tambahkan elemen dekoratif -->
+    <div class="decorative-elements">
+      <div class="circle-decoration circle-1"></div>
+      <div class="circle-decoration circle-2"></div>
+      <div class="square-decoration"></div>
+    </div>
+    
+    <swiper-container #swiper init="false" class="intro-slides">
+      
+      <!-- Welcome Slide -->
+      <swiper-slide>
+        <div class="slide-container">
+          <div class="slide-image">
+            <img src="assets/images/rumah.png" alt="Perumahan Modern">
+          </div>
+          <div class="slide-content">
+            <strong>Hi Get Started</strong>
+            <h1>Bukit Asri Cluster</h1>
+            <p>Temukan hunian impian untuk keluarga Anda di kawasan yang asri, nyaman dan modern</p>
+          </div>
+        </div>
+      </swiper-slide>
+      
+      <!-- Community Slide -->
+      <swiper-slide>
+        <div class="slide-container">
+          <div class="slide-image">
+            <img src="assets/images/rumah.png" alt="Komunitas">
+          </div>
+          <div class="slide-content">
+            <strong>Komunitas</strong>
+            <h1>Lingkungan Terpadu</h1>
+            <p>Nikmati fasilitas lengkap dan lingkungan yang aman untuk tumbuh kembang keluarga</p>
+          </div>
+        </div>
+      </swiper-slide>
+      
+      <!-- Features Slide -->
+      <swiper-slide>
+        <div class="slide-container">
+          <div class="slide-image">
+            <img src="assets/images/rumah.png" alt="Fitur">
+          </div>
+          <div class="slide-content">
+            <strong>Fitur Aplikasi</strong>
+            <h1>Kemudahan Dalam Genggaman</h1>
+            <p>Akses semua informasi dan layanan perumahan melalui aplikasi ini</p>
+            <ion-button class="get-started-btn" shape="round" routerLink="/login">
+              Mulai Sekarang
+              <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+      </swiper-slide>
+      
+      <div class="swiper-navigation">
+        <button class="nav-btn prev-btn" (click)="slidePrev()">
+          <ion-icon name="chevron-back-outline"></ion-icon>
+        </button>
+        <button class="nav-btn next-btn" (click)="slideNext()">
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </button>
+      </div>
+    </swiper-container>
+  </div>
+  
+  <div *ngIf="!showContent" class="loading-container">
+    <!-- Header aplikasi saat loading -->
+    <div class="loading-app-title">
+      <h1>Bukit Asri Cluster App</h1>
+      <p class="app-tagline">Hunian Modern & Nyaman</p>
+    </div>
+    
+    <!-- Animasi loading yang lebih menarik (tidak diubah) -->
+    <div class="custom-loader">
+      <div class="loader-content">
+        <div class="house-loader">
+          <!-- Tambahkan palu -->
+          <div class="hammer"></div>
+          <!-- Tambahkan partikel debu -->
+          <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+          </div>
+          <div class="roof"></div>
+          <div class="base">
+            <div class="door"></div>
+            <div class="window"></div>
+            <!-- Tambahkan orang kecil -->
+            <div class="person">
+              <div class="head"></div>
+              <div class="body"></div>
+              <div class="legs"></div>
+            </div>
+          </div>
+        </div>
+        <div class="loading-text">
+          <h3>{{ loadingMessage }}</h3>
+          <div class="loading-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+    
+    <!-- Tambahkan elemen dekoratif pada halaman loading -->
+    <div class="loading-decoration">
+      <div class="deco-circle deco-circle-1"></div>
+      <div class="deco-circle deco-circle-2"></div>
+      <div class="deco-line deco-line-1"></div>
+      <div class="deco-line deco-line-2"></div>
+    </div>
+  </div>
+</ion-content>
+
+<!-- Footer aplikasi -->
+<footer class="app-footer">
+  Bukit Asri Cluster App V.1.0.2
+</footer>
+

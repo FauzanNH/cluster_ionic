@@ -1,0 +1,141 @@
+<ion-header class="ion-no-border" fixed-height>
+  <div class="header-toolbars">
+    <!-- Toolbar standar (tidak dalam mode seleksi) -->
+    <ion-toolbar *ngIf="!isSelectionMode" [class.ion-toolbar-animate-leave]="isSelectionTransitioning">
+      <ion-title>
+        <strong>LiveChat</strong>
+      </ion-title>
+    </ion-toolbar>
+
+    <!-- Toolbar untuk pencarian -->
+    <ion-toolbar *ngIf="!isSelectionMode" class="search-toolbar" [class.ion-toolbar-animate-leave]="isSelectionTransitioning">
+      <div class="search-container">
+        <ion-searchbar
+          [(ngModel)]="searchQuery"
+          (ionInput)="searchChats()"
+          placeholder="Cari percakapan..."
+          animated
+          showCancelButton="never"
+          [debounce]="300"
+        ></ion-searchbar>
+        <ion-button fill="clear" class="filter-button" (click)="startNewChat()">
+          <ion-icon name="create-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-toolbar>
+  </div>
+
+  <!-- Toolbar untuk mode seleksi -->
+  <ion-toolbar *ngIf="isSelectionMode || isSelectionTransitioning" color="primary" 
+    [class.ion-toolbar-animate-enter]="isSelectionTransitioning && isSelectionMode"
+    [class.ion-toolbar-animate-leave]="isSelectionTransitioning && !isSelectionMode">
+    <ion-buttons slot="start">
+      <ion-button (click)="exitSelectionMode()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ selectedChats.length }} dipilih</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="markSelectedAsRead()">
+        <ion-icon slot="icon-only" name="checkmark-done-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="muteSelectedChats()">
+        <ion-icon slot="icon-only" name="notifications-off-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="deleteSelectedChats()">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="app-background">
+  <div class="chat-content-wrapper">
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
+    <!-- Loading indicator -->
+    <div *ngIf="isLoading" class="loading-container">
+      <ion-spinner name="circular"></ion-spinner>
+      <p>Memuat daftar chat...</p>
+    </div>
+
+    <!-- Error message -->
+    <div *ngIf="!isLoading && loadingError" class="error-container">
+      <ion-icon name="alert-circle-outline" class="error-icon"></ion-icon>
+      <p>{{ loadingError }}</p>
+      <ion-button size="small" (click)="loadChats()">Coba Lagi</ion-button>
+    </div>
+
+    <!-- Hasil pencarian kosong -->
+    <div *ngIf="!isLoading && !loadingError && filteredChats.length === 0 && searchQuery.length > 0" class="empty-search">
+      <ion-icon name="search-outline" class="empty-icon"></ion-icon>
+      <p>Tidak ada hasil untuk "<strong>{{ searchQuery }}</strong>"</p>
+    </div>
+
+    <ion-list class="chat-list chat-list-spacing" *ngIf="!isLoading && !loadingError">
+      <!-- Chat list items with sliding options -->
+      <ion-item-sliding *ngFor="let chat of filteredChats" [disabled]="isSelectionMode">
+        <ion-item button detail="false" class="chat-item animated-item" 
+          (click)="openChat(chat)" 
+          [ngClass]="{'selected-item': chat.selected}">
+          
+          <ion-avatar slot="start">
+            <img [src]="chat.avatar" alt="Avatar">
+          </ion-avatar>
+
+          <ion-label>
+            <div class="chat-header">
+              <h2 [class.bold-text]="chat.unread > 0">{{ chat.name }}</h2>
+              <div class="chat-time">
+                <span [class.blue-text]="chat.unread > 0">{{ chat.time }}</span>
+              </div>
+            </div>
+            <div class="chat-content">
+              <p [ngClass]="{'bold-text': chat.unread > 0, 'muted-message': chat.muted}">
+                <ion-icon *ngIf="chat.muted" name="volume-mute-outline" class="muted-icon"></ion-icon>
+                {{ chat.lastMessage ? (chat.lastMessage | slice:0:40) : '' }}{{ chat.lastMessage && chat.lastMessage.length > 40 ? '...' : '' }}
+              </p>
+              <ion-badge *ngIf="chat.unread > 0" color="primary" class="round-badge">{{ chat.unread }}</ion-badge>
+            </div>
+          </ion-label>
+          
+          <!-- Online status indicator -->
+          <div class="status-indicator" [ngClass]="{'online': chat.is_online}" *ngIf="chat.is_online" slot="end">
+            <span class="status-dot"></span>
+          </div>
+          
+          <!-- Indikator terpilih -->
+          <ion-icon *ngIf="chat.selected" slot="end" name="checkmark-circle" color="primary" class="selection-icon"></ion-icon>
+        </ion-item>
+        
+        <!-- Sliding options -->
+        <ion-item-options side="start">
+          <ion-item-option color="primary" (click)="markAsRead(chat)">
+            <ion-icon slot="icon-only" name="checkmark-done-outline"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+        
+        <ion-item-options side="end">
+          <ion-item-option color="medium" (click)="muteChat(chat)">
+            <ion-icon slot="icon-only" [name]="chat.muted ? 'notifications-outline' : 'notifications-off-outline'"></ion-icon>
+          </ion-item-option>
+          <ion-item-option color="danger" (click)="deleteChat(chat)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
+    <!-- Empty state when no chats -->
+    <div class="empty-state" *ngIf="!isLoading && !loadingError && filteredChats.length === 0 && searchQuery.length === 0">
+      <ion-icon name="chatbubble-outline" class="empty-icon"></ion-icon>
+      <p>Belum ada pesan</p>
+      <ion-button color="primary" fill="outline" size="small" (click)="startNewChat()">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Mulai Percakapan
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

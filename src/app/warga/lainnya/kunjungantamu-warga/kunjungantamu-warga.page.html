@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/warga/lainnya" text="" icon="arrow-back-outline"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Kunjungan Tamu</ion-title>
+  </ion-toolbar>
+  
+  <ion-toolbar class="search-toolbar">
+    <div class="search-container">
+      <ion-searchbar placeholder="Cari nama atau ID Kunjungan" animated (ionInput)="onSearchChange($event)"></ion-searchbar>
+      <ion-button fill="clear" class="filter-button" (click)="openFilterModal()">
+        <ion-icon name="options-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="refreshData($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-down-outline"
+      refreshingSpinner="crescent"
+      pullingText="Tarik untuk refresh"
+      refreshingText="Merefresh...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Loading Spinner -->
+  <div class="loading-container" *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Memuat data kunjungan...</p>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="filter-tabs" *ngIf="!isLoading">
+    <div class="tab" [ngClass]="{'active': activeTab === 'semua'}" (click)="filterByTab('semua')">
+      Semua
+    </div>
+    <div class="tab" [ngClass]="{'active': activeTab === 'menunggu'}" (click)="filterByTab('menunggu')">
+      Menunggu
+    </div>
+    <div class="tab" [ngClass]="{'active': activeTab === 'berlangsung'}" (click)="filterByTab('berlangsung')">
+      Berlangsung
+    </div>
+    <div class="tab" [ngClass]="{'active': activeTab === 'selesai'}" (click)="filterByTab('selesai')">
+      Selesai
+    </div>
+  </div>
+  
+  <!-- Empty State when no visits -->
+  <div class="empty-state" *ngIf="!isLoading && allVisits.length === 0">
+    <ion-icon name="calendar-outline"></ion-icon>
+    <p>Belum ada kunjungan yang tercatat</p>
+  </div>
+  
+  <div *ngIf="!isLoading && allVisits.length > 0">
+    <!-- Section Hari Ini -->
+    <div class="date-section">
+      <div class="date-header">
+        <h3>Hari Ini</h3>
+        <div class="date-badge">{{ todayVisits.length }}</div>
+      </div>
+      
+      <div class="visit-list" *ngIf="todayVisits.length > 0">
+        <ion-item *ngFor="let visit of todayVisits" class="visit-item" lines="none">
+          <div class="visit-content">
+            <div class="visit-header">
+              <h2>{{ visit.tamu?.detail_tamu?.nama || visit.tamu?.nama || 'Tamu' }}</h2>
+              <div class="status-badge" [ngClass]="{'active': visit.status_kunjungan === 'Sedang Berlangsung', 'completed': visit.status_kunjungan === 'Meninggalkan Cluster', 'waiting': visit.status_kunjungan === 'Menunggu Menuju Cluster'}">
+                {{ visit.status_kunjungan }}
+              </div>
+            </div>
+            
+            <div class="visit-details">
+              <p>ID Kunjungan: <span class="id-value">{{ visit.kunjungan_id }}</span></p>
+              <p>Tujuan: {{ visit.tujuan_kunjungan }}</p>
+            </div>
+            
+            <div class="card-footer">
+              <div class="tanggal">
+                <ion-icon name="calendar-outline"></ion-icon>
+                <span>Dibuat pada: {{ formatDateOnly(visit.created_at) }}</span>
+                <span class="time-info">
+                  <ion-icon name="time-outline"></ion-icon>
+                  Masuk: {{ formatFullDateTime(visit.waktu_masuk) }}
+                </span>
+                <span class="time-info" *ngIf="visit.waktu_keluar">
+                  <ion-icon name="time-outline"></ion-icon>
+                  Keluar: {{ formatFullDateTime(visit.waktu_keluar) }}
+                </span>
+              </div>
+              <div class="action-buttons">
+                <ion-button fill="clear" class="detail-button" color="primary" [routerLink]="['/warga/lainnya/kunjungantamu-warga/detail', visit.kunjungan_id]">
+                  DETAIL
+                  <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+          </div>
+        </ion-item>
+      </div>
+      
+      <div class="empty-state small" *ngIf="todayVisits.length === 0">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <p>Tidak ada kunjungan hari ini</p>
+      </div>
+    </div>
+    
+    <!-- Section Minggu Ini -->
+    <div class="date-section">
+      <div class="date-header">
+        <h3>Minggu Ini</h3>
+        <div class="date-badge">{{ weekVisits.length }}</div>
+      </div>
+      
+      <div class="visit-list" *ngIf="weekVisits.length > 0">
+        <ion-item *ngFor="let visit of weekVisits" class="visit-item" lines="none">
+          <div class="visit-content">
+            <div class="visit-header">
+              <h2>{{ visit.tamu?.detail_tamu?.nama || visit.tamu?.nama || 'Tamu' }}</h2>
+              <div class="status-badge" [ngClass]="{'active': visit.status_kunjungan === 'Sedang Berlangsung', 'completed': visit.status_kunjungan === 'Meninggalkan Cluster', 'waiting': visit.status_kunjungan === 'Menunggu Menuju Cluster'}">
+                {{ visit.status_kunjungan }}
+              </div>
+            </div>
+            
+            <div class="visit-details">
+              <p>ID Kunjungan: <span class="id-value">{{ visit.kunjungan_id }}</span></p>
+              <p>Tujuan: {{ visit.tujuan_kunjungan }}</p>
+            </div>
+            
+            <div class="card-footer">
+              <div class="tanggal">
+                <ion-icon name="calendar-outline"></ion-icon>
+                <span>Dibuat pada: {{ formatDateOnly(visit.created_at) }}</span>
+                <span class="time-info">
+                  <ion-icon name="time-outline"></ion-icon>
+                  Masuk: {{ formatFullDateTime(visit.waktu_masuk) }}
+                </span>
+                <span class="time-info" *ngIf="visit.waktu_keluar">
+                  <ion-icon name="time-outline"></ion-icon>
+                  Keluar: {{ formatFullDateTime(visit.waktu_keluar) }}
+                </span>
+              </div>
+              <div class="action-buttons">
+                <ion-button fill="clear" class="detail-button" color="primary" [routerLink]="['/warga/lainnya/kunjungantamu-warga/detail', visit.kunjungan_id]">
+                  DETAIL
+                  <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+          </div>
+        </ion-item>
+      </div>
+      
+      <div class="empty-state small" *ngIf="weekVisits.length === 0">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <p>Tidak ada kunjungan minggu ini</p>
+      </div>
+    </div>
+    
+    <!-- Section Bulan Ini -->
+    <div class="date-section">
+      <div class="date-header">
+        <h3>Bulan Ini</h3>
+        <div class="date-badge">{{ monthVisits.length }}</div>
+      </div>
+      
+      <div class="visit-list" *ngIf="monthVisits.length > 0">
+        <ion-item *ngFor="let visit of monthVisits" class="visit-item" lines="none">
+          <div class="visit-content">
+            <div class="visit-header">
+              <h2>{{ visit.tamu?.detail_tamu?.nama || visit.tamu?.nama || 'Tamu' }}</h2>
+              <div class="status-badge" [ngClass]="{'active': visit.status_kunjungan === 'Sedang Berlangsung', 'completed': visit.status_kunjungan === 'Meninggalkan Cluster', 'waiting': visit.status_kunjungan === 'Menunggu Menuju Cluster'}">
+                {{ visit.status_kunjungan }}
+              </div>
+            </div>
+            
+            <div class="visit-details">
+              <p>ID Kunjungan: <span class="id-value">{{ visit.kunjungan_id }}</span></p>
+              <p>Tujuan: {{ visit.tujuan_kunjungan }}</p>
+            </div>
+            
+            <div class="card-footer">
+              <div class="tanggal">
+                <ion-icon name="calendar-outline"></ion-icon>
+                <span>Dibuat pada: {{ formatDateOnly(visit.created_at) }}</span>
+                <span class="time-info">
+                  <ion-icon name="time-outline"></ion-icon>
+                  Masuk: {{ formatFullDateTime(visit.waktu_masuk) }}
+                </span>
+                <span class="time-info" *ngIf="visit.waktu_keluar">
+                  <ion-icon name="time-outline"></ion-icon>
+                  Keluar: {{ formatFullDateTime(visit.waktu_keluar) }}
+                </span>
+              </div>
+              <div class="action-buttons">
+                <ion-button fill="clear" class="detail-button" color="primary" [routerLink]="['/warga/lainnya/kunjungantamu-warga/detail', visit.kunjungan_id]">
+                  DETAIL
+                  <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+          </div>
+        </ion-item>
+      </div>
+      
+      <div class="empty-state small" *ngIf="monthVisits.length === 0">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <p>Tidak ada kunjungan bulan ini</p>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+<!-- Modal Filter -->
+<ion-modal [isOpen]="isFilterModalOpen" (didDismiss)="closeFilterModal()" class="filter-modal" [initialBreakpoint]="1" [breakpoints]="[0, 1]">
+  <ng-template>
+    <div class="modal-wrapper">
+      <div class="modal-header">
+        <ion-button fill="clear" class="close-button" (click)="closeFilterModal()">
+          <ion-icon name="close-outline"></ion-icon>
+        </ion-button>
+        <div class="modal-title">Status Kunjungan</div>
+        <div class="spacer"></div>
+      </div>
+      
+      <div class="modal-content">
+        <!-- Status Kunjungan -->
+        <div class="filter-card">
+          <h3>Status Kunjungan</h3>
+          <div class="status-options">
+            <div class="status-option" [ngClass]="{'active': filterStatus === 'semua'}" (click)="setFilterStatus('semua')">
+              Semua
+            </div>
+            <div class="status-option" [ngClass]="{'active': filterStatus === 'menunggu'}" (click)="setFilterStatus('menunggu')">
+              Menunggu
+            </div>
+            <div class="status-option" [ngClass]="{'active': filterStatus === 'berlangsung'}" (click)="setFilterStatus('berlangsung')">
+              Berlangsung
+            </div>
+            <div class="status-option" [ngClass]="{'active': filterStatus === 'selesai'}" (click)="setFilterStatus('selesai')">
+              Selesai
+            </div>
+          </div>
+        </div>
+        
+        <!-- Tanggal -->
+        <div class="filter-card">
+          <h3>Tanggal</h3>
+          <div class="date-input">
+            <input type="text" placeholder="Pilih tanggal yang mau ditampilkan" readonly (click)="showDatePicker()" [value]="selectedDate ? formatDateDisplay(selectedDate) : ''">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <ion-button expand="block" fill="outline" class="reset-button" (click)="resetFilter()">RESET</ion-button>
+        <ion-button expand="block" class="apply-button" (click)="applyFilter()" style="background-color: #0099ff; color: white; border: 1px solid #0099ff;">TERAPKAN</ion-button>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- Date Picker Modal -->
+<ion-modal [isOpen]="isDatePickerOpen" (didDismiss)="closeDatePicker()" class="date-picker-modal" [initialBreakpoint]="1" [breakpoints]="[0, 1]">
+  <ng-template>
+    <div class="date-picker-wrapper">
+      <div class="modal-header">
+        <div class="modal-title">Pilih Tanggal</div>
+        <ion-button fill="clear" class="close-button" (click)="closeDatePicker()">
+          <ion-icon name="close-outline"></ion-icon>
+        </ion-button>
+      </div>
+      
+      <div class="simple-date-display">
+        <div class="date-label">PILIH TANGGAL</div>
+        <div class="selected-date">{{ selectedDate ? formatDateForDisplay(selectedDate) : 'Pilih Tanggal' }}</div>
+      </div>
+      
+      <div class="month-year-display">
+        <div class="month-year" (click)="toggleYearMonthView()">
+          {{ viewMode === 'calendar' ? (currentMonth + ' ' + currentYear) : (currentYear) }}
+          <ion-icon name="chevron-down-outline"></ion-icon>
+        </div>
+        <div class="navigation-buttons" *ngIf="viewMode === 'calendar'">
+          <button class="nav-button" (click)="prevMonth()">
+            <ion-icon name="chevron-back-outline"></ion-icon>
+          </button>
+          <button class="nav-button" (click)="nextMonth()">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Calendar View -->
+      <div *ngIf="viewMode === 'calendar'">
+        <div class="calendar-days">
+          <div class="day-header" *ngFor="let day of dayNames">{{ day }}</div>
+        </div>
+        
+        <div class="calendar-grid">
+          <div class="day-cell" *ngFor="let day of calendarDays" 
+               [ngClass]="{'other-month': day.otherMonth, 'selected': day.selected, 'today': day.today}"
+               (click)="selectDate(day)">
+            <div class="day-number" [ngClass]="{'selected-circle': day.selected}">
+              {{ day.day }}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Year-Month View -->
+      <div *ngIf="viewMode === 'year'" class="year-view-container">
+        <div class="year-selector">
+          <button class="nav-button big-nav-button" (click)="prevYearSet()">
+            <ion-icon name="chevron-back-outline" size="large"></ion-icon>
+          </button>
+          <div class="year-range-button">
+            {{ yearRangeStart }} - {{ yearRangeStart + 11 }}
+          </div>
+          <button class="nav-button big-nav-button" (click)="nextYearSet()">
+            <ion-icon name="chevron-forward-outline" size="large"></ion-icon>
+          </button>
+        </div>
+        
+        <div class="years-grid">
+          <button 
+            class="year-cell" 
+            *ngFor="let year of years" 
+            [ngClass]="{'selected': year === currentYear}"
+            (click)="selectYear(year)">
+            {{ year }}
+          </button>
+        </div>
+      </div>
+      
+      <!-- Month View -->
+      <div *ngIf="viewMode === 'month'">
+        <div class="months-grid">
+          <button 
+            class="month-cell" 
+            *ngFor="let month of monthNames; let i = index" 
+            [ngClass]="{'selected': i === currentMonthIndex}"
+            (click)="selectMonth(i)">
+            {{ month }}
+          </button>
+        </div>
+      </div>
+      
+      <div class="calendar-footer">
+        <ion-button fill="clear" class="cancel-button" (click)="closeDatePicker()">BATAL</ion-button>
+        <div class="footer-actions">
+          <ion-button fill="clear" class="clear-button" (click)="clearDate()">CLEAR</ion-button>
+          <ion-button fill="clear" class="select-button" (click)="confirmDateSelection()">PILIH</ion-button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>

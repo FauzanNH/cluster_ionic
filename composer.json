@@ -1,0 +1,7 @@
+{
+    "require": {
+        "laravel/sanctum": "^4.1",
+        "thiagoalessio/tesseract_ocr": "^2.13",
+        "intervention/image": "^3.11"
+    }
+}

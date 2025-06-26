@@ -1,0 +1,522 @@
+:host {
+  --ion-color-primary: #29b6f6; /* Lighter blue color */
+  --ion-color-secondary: #0288d1; /* Darker blue */
+  --ion-card-background: #ffffff;
+}
+
+/* Transparent Toolbar */
+.transparent-toolbar {
+  --background: transparent;
+  --border-color: transparent;
+}
+
+ion-header {
+  position: absolute;
+  top: env(safe-area-inset-top, 8px); /* Increased from 0px to 8px */
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
+ion-content {
+  --background: #e3f2fd; /* Light blue background */
+  --padding-bottom: 24px;
+  position: relative;
+  overflow: visible;
+  /* Reduce horizontal padding */
+  --padding-start: 8px;
+  --padding-end: 8px;
+  --padding-top: calc(env(safe-area-inset-top, 6px) + 10px); /* Reduced top padding by 2px */
+}
+
+/* Background decorative shapes */
+ion-content::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  right: -80px;
+  width: 240px;
+  height: 240px;
+  background-color: #bbdefb;
+  border-radius: 50%;
+  z-index: -1;
+}
+
+ion-content::after {
+  content: '';
+  position: absolute;
+  bottom: -100px;
+  left: -80px;
+  width: 200px;
+  height: 200px;
+  background-color: #bbdefb;
+  border-radius: 50%;
+  z-index: -1;
+}
+
+/* Fixed Top Section */
+.fixed-top-section {
+  position: sticky;
+  top: env(safe-area-inset-top, 8px); /* Increased from 0px to 8px */
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background-color: #e3f2fd; /* Restored background color */
+  margin-bottom: 0; /* Remove margin */
+  padding-top: 5px; /* Increased from 0px */
+  padding-bottom: 12px; /* Increased padding */
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Restored subtle shadow */
+}
+
+/* Combined Card (Toolbar + Search) */
+.combined-card {
+  background: #ffffff;
+  border-radius: 16px 16px 16px 16px; /* Rounded corners all sides */
+  margin-top: 5px; /* Added small margin */
+  margin-bottom: 12px; /* Reduced from 16px to 12px */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+/* Toolbar Section */
+.toolbar-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary));
+  padding: 12px 16px;
+  
+  .toolbar-left {
+    width: 40px; /* Slightly increased for better tap target */
+  }
+  
+  .toolbar-right {
+    width: 40px; /* Keep space but hide the button */
+    visibility: hidden; /* Hide the top-right add button */
+  }
+}
+
+.toolbar-title {
+  text-align: center;
+  flex: 1;
+  
+  h2 {
+    margin: 0;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+.back-button {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.25); /* Slightly increased opacity */
+  border-radius: 50%;
+  cursor: pointer; /* Add pointer cursor */
+  transition: transform 0.2s ease;
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  ion-icon {
+    font-size: 20px;
+    color: white;
+  }
+}
+
+.add-button-toolbar {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  
+  ion-icon {
+    font-size: 20px;
+    color: white;
+  }
+}
+
+/* Search Section */
+.search-section {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+  background: #ffffff;
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  background: #f5f5f5;
+  border-radius: 12px;
+  padding: 0 12px;
+  height: 40px;
+}
+
+.search-icon {
+  font-size: 18px;
+  color: #666666;
+  margin-right: 8px;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  height: 40px;
+  font-size: 14px;
+  color: #333333;
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: #888888;
+  opacity: 1;
+}
+
+/* Filter Card */
+.filter-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Filter Header */
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.header-title h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.counter {
+  color: #666666;
+  font-size: 13px;
+  background: rgba(227, 242, 253, 0.7);
+  padding: 4px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.filter-title {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666666;
+}
+
+.filter-chips-container {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  
+  /* Hide scrollbar but keep functionality */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.filter-chip {
+  background-color: #f5f5f5;
+  color: #666666;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 16px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+  
+  &:active {
+    transform: scale(0.97);
+  }
+  
+  &.active {
+    background-color: var(--ion-color-primary);
+    color: white;
+  }
+}
+
+/* Section Header */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  margin: 8px 2px 16px 2px; /* Increased bottom margin to 16px for more space */
+  background-color: rgba(227, 242, 253, 0.9); /* Increased opacity slightly */
+  position: relative;
+  z-index: 15;
+  border-radius: 12px; /* Added border radius */
+  backdrop-filter: blur(4px); /* Add blur effect for modern browsers */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04); /* Subtle shadow */
+  
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333333;
+  }
+  
+  .counter {
+    color: #666666;
+    font-size: 13px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 4px 12px;
+    border-radius: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+}
+
+/* Loading container */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 40vh; /* Reduced height */
+  text-align: center;
+  margin-top: 16px;
+  
+  ion-spinner {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 20px;
+    --color: var(--ion-color-primary);
+  }
+  
+  p {
+    color: #666666;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  text-align: center;
+  
+  .empty-icon {
+    background-color: rgba(41, 182, 246, 0.1);
+    border-radius: 50%;
+    width: 130px;
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 28px;
+    box-shadow: 0 8px 20px rgba(41, 182, 246, 0.15);
+    
+    ion-icon {
+      font-size: 64px;
+      color: var(--ion-color-primary);
+    }
+  }
+  
+  .empty-title {
+    color: #333333;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+
+  .empty-description {
+    color: #666666;
+    font-size: 16px;
+    margin: 0 0 36px;
+    line-height: 1.5;
+  }
+}
+
+/* Document list container */
+.dokumen-list-container {
+  padding: 0 8px;
+  margin-top: 12px;
+  /* Create scrollable area */
+  height: calc(100vh - 240px - 70px); /* Adjusted for the new filter card height */
+  overflow-y: auto;
+  position: relative;
+  z-index: 10;
+  
+  /* Styling for scrollbar */
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+}
+
+.dokumen-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+  position: relative;
+  z-index: 5;
+  border-left: 3px solid var(--ion-color-primary); /* Add left border accent */
+  
+  &:first-child {
+    margin-top: 0px; /* Reduced top margin for first card */
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    
+    .kategori-label {
+      background-color: rgba(41, 182, 246, 0.1);
+      color: var(--ion-color-primary);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      background-color: #f5f5f5;
+      color: #666666;
+    }
+    
+    .status-approved {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+    
+    .status-validating {
+      background-color: #fff8e1;
+      color: #f57c00;
+    }
+    
+    .status-rejected {
+      background-color: #ffebee;
+      color: #d32f2f;
+    }
+    
+    .status-pending {
+      background-color: #e3f2fd;
+      color: #1976d2;
+    }
+  }
+  
+  .dokumen-title {
+    margin: 0 0 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+    line-height: 1.4;
+  }
+  
+  .dokumen-deskripsi {
+    margin: 0 0 16px;
+    font-size: 14px;
+    color: #666666;
+    line-height: 1.5;
+  }
+  
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    
+    .tanggal {
+      display: flex;
+      align-items: center;
+      color: #888888;
+      font-size: 13px;
+      gap: 6px;
+      
+      ion-icon {
+        font-size: 16px;
+      }
+    }
+    
+    .view-detail {
+      display: flex;
+      align-items: center;
+      color: var(--ion-color-primary);
+      font-size: 13px;
+      font-weight: 500;
+      gap: 4px;
+      
+      ion-icon {
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+/* Add FAB button at bottom right */
+ion-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 100px; /* Increased from 80px to 100px to position lower */
+  z-index: 999;
+}
+
+ion-fab-button {
+  --background: var(--ion-color-primary);
+  --background-activated: var(--ion-color-secondary);
+  --background-hover: var(--ion-color-secondary);
+  --border-radius: 50%;
+  --box-shadow: 0 4px 12px rgba(41, 182, 246, 0.4);
+  --padding-start: 0;
+  --padding-end: 0;
+  transition: transform 0.2s ease;
+  
+  &:active {
+    --box-shadow: 0 2px 8px rgba(41, 182, 246, 0.3);
+    transform: scale(0.95);
+  }
+}

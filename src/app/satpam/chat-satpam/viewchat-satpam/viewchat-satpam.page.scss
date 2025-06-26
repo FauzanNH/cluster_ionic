@@ -1,0 +1,795 @@
+// Variabel warna
+:host {
+    --chat-outgoing-bg: #dcf8c6;
+    --chat-incoming-bg: #ffffff;
+    --chat-time-color: #7d7d7d;
+    --chat-bg: #e5ddd5;
+    --chat-bg-pattern: rgba(0, 0, 0, 0.02);
+    --chat-footer-bg: #f0f0f0;
+    --chat-input-bg: #f5f5f5;
+    --chat-border-radius: 12px;
+    --chat-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    --chat-primary: #0099ff;
+    --chat-selected-bg: rgba(0, 153, 255, 0.2);
+    --chat-blocked-color: #ff3b30;
+    --chat-reply-me: #0099ff;
+    --chat-reply-other: #4caf50;
+    --chat-highlight: rgba(255, 213, 79, 0.3);
+    
+    // Memastikan konten mengisi seluruh layar
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  // Header styling
+  ion-header {
+    ion-toolbar {
+      --background: var(--chat-primary);
+      --color: #ffffff;
+      --min-height: 60px;
+      --padding-top: 8px;
+      --padding-bottom: 8px;
+      
+      ion-back-button {
+        --color: #ffffff;
+        --icon-font-size: 22px;
+        --padding-start: 8px;
+      }
+      
+      .chat-profile {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 4px 0;
+        
+        ion-avatar {
+          width: 36px;
+          height: 36px;
+          margin-right: 12px;
+        }
+        
+        .chat-info {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          overflow: hidden;
+          
+          h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          
+          p {
+            margin: 0;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+          }
+          
+          .blocked-status {
+            color: var(--chat-blocked-color);
+            font-weight: 500;
+          }
+        }
+      }
+      
+      ion-buttons {
+        ion-button {
+          --color: #ffffff;
+        }
+      }
+    }
+  }
+  
+  // Content styling
+  .chat-content {
+    --background: var(--chat-bg);
+    --padding-bottom: 0;
+    flex: 1;
+    
+    .chat-background {
+      min-height: 100%;
+      background-color: var(--chat-bg);
+      background-image: 
+        linear-gradient(to bottom, var(--chat-bg-pattern) 25%, transparent 25%, transparent 50%, 
+        var(--chat-bg-pattern) 50%, var(--chat-bg-pattern) 75%, transparent 75%, transparent);
+      background-size: 20px 20px;
+      padding: 16px 8px 80px;
+    }
+  }
+  
+  // Message container
+  .message-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+  }
+  
+  // Date divider
+  .date-divider {
+    text-align: center;
+    margin: 16px 0;
+    
+    span {
+      background-color: rgba(225, 245, 254, 0.9);
+      color: #505050;
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 16px;
+      box-shadow: var(--chat-shadow);
+    }
+  }
+  
+  // Message wrapper
+  .message-wrapper {
+    display: flex;
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  
+  .message-wrapper.outgoing {
+      justify-content: flex-end;
+  }
+  
+  .message-wrapper.incoming {
+    justify-content: flex-start;
+  }
+  
+  // Message bubble
+  .message-bubble {
+    padding: 8px 12px;
+    box-shadow: var(--chat-shadow);
+    position: relative;
+    max-width: 80%;
+    transition: background-color 0.2s ease, transform 0.2s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s;
+    
+    // Style untuk bubble yang dipilih
+    &.selected {
+      position: relative;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--chat-selected-bg);
+        border-radius: inherit;
+        z-index: -1;
+      }
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        border: 2px solid var(--chat-primary);
+        border-radius: inherit;
+        pointer-events: none;
+      }
+    }
+    
+    // Style untuk highlight pesan yang dirujuk
+    &.highlight-message {
+      animation: highlight-animation 1.5s ease;
+    }
+    
+    @keyframes highlight-animation {
+      0% { background-color: var(--chat-highlight); }
+      100% { background-color: inherit; }
+    }
+    
+    .message-text {
+      font-size: 15px;
+      color: #303030;
+      line-height: 1.4;
+      margin-bottom: 4px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    
+    .message-time {
+      font-size: 11px;
+      color: #888;
+      margin-top: 2px;
+      text-align: right;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      
+      .status-indicator {
+        margin-left: 4px;
+        display: inline-flex;
+        align-items: center;
+        
+        ion-icon {
+        font-size: 14px;
+          min-width: 14px;
+        }
+      }
+    }
+    
+    .message-image {
+      margin: -8px -12px 8px;
+      overflow: hidden;
+      border-top-left-radius: var(--chat-border-radius);
+      border-top-right-radius: var(--chat-border-radius);
+      
+      img {
+        width: 100%;
+        max-height: 200px;
+        object-fit: cover;
+        display: block;
+        cursor: pointer;
+      }
+    }
+    
+    // Styling untuk dokumen
+    .document-container {
+      display: flex;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 0.05);
+      margin: -8px -12px 8px;
+      padding: 12px;
+      border-top-left-radius: var(--chat-border-radius);
+      border-top-right-radius: var(--chat-border-radius);
+      
+      .document-icon {
+        width: 40px;
+        height: 40px;
+        background-color: var(--chat-primary);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        
+        ion-icon {
+          font-size: 24px;
+          color: white;
+        }
+      }
+      
+      .document-info {
+        flex: 1;
+        overflow: hidden;
+        
+        .document-name {
+          font-size: 14px;
+          font-weight: 500;
+          color: #333;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-bottom: 4px;
+        }
+        
+        .document-size {
+          font-size: 12px;
+          color: #666;
+        }
+      }
+    }
+    
+    // Styling untuk reply container
+    .reply-container {
+      display: flex;
+      margin: -8px -12px 8px;
+      padding: 8px;
+      background-color: rgba(0, 0, 0, 0.04);
+      border-top-left-radius: var(--chat-border-radius);
+      border-top-right-radius: var(--chat-border-radius);
+      cursor: pointer;
+      
+      .reply-indicator {
+        width: 4px;
+        border-radius: 2px;
+        margin-right: 8px;
+        
+        &.reply-me {
+          background-color: var(--chat-reply-me);
+        }
+        
+        &.reply-other {
+          background-color: var(--chat-reply-other);
+        }
+      }
+      
+      .reply-content {
+        flex: 1;
+        overflow: hidden;
+        
+        .reply-sender {
+          font-size: 13px;
+          font-weight: 600;
+          margin-bottom: 2px;
+          color: var(--chat-reply-me);
+          
+          .incoming & {
+            color: var(--chat-reply-other);
+          }
+        }
+        
+        .reply-text {
+          font-size: 13px;
+          color: #666;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        
+        .reply-image {
+          height: 40px;
+          width: 40px;
+          overflow: hidden;
+          border-radius: 4px;
+          margin: 2px 0;
+          
+          img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+          }
+        }
+        
+        .reply-document {
+          display: flex;
+          align-items: center;
+          margin: 2px 0;
+          
+          ion-icon {
+            font-size: 16px;
+            color: var(--chat-primary);
+            margin-right: 4px;
+          }
+          
+          span {
+            font-size: 12px;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+    }
+    
+    &.swiping-right {
+      box-shadow: 0 2px 12px rgba(0,153,255,0.15);
+      background-color: #e3f2fd;
+      transform: translateX(40px) scale(1.02);
+    }
+  }
+  
+  // Footer styling
+  .chat-footer {
+    --ion-toolbar-background: #ffffff;
+    background: #ffffff;
+    padding: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.05);
+  }
+  
+  // Tambahkan untuk mengatasi masalah keyboard
+  .keyboard-attach {
+    position: relative;
+    transform: translateZ(0);
+    will-change: transform;
+          }
+  
+  // Input container styles
+  .input-container {
+          display: flex;
+          align-items: center;
+    padding: 8px 10px;
+    background: #ffffff;
+    border-top: 1px solid #f0f0f0;
+      }
+      
+  .attachment-button {
+    padding: 0 5px;
+        ion-button {
+      --padding-start: 6px;
+      --padding-end: 6px;
+      --padding-top: 8px;
+      --padding-bottom: 8px;
+          margin: 0;
+      height: 42px;
+      width: 42px;
+          
+          ion-icon {
+        font-size: 28px;
+        color: #888;
+          }
+        }
+      }
+      
+      .message-input {
+        flex: 1;
+    position: relative;
+    margin: 0 8px;
+        
+        ion-textarea {
+      --padding-start: 12px;
+      --padding-end: 12px;
+      --padding-top: 10px;
+      --padding-bottom: 10px;
+      margin: 0;
+      background: #f5f5f5;
+      border-radius: 24px;
+      font-size: 15px;
+          max-height: 120px;
+      --background: #f5f5f5;
+      --color: #333;
+      --placeholder-color: #888;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    }
+  }
+  
+  .send-button {
+    padding: 0 5px;
+    
+    ion-button {
+      --padding-start: 6px;
+      --padding-end: 6px;
+      --padding-top: 8px;
+      --padding-bottom: 8px;
+          margin: 0;
+      height: 42px;
+      width: 42px;
+      
+      ion-icon {
+        font-size: 28px;
+        color: #4a94f9;
+      }
+    }
+  }
+  
+  // Animasi ketik
+  @keyframes typing {
+    0% { opacity: 0.3; }
+    50% { opacity: 1; }
+    100% { opacity: 0.3; }
+  }
+  
+  .typing-indicator {
+    display: flex;
+    padding: 12px;
+    
+    span {
+      height: 8px;
+      width: 8px;
+      background-color: #999;
+      border-radius: 50%;
+      margin: 0 2px;
+      display: inline-block;
+      
+      &:nth-child(1) {
+        animation: typing 1s infinite;
+        animation-delay: 0s;
+      }
+      
+      &:nth-child(2) {
+        animation: typing 1s infinite;
+        animation-delay: 0.2s;
+      }
+      
+      &:nth-child(3) {
+        animation: typing 1s infinite;
+        animation-delay: 0.4s;
+      }
+    }
+  }
+  
+  // Responsive adjustments
+  @media (max-width: 360px) {
+    .message-wrapper {
+      &.incoming .message-bubble {
+        margin-right: 32px;
+      }
+      
+      &.outgoing .message-bubble {
+        margin-left: 32px;
+      }
+    }
+    
+    .message-bubble {
+      max-width: 90%;
+    }
+  }
+  
+  // Animation for toolbar
+  @keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideUp {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+  }
+  
+  // Selection mode styling
+  .selection-mode {
+    ion-toolbar {
+      animation: slideDown 0.3s ease;
+    }
+  }
+  
+  // Hover effect untuk pesan
+  .message-bubble {
+    cursor: pointer;
+    
+    &:active {
+      opacity: 0.9;
+    }
+  }
+  
+  // Styling untuk popover menu
+  ion-popover {
+    --width: 200px;
+    
+    ion-item {
+      --padding-start: 16px;
+      --padding-end: 16px;
+      --min-height: 44px;
+      
+      ion-icon {
+        font-size: 22px;
+        margin-right: 12px;
+      }
+    }
+  }
+  
+  // Styling untuk opsi lampiran
+  .attachment-options {
+    ion-item {
+      --padding-start: 16px;
+      --padding-end: 16px;
+      --min-height: 52px;
+      
+      ion-icon {
+        font-size: 22px;
+        margin-right: 12px;
+      }
+      
+      ion-label {
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+  }
+  
+  // Modal Preview Styling
+  .preview-modal {
+    --width: 100%;
+    --height: 100%;
+    --background: #f8f8f8;
+    
+    .preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background-color: var(--chat-primary);
+      color: white;
+      
+      ion-buttons {
+        ion-button {
+          --color: white;
+        }
+      }
+      
+      .preview-title {
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+    
+    .preview-content {
+      display: flex;
+      flex-direction: column;
+      height: calc(100% - 56px);
+      
+      .image-preview {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #000;
+        overflow: hidden;
+        
+        img {
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain;
+        }
+      }
+      
+      .document-preview {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        
+        .document-preview-icon {
+          width: 80px;
+          height: 80px;
+          background-color: var(--chat-primary);
+          border-radius: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 16px;
+          
+          ion-icon {
+            font-size: 48px;
+            color: white;
+          }
+        }
+        
+        .document-preview-info {
+          text-align: center;
+          
+          .document-preview-name {
+            font-size: 18px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+          }
+          
+          .document-preview-size {
+            font-size: 14px;
+            color: #666;
+          }
+        }
+      }
+      
+      .caption-input {
+        padding: 12px 16px;
+        background-color: white;
+        border-top: 1px solid #eee;
+        
+        ion-textarea {
+          --padding-top: 8px;
+          --padding-bottom: 8px;
+          --padding-start: 12px;
+          --padding-end: 12px;
+          --placeholder-color: #999;
+          --color: #333333;
+          font-size: 16px;
+          background-color: #f1f1f1;
+          border-radius: 20px;
+        }
+      }
+    }
+  }
+  
+  // Image Viewer Modal
+  .image-viewer-modal {
+    --width: 100%;
+    --height: 100%;
+    --background: rgba(0, 0, 0, 0.9);
+    
+    .image-viewer-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 16px;
+      z-index: 10;
+      
+      ion-buttons {
+        ion-button {
+          --color: white;
+          --background: rgba(0, 0, 0, 0.5);
+          --border-radius: 50%;
+          width: 36px;
+          height: 36px;
+        }
+      }
+    }
+    
+    .image-viewer-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+      
+      img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+    }
+  }
+  
+  /* Perbaikan untuk latar belakang pesan */
+  .chat-background {
+    background-color: #e5ddd5 !important;
+    min-height: 100%;
+    padding-bottom: 80px;
+  }
+  
+  /* Perbaikan untuk pesan outgoing */
+  .message-wrapper.outgoing .message-bubble {
+    background-color: #dcf8c6 !important; /* Warna hijau untuk pesan outgoing */
+    border-radius: 12px 12px 0 12px !important;
+    margin-left: 64px !important;
+    align-self: flex-end !important;
+  }
+  
+  /* Perbaikan untuk pesan incoming */
+  .message-wrapper.incoming .message-bubble {
+    background-color: #ffffff !important;
+    border-radius: 12px 12px 12px 0 !important;
+    margin-right: 64px !important;
+    align-self: flex-start !important;
+  }
+  
+  /* Perbaikan untuk wrapper pesan */
+  .message-wrapper {
+    display: flex !important;
+    width: 100% !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .message-wrapper.outgoing {
+    justify-content: flex-end !important;
+  }
+  
+  .message-wrapper.incoming {
+    justify-content: flex-start !important;
+  }
+  
+  /* Memastikan bubble memiliki padding yang tepat */
+  .message-bubble {
+    padding: 8px 12px !important;
+    max-width: 80% !important;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  /* Adjust the content area to make space for the footer */
+  ion-content {
+    --padding-bottom: 60px; /* Adjust based on your footer height */
+  }
+  
+  /* Ensure content is visible when keyboard is open */
+  :host-context(.ios) {
+    ion-content {
+      --keyboard-offset: 0 !important;
+    }
+    
+    ion-footer {
+      transition: all 0.3s ease;
+    }
+  }
+  

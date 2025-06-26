@@ -1,0 +1,176 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/warga/beranda" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <div class="toolbar-title"></div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <div class="notification-bell">
+        <ion-icon name="notifications-outline"></ion-icon>
+        <span class="notification-badge">3</span>
+      </div>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <div class="status-bar-spacer"></div>
+  
+  <div class="content-wrapper">
+    <!-- Header with cluster name -->
+    <div class="app-header">
+      <p class="page-subtitle">Bukit Asri Cluster · Pengaturan</p>
+    </div>
+
+    <div class="profile-card">
+      <div class="avatar-wrapper">
+        <div class="avatar">
+          <img src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/svg/person-circle-outline.svg" alt="Profile">
+        </div>
+        <div class="status-badge online"></div>
+      </div>
+      <div class="user-info">
+        <h2>{{ nama || 'Memuat data...' }}</h2>
+        <p>Bergabung sejak {{ createdAt || 'Memuat data...' }}</p>
+        <div class="user-tags">
+          <span class="user-tag">Kepala Keluarga</span>
+          <span class="user-tag"> Sedang Aktif</span>
+        </div>
+      </div>
+      <div class="edit-profile" routerLink="/warga/profile">
+        <ion-icon name="create-outline"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Security Reminder Card -->
+    <div class="security-reminder-card" routerLink="/warga/lainnya/keamanan">
+      <div class="reminder-icon">
+        <ion-icon name="shield-half-outline"></ion-icon>
+      </div>
+      <div class="reminder-content">
+        <h3>Yuk Lengkapi Keamanan Aplikasi Kamu!</h3>
+        <p>Aktifkan PIN dan sidik jari untuk keamanan data yang lebih baik</p>
+        <div class="reminder-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width]="securityProgress + '%'"></div>
+          </div>
+          <span class="progress-text">{{ securityProgress }}% Lengkap</span>
+        </div>
+      </div>
+      <div class="reminder-action">
+        <ion-icon name="chevron-forward"></ion-icon>
+      </div>
+    </div>
+
+    <div class="menu-container">
+      <div class="section-header">
+        <h3 class="section-title">Pengaturan Akun</h3>
+        <span class="subtitle">Kelola data pribadi dan keamanan</span>
+      </div>
+      
+      <div class="menu-items">
+        <div class="menu-item ripple" routerLink="/warga/profile">
+          <div class="menu-icon profile-icon">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+          <div class="menu-content">
+            <p class="menu-label">Pengaturan Profil</p>
+            <p class="menu-description">Update informasi pribadi Anda</p>
+          </div>
+          <div class="menu-arrow">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </div>
+        </div>
+        
+        <div class="menu-item ripple" routerLink="/warga/lainnya/keluarga">
+          <div class="menu-icon family-icon">
+            <ion-icon name="people-outline"></ion-icon>
+          </div>
+          <div class="menu-content">
+            <p class="menu-label">Anggota Keluarga</p>
+            <p class="menu-description">Kelola data anggota keluarga</p>
+          </div>
+          <div class="menu-arrow">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </div>
+        </div>
+        
+        <div class="menu-item ripple" routerLink="/warga/lainnya/keamanan">
+          <div class="menu-icon security-icon">
+            <ion-icon name="shield-outline"></ion-icon>
+          </div>
+          <div class="menu-content">
+            <p class="menu-label">Pengaturan Keamanan</p>
+            <p class="menu-description">Password dan autentikasi</p>
+          </div>
+          <div class="menu-arrow">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-container">
+      <div class="section-header">
+        <h3 class="section-title">Layanan</h3>
+        <span class="subtitle">Akses fitur tambahan</span>
+      </div>
+      
+      <div class="menu-items">
+        <div class="menu-item ripple" routerLink="/warga/lainnya/kunjungantamu-warga">
+          <div class="menu-icon visitor-icon">
+            <ion-icon name="footsteps-outline"></ion-icon>
+          </div>
+          <div class="menu-content">
+            <p class="menu-label">Tamu Kunjungan</p>
+            <p class="menu-description">Daftar tamu yang berkunjung</p>
+          </div>
+          <div class="menu-arrow">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </div>
+        </div>
+        
+        <div class="menu-item ripple" routerLink="/warga/lainnya/policy">
+          <div class="menu-icon terms-icon">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+          </div>
+          <div class="menu-content">
+            <p class="menu-label">Syarat dan Ketentuan</p>
+            <p class="menu-description">Ketentuan penggunaan aplikasi</p>
+          </div>
+          <div class="menu-arrow">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-container">
+      <div class="info-card">
+        <div class="info-icon">
+          <ion-icon name="information-circle-outline"></ion-icon>
+        </div>
+        <div class="info-content">
+          <p>Ada pertanyaan atau kendala? Hubungi RT setempat melalui menu Chat.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-version">
+      <div class="version-pill">
+        <ion-icon name="code-slash-outline"></ion-icon>
+        <p>Bukit Asri Cluster App V.1.0.0</p>
+      </div>
+    </div>
+
+    <div class="logout-container">
+      <ion-button expand="block" (click)="logout()" class="logout-button">
+        <ion-icon name="log-out-outline" slot="start"></ion-icon>
+        <span>LogOut</span>
+      </ion-button>
+    </div>
+  </div>
+</ion-content>
+

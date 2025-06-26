@@ -1,0 +1,92 @@
+<ion-header class="modal-header">
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ otpSent ? 'Verifikasi OTP' : 'Update Nomor HP' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding light-theme">
+  <div *ngIf="!otpSent" class="phone-form-container">
+    <div class="form-info">
+      <ion-icon name="call-outline"></ion-icon>
+      <h3>Update Nomor HP</h3>
+      <p>Masukkan nomor HP baru Anda. Kami akan mengirimkan kode OTP ke WhatsApp Anda untuk verifikasi.</p>
+    </div>
+
+    <form [formGroup]="phoneForm" (ngSubmit)="requestOTP()">
+      <ion-item lines="none" class="custom-input">
+        <ion-label position="stacked">Nomor HP</ion-label>
+        <ion-input type="tel" formControlName="phone" placeholder="Contoh: 081234567890"></ion-input>
+      </ion-item>
+      
+      <div class="error-container" *ngIf="phoneForm.get('phone')?.invalid && phoneForm.get('phone')?.touched">
+        <span class="error-message" *ngIf="phoneForm.get('phone')?.errors?.['required']">
+          Nomor HP wajib diisi
+        </span>
+        <span class="error-message" *ngIf="phoneForm.get('phone')?.errors?.['minlength']">
+          Nomor HP minimal 10 digit
+        </span>
+      </div>
+
+      <div class="button-container">
+        <ion-button expand="block" type="submit" [disabled]="phoneForm.invalid">
+          Kirim Kode OTP
+        </ion-button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="otpSent" class="otp-form-container">
+    <div class="form-info">
+      <ion-icon name="shield-checkmark-outline"></ion-icon>
+      <h3>Verifikasi OTP</h3>
+      <p>Masukkan kode OTP 6 digit yang telah dikirim ke WhatsApp Anda.</p>
+    </div>
+
+    <form [formGroup]="otpForm" (ngSubmit)="verifyOTP()">
+      <ion-item lines="none" class="custom-input">
+        <ion-label position="stacked">Kode OTP</ion-label>
+        <ion-input 
+          type="text" 
+          formControlName="otp" 
+          maxlength="6" 
+          minlength="6" 
+          placeholder="Masukkan 6 digit kode OTP" 
+          pattern="[0-9]*" 
+          inputmode="numeric"
+        ></ion-input>
+      </ion-item>
+      
+      <div class="error-container" *ngIf="otpForm.get('otp')?.invalid && otpForm.get('otp')?.touched">
+        <span class="error-message" *ngIf="otpForm.get('otp')?.errors?.['required']">
+          Kode OTP wajib diisi
+        </span>
+        <span class="error-message" *ngIf="otpForm.get('otp')?.errors?.['minlength'] || otpForm.get('otp')?.errors?.['maxlength']">
+          Kode OTP harus 6 digit
+        </span>
+      </div>
+
+      <div class="countdown-container" *ngIf="countdownTime > 0">
+        <p>Kirim ulang kode dalam {{ countdownTime }} detik</p>
+      </div>
+
+      <div class="button-container">
+        <ion-button expand="block" type="submit" [disabled]="otpForm.invalid">
+          Verifikasi
+        </ion-button>
+        
+        <ion-button expand="block" fill="outline" (click)="backToPhoneInput()">
+          Kembali
+        </ion-button>
+        
+        <ion-button expand="block" fill="clear" (click)="requestOTP()" [disabled]="countdownTime > 0">
+          Kirim Ulang OTP
+        </ion-button>
+      </div>
+    </form>
+  </div>
+</ion-content> 

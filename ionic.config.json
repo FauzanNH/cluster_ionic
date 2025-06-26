@@ -1,0 +1,7 @@
+{
+  "name": "bukit asri cluster ",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

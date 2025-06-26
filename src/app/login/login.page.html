@@ -1,0 +1,70 @@
+<ion-header [translucent]="true">
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="login-container">
+    <div class="login-back-button">
+      <ion-button fill="clear" routerLink="/" class="back-btn">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </div>
+    
+    <div class="login-header">
+      <img src="assets/images/rumah.png" alt="Bukit Asri Cluster" class="login-logo">
+      <h1>Selamat Datang</h1>
+      <p>Silakan masuk untuk mengakses layanan Bukit Asri Cluster</p>
+    </div>
+    
+    <div class="login-form">
+      <form [formGroup]="loginForm" (ngSubmit)="login()">
+      <div class="input-group">
+        <label class="input-label">Email atau No HP</label>
+        <div class="input-container">
+          <ion-icon name="person-outline"></ion-icon>
+            <input type="text" formControlName="login" placeholder="Masukkan email atau no HP Anda">
+        </div>
+      </div>
+      
+      <div class="input-group">
+        <label class="input-label">Password</label>
+        <div class="input-container password-container">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+            <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Masukkan password">
+          <ion-icon 
+            [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" 
+            class="toggle-password"
+              (click)="toggleShowPassword()">
+          </ion-icon>
+        </div>
+      </div>
+      
+      <div class="form-actions">
+          <ion-button type="submit" expand="block" class="login-button" [disabled]="!loginForm.valid || isLoading">
+          <span *ngIf="!isLoading">
+            Masuk
+            <ion-icon slot="end" name="log-in-outline"></ion-icon>
+          </span>
+          <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
+        </ion-button>
+
+        <div class="forgot-password" style="text-align: right; margin-top: 8px;">
+          <a routerLink="/lupapassword" style="color: #2196F3; font-size: 14px; text-decoration: none; font-weight: 500; cursor: pointer;">
+            Lupa password?
+          </a>
+        </div>
+        
+        <div class="alternative-options">
+          <a routerLink="/login-tamu" class="guest-link">
+            <ion-icon name="person-outline"></ion-icon>
+            Login sebagai Tamu
+          </a>
+        </div>
+      </div>
+      </form>
+    </div>
+    
+    <div class="login-footer">
+      <p>V1.0.0 (beta) Bukit Asri Cluster Apps</p>
+    </div>
+  </div>
+</ion-content>

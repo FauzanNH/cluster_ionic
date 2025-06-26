@@ -1,0 +1,55 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="onBack()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      <div class="toolbar-title">Keamanan</div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding-horizontal">
+  <div class="status-bar-spacer"></div>
+  
+  <div class="content-wrapper">
+    <!-- Page Header -->
+    <div class="app-header">
+      <h1 class="page-title">Edit Hint PIN</h1>
+    </div>
+
+    <!-- Hint Form -->
+    <div class="step-content">
+      <div class="form-card">
+        <div class="form-header">
+          <div class="form-icon">
+            <img src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/svgs/solid/question-circle.svg" alt="Hint">
+          </div>
+          <h2>Ubah Hint PIN</h2>
+        </div>
+        <div class="form-description">
+          Masukkan hint PIN baru (petunjuk jika lupa PIN, minimal 3 karakter).
+        </div>
+        <div class="form-group">
+          <label for="hint">Hint PIN <span style="color:#f00">*</span></label>
+          <div class="input-container">
+            <ion-icon name="help-circle-outline" class="input-icon"></ion-icon>
+            <input type="text" id="hint" class="password-input" [(ngModel)]="hint" placeholder="Contoh: 4 digit tahun lahir anak" maxlength="32">
+          </div>
+          <small class="hint-text">Hint akan ditampilkan jika Anda lupa PIN</small>
+        </div>
+        <div class="form-actions">
+          <button class="btn-secondary" (click)="onBack()">
+            Batal
+          </button>
+          <button class="btn-primary" (click)="saveHint()" [disabled]="isSaving || !isValidHint()">
+            <ng-container *ngIf="!isSaving">Simpan Hint</ng-container>
+            <ng-container *ngIf="isSaving"><ion-spinner name="dots"></ion-spinner></ng-container>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

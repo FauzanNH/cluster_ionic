@@ -1,0 +1,217 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/satpam/beranda" text="" icon="arrow-back-outline"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button class="header-button">
+        <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-down-outline"
+      refreshingSpinner="crescent"
+      pullingText="Tarik untuk refresh"
+      refreshingText="Memuat...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div class="status-bar-spacer"></div>
+  
+  <!-- Cover Photo (Always Visible) -->
+  <div class="cover-photo"></div>
+  
+  <!-- Skeleton Loading View -->
+  <div class="content-container ion-padding-horizontal" *ngIf="isLoading">
+    <!-- Profile Header Skeleton -->
+    <div class="profile-header">
+      <div class="avatar-container skeleton">
+        <div class="avatar skeleton-avatar"></div>
+      </div>
+      
+      <div class="skeleton-line name-line"></div>
+      <div class="skeleton-line badge-line"></div>
+    </div>
+
+    <!-- Personal Information Skeleton -->
+    <div class="profile-section">
+      <div class="section-title skeleton-section-title">
+        <div class="skeleton-icon"></div>
+        <div class="skeleton-line title-line"></div>
+      </div>
+      
+      <div class="info-card skeleton">
+        <!-- Info Item 1 -->
+        <div class="info-item">
+          <div class="info-icon skeleton-icon"></div>
+          <div class="info-detail">
+            <div class="skeleton-line label-line"></div>
+            <div class="skeleton-line value-line"></div>
+          </div>
+        </div>
+        
+        <!-- Info Item 2 -->
+        <div class="info-item">
+          <div class="info-icon skeleton-icon"></div>
+          <div class="info-detail">
+            <div class="skeleton-line label-line"></div>
+            <div class="skeleton-line value-line"></div>
+          </div>
+        </div>
+
+        <!-- Info Item 3 -->
+        <div class="info-item">
+          <div class="info-icon skeleton-icon"></div>
+          <div class="info-detail">
+            <div class="skeleton-line label-line"></div>
+            <div class="skeleton-line value-line"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Work Information Skeleton -->
+    <div class="profile-section">
+      <div class="section-title skeleton-section-title">
+        <div class="skeleton-icon"></div>
+        <div class="skeleton-line title-line"></div>
+      </div>
+      
+      <div class="info-card skeleton">
+        <!-- Info Item 1 -->
+        <div class="info-item">
+          <div class="info-icon skeleton-icon"></div>
+          <div class="info-detail">
+            <div class="skeleton-line label-line"></div>
+            <div class="skeleton-line value-line"></div>
+          </div>
+        </div>
+
+        <!-- Info Item 2 -->
+        <div class="info-item">
+          <div class="info-icon skeleton-icon"></div>
+          <div class="info-detail">
+            <div class="skeleton-line label-line"></div>
+            <div class="skeleton-line value-line"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Action Buttons Skeleton -->
+    <div class="action-buttons">
+      <div class="skeleton-button"></div>
+      <div class="skeleton-button outline"></div>
+    </div>
+  </div>
+  
+  <!-- Actual Content -->
+  <div class="content-container ion-padding-horizontal" *ngIf="!isLoading">
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="avatar-container">
+        <div class="avatar">
+          <ion-icon name="person-circle-outline"></ion-icon>
+        </div>
+        <div class="edit-avatar">
+          <ion-icon name="camera"></ion-icon>
+        </div>
+      </div>
+      <h2 class="profile-name">{{ satpamData.nama }}</h2>
+      <div class="profile-id-badge">
+        <ion-icon name="shield-outline"></ion-icon>
+        <span>{{ satpamData.no_kep }}</span>
+      </div>
+    </div>
+
+    <!-- Personal Information Card -->
+    <div class="profile-section">
+      <h3 class="section-title">
+        <ion-icon name="person-outline"></ion-icon>
+        <span>Informasi Pribadi</span>
+      </h3>
+      
+      <div class="info-card">
+        <div class="info-item">
+          <div class="info-icon">
+            <ion-icon name="card-outline"></ion-icon>
+          </div>
+          <div class="info-detail">
+            <p class="info-label">NIK</p>
+            <h3 class="info-value">{{ satpamData.nik }}</h3>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-icon">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </div>
+          <div class="info-detail">
+            <p class="info-label">Tanggal Lahir</p>
+            <h3 class="info-value">{{ satpamData.tanggal_lahir }}</h3>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-icon">
+            <ion-icon name="mail-outline"></ion-icon>
+          </div>
+          <div class="info-detail">
+            <p class="info-label">Email</p>
+            <h3 class="info-value">{{ satpamData.email }}</h3>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-icon">
+            <ion-icon name="call-outline"></ion-icon>
+          </div>
+          <div class="info-detail">
+            <p class="info-label">Nomor HP</p>
+            <h3 class="info-value">{{ satpamData.no_hp }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Work Information Card -->
+    <div class="profile-section">
+      <h3 class="section-title">
+        <ion-icon name="briefcase-outline"></ion-icon>
+        <span>Informasi Pekerjaan</span>
+      </h3>
+      
+      <div class="info-card">
+        <div class="info-item">
+          <div class="info-icon">
+            <ion-icon name="business-outline"></ion-icon>
+          </div>
+          <div class="info-detail">
+            <p class="info-label">Unit Seksi Gerbang</p>
+            <h3 class="info-value">{{ satpamData.seksi_unit_gerbang }}</h3>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-icon">
+            <ion-icon name="time-outline"></ion-icon>
+          </div>
+          <div class="info-detail">
+            <p class="info-label">Terdaftar Pada</p>
+            <h3 class="info-value">{{ satpamData.terdaftar_pada }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="version-info">
+      <p>Bukit Asri Cluster App v1.0.2</p>
+    </div>
+  </div>
+</ion-content>
